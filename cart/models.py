@@ -13,4 +13,4 @@ class Cart(models.Model):
 class Order(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     datetime = models.DateTimeField(auto_now_add=True)
-    total_price = models.IntegerField()
+    total_price = models.IntegerField(default=0)
