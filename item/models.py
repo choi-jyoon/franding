@@ -16,7 +16,7 @@ class Brand(models.Model):
     name = models.CharField(max_length=50)
     
 class Size(models.Model):
-    ml = models.IntegerField
+    ml = models.IntegerField(default=50)
     
 class ItemType(models.Model):
     name = models.CharField(max_length=50)
