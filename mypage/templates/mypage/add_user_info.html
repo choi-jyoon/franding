@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>{{user}}님의 회원정보등록페이지</h1>
+
+<form action="" method="post" class="needs-validation" novalidate>
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="address" class="form-label">주소:</label>
+        <textarea name="address" rows="2" class="form-control"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="phone" class="form-label">전화번호:</label>
+        <input type="text" name="phone" class="form-control" id="name">
+    </div>
+    <div class="text-center">
+        <input type="submit" value="제출" class="btn btn-success">
+    </div>
+</form>
+</div>
+{% endblock %}
