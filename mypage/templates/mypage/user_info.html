@@ -1,6 +1,24 @@
-<h1>{{user}}님의 회원정보</h1>
+{% extends 'base.html' %}
 
+{% block title %} MyPage {% endblock %}
 
-{{object.user.username}}
-{{object.address}}
-{{object.phone}}
+{% block content %}
+
+{% if object %}
+    <h1>{{user}}님의 회원정보</h1>
+    <!-- 여기에 사용자 정보를 표시하는 코드 추가 -->
+    {{object.user.username}}
+    {{object.address}}
+    {{object.phone}}
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{% url 'mypage:update_user_info' %}" class="btn btn-success">회원정보수정</a>
+    </div>
+{% else %}
+    <h1>No User Info Found</h1>
+    <p>{{ message }}</p>
+    <div>
+        <a href="{% url 'mypage:add_user_info' %}" class="btn btn-success">회원정보등록</a>
+    </div>
+{% endif %}
+
+{% endblock %}

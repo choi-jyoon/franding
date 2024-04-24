@@ -1,34 +1,33 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>마이 페이지</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* 화면 전체를 사용하기 위한 스타일 */
-        html, body {
-            height: 100%;
-            margin: 0;
-        }
-        /* 내비게이션 바를 제외한 전체 화면을 채우는 컨테이너 */
-        .container-fluid {
-            height: calc(100% - 56px); /* 내비게이션 바 높이만큼 제외 */
-        }
-        /* 높이 100% 설정 */
-        .full-height {
-            height: 100%;
-        }
-        #content-display {
-            height: 100%;
-            overflow-y: auto; /* 내용이 많을 경우 스크롤 가능 */
-        }
-        .order-title {
-            margin-bottom: 20px; /* 하단 마진을 20px로 설정 */
-        }
-    </style>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %} MyPage {% endblock %}
+
+{% block extra-style %}
+<style>
+    /* 화면 전체를 사용하기 위한 스타일 */
+    html, body {
+        height: 100%;
+        margin: 0;
+    }
+    /* 내비게이션 바를 제외한 전체 화면을 채우는 컨테이너 */
+    .container-fluid {
+        height: calc(100% - 56px); /* 내비게이션 바 높이만큼 제외 */
+    }
+    /* 높이 100% 설정 */
+    .full-height {
+        height: 100%;
+    }
+    #content-display {
+        height: 100%;
+        overflow-y: auto; /* 내용이 많을 경우 스크롤 가능 */
+    }
+    .order-title {
+        margin-bottom: 20px; /* 하단 마진을 20px로 설정 */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
     <div class="container-fluid">
         <div class="row full-height">
             <div class="col-2 d-flex flex-column p-3 bg-light full-height">
@@ -42,11 +41,12 @@
             <div class="col-10" id="content-display">
                 <!-- 내용이 여기에 표시됩니다. -->
                 <h3 class="order-title">"{{user}}"의 주문내역</h3>
+                {% if object_list %}
                 <div class="row">
                     {% for ordercart in object_list %}
                     <div class="card mb-4">
                         <div class="card-header">
-                            결제완료 {{ order.datetime }}
+                            결제완료 {{ ordercart.order.datetime }}
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -65,9 +65,12 @@
                     </div>                    
                     {% endfor %}
                 </div>
+                {% else %}
+                <div class="row">
+                    <p>{{ message }}</p>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
-
-</body>
-</html>
+{% endblock %}
