@@ -1,2 +1,4 @@
 <h1>hi</h1>
-<a href="">{{key.name}}</a>
+{% for item in key %}
+    <div>{{ item.name }}</div>
+{% endfor %}
