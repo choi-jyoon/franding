@@ -8,65 +8,73 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 
-    {% block extra-style %}{% endblock %}
+    {% block extra-style %}
+    <style>
+        .navbar {
+            background-color: ;
+        }
+    </style>
+    {% endblock %}
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container-fluid justify-content-center">
-            <a class="navbar-brand" href="{% url 'home' %}">
-                <img src="{% static 'img/logo.jpg' %}" alt="Logo" width="30" height="24" class="d-inline-block align-text-top"></a>
-            <a class="navbar-brand" href="{% url 'home' %}" style="font-weight: bold; ">Franding</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button> 
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link"  href="{% url 'item:item_list' %}">Perfume</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'item:item_list' %}">Others</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'item:item_list' %}">Brand</a> 
-                    </li>
-                    <li class="nav-item">
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" placeholder="검색어를 입력하세요" aria-label="Search_word" aria-describedby="button-addon2">
-                            <button class="btn btn-outline-secondary" type="button" id="button-addon2"><i class="bi bi-search"></i></button>
-                        </div>
-                    </li>
-                </ul>
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item dropdown">
-                        {% if user.is_active %}
-                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle"></i>&nbsp;{% firstof user.get_short_name user.get_username %}
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarUserDropdown">
-                            <form action="{% url 'logout' %}" method="post">
-                                {% csrf_token %}
-                                <button type="submit" class="dropdown-item">Logout</button>
-                            </form>
-                            {% comment %} <li><a class="dropdown-item" href="{% url 'password_change' %}">Change Password</a></li> {% endcomment %}
-                            <li><a class="dropdown-item" href="{% url 'mypage:order_index' %}">My Page</a></li>
-                        </ul>
-                        {% else %}
-                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarAnonymousDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle"></i>&nbsp;Anonymous
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarAnonymousDropdown">
-                            <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
-                            <li><a class="dropdown-item" href="{% url 'register' %}">Register</a></li>
-                        </ul>
-                        {% endif %}
-                    </li>
-                </ul>
-            </div>
+            <!-- 좌측 항목들 -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 justify-content-center">
+                <li class="nav-item" style="margin-right: 30px;">
+                    <a class="nav-link" href="{% url 'item:item_list' %}">Perfume</a>
+                </li>
+                <li class="nav-item" style="margin-right: 30px;">
+                    <a class="nav-link" href="{% url 'item:item_list' %}">Others</a>
+                </li>
+                <li class="nav-item" style="margin-right: 30px;">
+                    <a class="nav-link" href="{% url 'item:item_list' %}">Brand</a> 
+                </li>
+            </ul>
+    
+            <!-- 로고 -->
+            <a class="navbar-brand mx-auto" href="{% url 'home' %}">
+                <img src="{% static 'img/logo.jpg' %}" alt="Logo" width="62" height="62" class="d-inline-block align-text-top">
+            </a>
+    
+            <!-- 우측 항목들 -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 justify-content-center align-items-center">
+                <li class="nav-item me-5">
+                    <form action='{% url 'search' %}' method='post'>
+                        {% csrf_token %}
+                    <div class="input-group mb-0">
+                        <input type="text" class="form-control" placeholder="검색어를 입력하세요" aria-label="Search_word" aria-describedby="button-addon2" name="search_word">
+                        <button class="btn btn-outline-secondary" type="submit" id="button-addon2"><i class="bi bi-search"></i></button>
+                    </div>
+                </form>
+                </li>
+                <li class="nav-item dropdown">
+                    {% if user.is_active %}
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle"></i>&nbsp;{% firstof user.get_short_name user.get_username %}
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarUserDropdown">
+                        <form action="{% url 'logout' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item">Logout</button>
+                        </form>
+                        <li><a class="dropdown-item" href="{% url 'mypage:order_index' %}">My Page</a></li>
+                    </ul>
+                    {% else %}
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarAnonymousDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle"></i>&nbsp;Anonymous
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarAnonymousDropdown">
+                        <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
+                        <li><a class="dropdown-item" href="{% url 'register' %}">Register</a></li>
+                    </ul>
+                    {% endif %}
+                </li>
+            </ul>
         </div>
     </nav>
-
+    
     <div class="container mb-5">
         {% block content %}{% endblock %}
     </div>
