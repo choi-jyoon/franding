@@ -41,6 +41,8 @@
             <div class="col-10" id="content-display">
                 <!-- 내용이 여기에 표시됩니다. -->
                 <h3 class="order-title">"{{user}}"의 주문내역</h3>
+                <hr class="mt-4 border-t-2 border-gray-500 md:mt-6">
+                
                 {% if object_list %}
                 <div class="row">
                     {% for ordercart in object_list %}

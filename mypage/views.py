@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from cart.models import OrderCart
 from .models import UserAddInfo
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout as auth_logout
 
 @login_required
 def order_index(request):
@@ -63,3 +64,9 @@ def update_user_info(request):
         user_info.save()
 
         return redirect('mypage:user_info')
+    
+@login_required
+def user_delete(request):
+    request.user.delete()
+    auth_logout(request)
+    return redirect('home')
