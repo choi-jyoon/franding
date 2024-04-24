@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %} MyPage {% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid">
+        <div class="row full-height">
+            <div class="col-2 d-flex flex-column p-3 bg-light full-height">
+                <!-- 버튼들 -->
+                <a href="#" class="btn btn-outline-secondary mb-4">주문 내역</a>
+                <a href="#" class="btn btn-outline-secondary mb-4">작성 리뷰</a>
+                <a href="#" class="btn btn-outline-secondary mb-4">프로필</a>
+                <a href="#" class="btn btn-outline-secondary mb-4">회원정보</a>
+                <a href="#" class="btn btn-outline-secondary mb-4">판매자페이지</a>
+            </div>
+            <div class="col-10" id="content-display">
+                <!-- 내용이 여기에 표시됩니다. -->
+                <!-- <h1>{{user}}의 주문내역</h1> -->
+                <h3 class="order-title">" "의 주문내역</h3>
+                <div class="row">
+                    {% for order in object_list %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            결제완료 {{ order.datetime }}
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- 이미지 열 -->
+                                <div class="col-1">
+                                    <img src="{{ order.cart.item.image }}" alt="{{ order.cart.item.name }}" class="img-fluid">
+                                </div>
+                                <!-- 상품 정보 열 -->
+                                <div class="col-11">
+                                    <h5 class="card-title">주문상품 : {{ order.cart.item.name }}</h5>
+                                    <p class="card-text">주문수량 : {{ order.cart.amount }}</p>
+                                    <p class="card-text"><strong>{{ order.total_price }}원</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

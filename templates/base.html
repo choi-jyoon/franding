@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} Franding {% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    {% block extra-style %}{% endblock %}
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                {% comment %} <img src="{% static 'img/logo.jpg' %}" alt="Logo" width="30" height="24" class="d-inline-block align-text-top"> {% endcomment %}
+                {% comment %} Franding {% endcomment %}
+              {% comment %} </a> {% endcomment %}
+            <a class="navbar-brand" href="{% url 'home' %}" style="font-weight: bold; ">Franding</a>
+            {% comment %} <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button> {% endcomment %}
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link"  href="#">Perfume</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Others</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Brand</a> 
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">검색</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        {% if user.is_active %}
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle"></i>&nbsp;{% firstof user.get_short_name user.get_username %}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarUserDropdown">
+                            <form action="{% url 'logout' %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="dropdown-item">Logout</button>
+                            </form>
+                            {% comment %} <li><a class="dropdown-item" href="{% url 'password_change' %}">Change Password</a></li> {% endcomment %}
+                            <li><a class="dropdown-item" href="#">My Page</a></li>
+                        </ul>
+                        {% else %}
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarAnonymousDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle"></i>&nbsp;Anonymous
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarAnonymousDropdown">
+                            <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
+                            <li><a class="dropdown-item" href="{% url 'register' %}">Register</a></li>
+                        </ul>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mb-5">
+        {% block content %}{% endblock %}
+    </div>
+
+    {% block footer %}
+    <footer class="footer mt-auto py-3 bg-light fixed-bottom">
+        <div class="container text-center">
+            <p>© 2024 Franding. All rights reserved.</p>
+            <p>Follow us: <a href="#">Facebook</a> | <a href="#">Twitter</a> | <a href="#">Instagram</a></p>
+            <p>개인정보처리방침 | 이용약관</p>
+        </div>
+    </footer>
+    {% endblock %}
+    <script src="https://kit.fontawesome.com/c998a172fe.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    {% block extra-script %}{% endblock %}
+
+</body>
+</html>
