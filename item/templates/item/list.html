@@ -1,7 +1,16 @@
-<a href="101/">cat1 </a>
-<a href="201/">cat2 </a>
-<a href="301/">brand </a>
-<a href="401/">type </a>
+
+{% extends 'base.html' %}
+
+{% block title %} Category_List {% endblock %}
+
+{% block content %}
+<!--#category 정리
+#100번대->cat1
+#200번대->cat2
+#250번대->detail_cat2
+#300번대->brand
+#400번대->item_type-->
 {% for item in item %}
-    <div>{{ item.name }}</div>
+    <div><a href="{%url 'item:detail' item.id%}">{{ item.name }}</a></div>
 {% endfor %}
+{% endblock %}
