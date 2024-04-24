@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %} MyPage {% endblock %}
+
+{% block extra-style %}
+<style>
+    /* 화면 전체를 사용하기 위한 스타일 */
+    html, body {
+        height: 100%;
+        margin: 0;
+    }
+    /* 내비게이션 바를 제외한 전체 화면을 채우는 컨테이너 */
+    .container-fluid {
+        height: calc(100% - 56px); /* 내비게이션 바 높이만큼 제외 */
+    }
+    /* 높이 100% 설정 */
+    .full-height {
+        height: 100%;
+    }
+    #content-display {
+        height: 100%;
+        overflow-y: auto; /* 내용이 많을 경우 스크롤 가능 */
+    }
+    .order-title {
+        margin-bottom: 20px; /* 하단 마진을 20px로 설정 */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row full-height">
+        <div class="col-2 d-flex flex-column p-3 bg-light full-height">
+            <!-- 버튼들 -->
+            <a href="{% url 'mypage:order_index' %}" class="btn btn-outline-secondary mb-4">주문 내역</a>
+            <a href="#" class="btn btn-outline-secondary mb-4">작성 리뷰</a>
+            <a href="#" class="btn btn-outline-secondary mb-4">프로필</a>
+            <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary mb-4">회원정보</a>
+            <a href="#" class="btn btn-outline-secondary mb-4">판매자페이지</a>
+        </div>
+    
+    <div class="col-10" id="content-display">
+    {% if object %}
+        <h3>{{user}}님의 회원정보</h3>
+        <hr class="mt-4 border-t-2 border-gray-500 md:mt-6">
+        <!-- 사용자 정보 -->
+        <div class="p-4 border rounded">
+            <div class="row mb-3">
+                <div class="col-3 fw-bold">이름</div>
+                <div class="col-9">{{object.user.username}}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-3 fw-bold">주소</div>
+                <div class="col-9">{{object.address}}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-3 fw-bold">전화번호</div>
+                <div class="col-9">{{object.phone}}</div>
+            </div>
+            <div class="text-center">
+                <a href="{% url 'mypage:update_user_info' %}" class="btn btn-outline-secondary">회원정보수정</a>
+                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    회원탈퇴
+                </button>
+                <!-- Modal -->
+                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">회원 탈퇴</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                        정말로 탈퇴하시겠습니까? <br>
+                        탈퇴하시면 되돌릴 수 없습니다.
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">취소</button>
+                        <form action="{% url 'mypage:user_delete'  %}" method="post">
+                            {% csrf_token %}
+                            <input type="submit" value="탈퇴하기" class="btn btn-outline-secondary">
+                        </form>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    {% else %}
+        <h1>No User Info Found</h1>
+        <p>{{ message }}</p>
+        <div>
+            <a href="{% url 'mypage:add_user_info' %}" class="btn btn-outline-secondary">회원정보등록</a>
+        </div>
+    {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra-script %}
+<script>
+    // 회원탈퇴 모달 script
+    document.getElementById('withdrawButton').addEventListener('click', function() {
+        const myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'), {
+            keyboard: false, // 키보드로 모달을 닫을 수 없도록 설정
+            backdrop: 'static' // 바깥 영역을 클릭해도 모달이 닫히지 않도록 설정
+        });
+        myModal.show();
+    });
+</script>
+{% endblock %}
