@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Post All{% endblock %}
+
+{% load widget_tweaks %}
+
+{%block content%}
+
+<h1>Please Login</h1>
+<p>Please enter your id and password</p>
+
+{% if form.error %}
+<div class="alert alert-danger">
+    <div>다시 확인해 주세요</div>
+    {{form.errors}}
+</div>
+{% endif %}
+<form action="." method="post" class="card pt-3">{% csrf_token %}
+
+    <div class="form-group row">
+        {{ form.username|add_label_class:"col-form-label col-sm-2 ml-3 font-weight-bold" }}
+        <div class="col-sm-5">
+            {{ form.username|add_class:"form-control"|attr:"autofocus" }}
+        </div>
+    </div>
+    <div class="form-group row">
+        {{ form.password|add_label_class:"col-form-label col-sm-2 ml-3 font-weight-bold" }}
+        <div class="col-sm-5">
+            {{ form.password|add_class:"form-control" }}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="offset-sm-2 col-sm-5">
+            <input type="submit" value="Log in" class="btn btn-info"/>
+            <input type="hidden" name="next" value="{{ next }}" />
+        </div>
+    </div>
+
+</form>
+{% endblock %}
