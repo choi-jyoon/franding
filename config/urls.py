@@ -24,12 +24,12 @@ from . import views
 urlpatterns = [
     path('', views.index, name='home'),
     path('admin/', admin.site.urls),
-    # path('/item', )
-    # path('/cart', )
-    # path('/mypage', )
-    # path('/seller', )
+    path("item/", include("item.urls")),
+    path('mypage/', include('mypage.urls')),
+    # path('/cart', ),
+    # path('/seller', ),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/register/', views.UserCreateView.as_view(), name='register'),
     path('accounts/register/done/', views.UserCreateDoneTV.as_view(), name='register_done'),
     
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
