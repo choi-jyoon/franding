@@ -11,6 +11,12 @@ class Cart(models.Model):
     status = models.BooleanField(default=True)
     
 class Order(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    # cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    # order_cart=models.ForeignKey(OrderCart, on_delete=models.CASCADE)
     datetime = models.DateTimeField(auto_now_add=True)
     total_price = models.IntegerField(default=0)
+    
+class OrderCart(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+
