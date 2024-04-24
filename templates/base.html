@@ -6,34 +6,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %} Franding {% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    {% block extra-style %}{% endblock %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 
+    {% block extra-style %}{% endblock %}
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                {% comment %} <img src="{% static 'img/logo.jpg' %}" alt="Logo" width="30" height="24" class="d-inline-block align-text-top"> {% endcomment %}
-                {% comment %} Franding {% endcomment %}
-              {% comment %} </a> {% endcomment %}
+        <div class="container-fluid justify-content-center">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'img/logo.jpg' %}" alt="Logo" width="30" height="24" class="d-inline-block align-text-top"></a>
             <a class="navbar-brand" href="{% url 'home' %}" style="font-weight: bold; ">Franding</a>
-            {% comment %} <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
-            </button> {% endcomment %}
+            </button> 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link"  href="#">Perfume</a>
+                        <a class="nav-link"  href="{% url 'item:item_list' %}">Perfume</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Others</a>
+                        <a class="nav-link" href="{% url 'item:item_list' %}">Others</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Brand</a> 
+                        <a class="nav-link" href="{% url 'item:item_list' %}">Brand</a> 
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">검색</a>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="검색어를 입력하세요" aria-label="Search_word" aria-describedby="button-addon2">
+                            <button class="btn btn-outline-secondary" type="button" id="button-addon2"><i class="bi bi-search"></i></button>
+                        </div>
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
@@ -48,7 +50,7 @@
                                 <button type="submit" class="dropdown-item">Logout</button>
                             </form>
                             {% comment %} <li><a class="dropdown-item" href="{% url 'password_change' %}">Change Password</a></li> {% endcomment %}
-                            <li><a class="dropdown-item" href="#">My Page</a></li>
+                            <li><a class="dropdown-item" href="{% url 'mypage:order_index' %}">My Page</a></li>
                         </ul>
                         {% else %}
                         <a class="nav-link dropdown-toggle text-white" href="#" id="navbarAnonymousDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -78,6 +80,7 @@
         </div>
     </footer>
     {% endblock %}
+
     <script src="https://kit.fontawesome.com/c998a172fe.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     {% block extra-script %}{% endblock %}

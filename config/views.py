@@ -2,11 +2,15 @@ from django.shortcuts import render
 from django.views.generic import CreateView, TemplateView
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
-
+from item.models import Item
 # Create your views here.
 
 def index(request):
-    return render(request, 'home.html')
+    objects = Item.objects.all()[:4]
+    context = {
+        'item_list' : objects
+    }
+    return render(request, 'home.html', context)
 
 class UserCreateView(CreateView):
     template_name='registration/register.html'
