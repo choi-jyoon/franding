@@ -4,12 +4,6 @@
 {% block title %} Category_List {% endblock %}
 
 {% block content %}
-<!--#category 정리
-#100번대->cat1
-#200번대->cat2
-#250번대->detail_cat2
-#300번대->brand
-#400번대->item_type-->
 {% for item in item %}
     <div><a href="{%url 'item:detail' item.id%}">{{ item.name }}</a></div>
 {% endfor %}
