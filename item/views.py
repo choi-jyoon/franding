@@ -48,4 +48,9 @@ def cat_list_item(request,cat_id):
         }
       
         return render(request,'item/cat_list.html',context)
-
+def detail_list_item(request,item_id):
+    model=Item.objects.get(id=item_id)
+    context={
+        "item":model
+    }
+    return render(request,'item/detail.html',context)
