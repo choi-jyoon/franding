@@ -1,4 +1,17 @@
 <h1>hi</h1>
 {% for item in key %}
-    <div>{{ item.name }}</div>
+<form method="POST" action="{% url 'cart:add_cart' %}">
+    {% csrf_token %}
+    <div><a href="">{{ item.name }}</a></div>
+    <input type="hidden" name="item_id" value="{{ item.id }}">
+    <input type="submit" value="장바구니에 담기">
+    <!-- Other form fields here -->
+</form>
 {% endfor %}
+
+<form method="POST" action="{% url 'cart:cart_detail' %}">
+    {% csrf_token %}
+    <!-- Form fields here -->
+    <input type="hidden" name="" value="">
+    <input type="submit" value="장바구니로 가기">
+</form>

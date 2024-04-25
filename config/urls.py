@@ -27,6 +27,7 @@ urlpatterns = [
     path("item/", include("item.urls")),
     path('mypage/', include('mypage.urls')),
     path('cart/', include('cart.urls')),
+    path('review/', include('review.urls')),
     # path('/seller', ),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/register/', views.UserCreateView.as_view(), name='register'),

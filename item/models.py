@@ -5,12 +5,8 @@ from django.contrib.auth.models import User
 class Category1(models.Model):
     name = models.CharField(max_length=50)
     
-class DetailCategory2(models.Model):
-    name = models.CharField(max_length=50)
-    
 class Category2(models.Model):
-    gender = models.BooleanField()
-    detail_cat2 = models.ForeignKey(DetailCategory2, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50, null=True)
     
 class Brand(models.Model):
     name = models.CharField(max_length=50)
