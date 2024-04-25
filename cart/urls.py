@@ -21,6 +21,6 @@ from cart import views
 app_name = 'cart'
 
 urlpatterns = [      
-    path('add/<int:item_id>/', views.add_cart, name='add_cart'),       
-    # path('<int:pk>/', CartListView.as_view(), name='cart_list'),    
+    path('add_cart/', views.add_cart, name='add_cart'),       
+    path('detail/', views.cart_detail, name='cart_detail'),    
 ]
