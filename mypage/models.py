@@ -7,3 +7,4 @@ class UserAddInfo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.TextField()
     phone = models.CharField(max_length=20)
+    profile_img = models.URLField(null=True, default=' ')
