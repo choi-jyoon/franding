@@ -71,9 +71,16 @@ def delete_cart(request):
 # 장바구니 페이지를 만들 때 새로운 함수를 만들어서 filter를 user, status 값을 가져와서 쭉 
 # 뽑아주는 형태로 만들면 될 것 같다.
 
-def cart_detail(request):
+def cart_detail(request, total_price=0):
     cart = Cart.objects.filter(user=request.user, status=False).order_by('user', '-status', '-id')
-    return render(request, 'cart/cart_detail.html', {'cart': cart})
+    for c in cart:
+        total_price += (c.item.price * c.amount)
+    
+    context = {
+        'cart': cart,
+        'total_price': total_price
+    }
+    return render(request, 'cart/cart_detail.html', context)
 
 
 def accept_ajax(request):
