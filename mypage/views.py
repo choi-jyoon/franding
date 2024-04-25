@@ -3,6 +3,7 @@ from cart.models import OrderCart
 from .models import UserAddInfo
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
+from django.core.files.storage import FileSystemStorage
 
 @login_required
 def order_index(request):
@@ -42,7 +43,13 @@ def add_user_info(request):
         user_address = request.POST['address']
         user_phone = request.POST['phone']
         
-        UserAddInfo.objects.create(user=user, address=user_address, phone=user_phone)
+        # 이미지 저장 및 url 설정 내용
+        fs=FileSystemStorage()
+        uploaded_file = request.FILES['file']
+        name = fs.save(uploaded_file.name, uploaded_file)
+        url = fs.url(name)
+        
+        UserAddInfo.objects.create(user=user, address=user_address, phone=user_phone, profile_img = url)
 
         return redirect('mypage:user_info')
     
@@ -61,6 +68,15 @@ def update_user_info(request):
         user_info = UserAddInfo.objects.get(user=request.user)
         user_info.address = request.POST['address']
         user_info.phone = request.POST['phone']
+        
+        # 이미지 업데이트 처리
+        if 'file' in request.FILES:
+            fs = FileSystemStorage()
+            uploaded_file = request.FILES['file']
+            name = fs.save(uploaded_file.name, uploaded_file)
+            url = fs.url(name)
+            user_info.profile_img = url
+            
         user_info.save()
 
         return redirect('mypage:user_info')

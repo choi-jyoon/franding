@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block title %} MyPage {% endblock %}
 
 {% block extra-style %}
@@ -34,7 +36,6 @@
             <!-- 버튼들 -->
             <a href="{% url 'mypage:order_index' %}" class="btn btn-outline-secondary mb-4">주문 내역</a>
             <a href="#" class="btn btn-outline-secondary mb-4">작성 리뷰</a>
-            <a href="#" class="btn btn-outline-secondary mb-4">프로필</a>
             <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary mb-4">회원정보</a>
             <a href="#" class="btn btn-outline-secondary mb-4">판매자페이지</a>
         </div>
@@ -45,6 +46,16 @@
         <hr class="mt-4 border-t-2 border-gray-500 md:mt-6">
         <!-- 사용자 정보 -->
         <div class="p-4 border rounded">
+            <div class="row mb-3">
+                <div class="col-3 fw-bold">프로필 사진</div>
+                <div class="col-9">
+                    {% if object.profile_img and object.profile_img.strip %}
+                        <img src="{{ object.profile_img }}" alt="{{ user }}" class="img-fluid rounded-circle" style="max-width: 100px; max-height: 100px;">
+                    {% else %}
+                        <img src="{% static 'img/logo.jpg' %}" alt="Default Profile Picture" class="img-fluid rounded-circle" style="max-width: 100px; max-height: 100px;">
+                    {% endif %}
+                </div>
+            </div>
             <div class="row mb-3">
                 <div class="col-3 fw-bold">이름</div>
                 <div class="col-9">{{object.user.username}}</div>
