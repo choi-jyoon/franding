@@ -6,6 +6,8 @@ from item.models import Item
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
 
 
@@ -46,6 +48,14 @@ def add_cart(request,) -> Any:
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/')) # 현재 페이지 그래로 유지
 
 
+def delete_cart(request):
+    if request.method == 'POST':
+        cart_id = request.POST['cart_id']
+        cart = Cart.objects.get(pk=cart_id)
+        cart.delete()
+        return redirect('cart:cart_detail')
+
+
     # 만약에 추가로 담을거면 있는 카트에 담아야 한다.  
     # try:
     #     cart = Cart.objects.get(user=user, status=False)
@@ -60,6 +70,24 @@ def add_cart(request,) -> Any:
 # 템플릿에 표시해야 함.
 # 장바구니 페이지를 만들 때 새로운 함수를 만들어서 filter를 user, status 값을 가져와서 쭉 
 # 뽑아주는 형태로 만들면 될 것 같다.
+
 def cart_detail(request):
     cart = Cart.objects.filter(user=request.user, status=False).order_by('user', '-status', '-id')
     return render(request, 'cart/cart_detail.html', {'cart': cart})
+
+
+def accept_ajax(request):
+    if request.method == 'POST':
+        item_id = request.POST['item_id']
+        item = get_object_or_404(Item, id=item_id)
+        cart, created = Cart.objects.get_or_create(user=request.user, item=item, status=False)
+        cart.amount += int(request.POST['amountChange'])
+        if cart.amount >= 1:
+            cart.save()
+        # 변경된 값을 반환
+        context ={
+            'new_amount': cart.amount,
+            'massage': '수량이 변경되었습니다.',
+            'success': True,
+        }
+        return JsonResponse(context)

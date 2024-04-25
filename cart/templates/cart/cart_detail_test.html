@@ -1,0 +1,39 @@
+<h1 id="user"></h1>
+
+<div id="cart"></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $.ajax({
+        url: '{% url "cart:cart_detail" %}',  // Update this to your URL
+        type: 'POST',
+        success: function (response) {
+            // The server responded with the cart data
+            // You can process the data here
+            $('#user').text(response[0].user + '장바구니 페이지입니다.');
+
+            for (var i = 0; i < response.length; i++) {
+                var cartItem = response[i];
+                // Append the cart item data to the #cart div
+                $('#cart').append(
+                    '<div class="item">' +
+                    '<img src="' + cartItem.item.image + '" alt="' + cartItem.item.name + '" class="item-image"><br>' +
+                    cartItem.item.name + '<br>' +
+                    '<div class="container">' +
+                    '<input type="hidden" id="csrfToken" value="{{csrf_token}}">' +
+                    '<button type="button" onclick="modifyCartAmount(\'' + cartItem.item.id + '\', 1)">담기</button>' +
+                    '<button type="button" onclick="modifyCartAmount(\'' + cartItem.item.id + '\', -1)">빼기</button>' +
+                    '<div>현재 수량 : <span id="currentQuantity"></span></div>' +
+                    '</div>' +
+                    cartItem.item.summary + '<br>' +
+                    cartItem.item.description + '<br>' +
+                    cartItem.item.price + '원<br><br>' +
+                    '</div>'
+                );
+            }
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+</script>
