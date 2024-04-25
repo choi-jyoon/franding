@@ -1,6 +1,86 @@
 {% extends 'base.html' %}
-{% load static%}
+
+{% block title %} MyReview {% endblock %}
+
+{% block extra-style %}
+<style>
+    /* 화면 전체를 사용하기 위한 스타일 */
+    html, body {
+        height: 100%;
+        margin: 0;
+    }
+    /* 내비게이션 바를 제외한 전체 화면을 채우는 컨테이너 */
+    .container-fluid {
+        height: calc(100% - 56px); /* 내비게이션 바 높이만큼 제외 */
+    }
+    /* 높이 100% 설정 */
+    .full-height {
+        height: 100%;
+    }
+    #content-display {
+        height: 100%;
+        overflow-y: auto; /* 내용이 많을 경우 스크롤 가능 */
+    }
+    .order-title {
+        margin-bottom: 20px; /* 하단 마진을 20px로 설정 */
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<h1>{{user}} 님이 작성한 리뷰 </h1>
-{{review_list}}
-{% endblock%}
+    <div class="container-fluid">
+        <div class="row full-height">
+            <div class="col-2 d-flex flex-column p-3 bg-light full-height">
+                <!-- 버튼들 -->
+                <a href="{% url 'mypage:order_index' %}" class="btn btn-outline-secondary mb-4">주문 내역</a>
+                <a href="{% url 'review:review_index' %}" class="btn btn-outline-secondary mb-4">작성 리뷰</a>
+                <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary mb-4">회원정보</a>
+                <a href="#" class="btn btn-outline-secondary mb-4">판매자페이지</a>
+            </div>
+            <div class="col-10" id="content-display">
+                <!-- 내용이 여기에 표시됩니다. -->
+                <h3 class="order-title">"{{user}}"의 리뷰</h3>
+                <hr class="mt-4 border-t-2 border-gray-500 md:mt-6">
+                
+                {% if object_list %}
+                <div class="row">
+                    {% for review in object_list %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            {{ review.item.name }}
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- 이미지 열 -->
+                                <div class="col-1">
+                                    <img src="#" alt="{{ review.item.name }}" class="img-fluid">
+                                </div>
+                                <!-- 상품 정보 열 -->
+                                <div class="col-11">
+                                    <div class="rating" data-value="{{ review.star }}">
+                                        {% for i in '12345' %}
+                                            {% if forloop.counter <= review.star %} <!-- i가 str으로 인식되어서 forloop.counter로 int맞춤 -->
+                                                <span>&#9733;</span>
+                                            {% else %}
+                                                <span>&#9734;</span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <br>
+                                    <p class="card-text"> {{ review.content }}</p>
+                                    {% comment %} <p class="card-text"> 작성날짜 </p> {% endcomment %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="row">
+                    <p>{{ message }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
