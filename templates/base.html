@@ -41,7 +41,7 @@
             <!-- 우측 항목들 -->
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 justify-content-center align-items-center">
                 <li class="nav-item me-5">
-                    <form action='{% url 'search' %}' method='post'>
+                    <form action='' method='post'>
                         {% csrf_token %}
                     <div class="input-group mb-0">
                         <input type="text" class="form-control" placeholder="검색어를 입력하세요" aria-label="Search_word" aria-describedby="button-addon2" name="search_word">
