@@ -1,1 +1,79 @@
 {% extends 'base.html' %}
+{% load static%}
+{% block content %}
+<div id="carouselExample" class="carousel slide">
+    <div class="carousel-inner">
+      <div class="carousel-item active " style="height: 33vh; overflow: hidden;">
+        <img src="{% static "img/perfume.jpg" %}" class="d-block w-100" alt="..."style="object-fit: contain;">
+      </div>
+      <div class="carousel-item" style="height: 33vh; overflow: hidden;">
+        <img src="{% static 'img/flower(1).jpg' %}" class="d-block w-100" alt="..."style="object-fit: contain;">
+      </div>
+      <div class="carousel-item" style="height: 33vh; overflow: hidden;">
+        <img src="{% static 'img/flower(2).jpg' %}" class="d-block w-100" alt="..."style="object-fit: contain;">
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+
+  <div class="row justify-content-center mt-4">
+    <div class="col">
+        <ul class="list-inline">
+            <li class="list-inline-item">
+                <a href="{{ url }}" class="btn btn-secondary">Citrus</a>
+            </li>
+            <li class="list-inline-item">
+                <a href="{{ url }}" class="btn btn-secondary">Sweet</a>
+            </li>
+            <li class="list-inline-item">
+                <a href="{{ url }}" class="btn btn-secondary">Floral</a>
+            </li>
+            <li class="list-inline-item">
+                <a href="{{ url }}" class="btn btn-secondary">Woody</a>
+            </li>
+            <li class="list-inline-item">
+                <a href="{{ url }}" class="btn btn-secondary">Musk</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="row justify-content-center mt-4">
+    <div class='col'>
+        <div class="row mb-4">
+            <div class="col-md-auto">
+                <h3 class="mb-0">Signature Perfume</h3>
+            </div>
+            <div class="col-md-auto">
+                <a href="{{ url }}" class="btn btn-outline-secondary">상품 더보기</a>
+            </div>
+        </div>
+        
+        
+        <ul class="list-inline">
+            {% for item in item_list %}
+            <li class="list-inline-item">
+                <div class="card" style="width: 18rem;">
+                    <a href="{% url 'item:item_list' %}">
+                    <img src="{{item.image}}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                      <p class="card-text">
+                        <div>{{item.name}}</div>
+                        <div>{{item.summary}}</div>
+                      </p>
+                    </div>
+                </a>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+  {% endblock%}
