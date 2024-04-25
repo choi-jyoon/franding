@@ -20,7 +20,7 @@
     <div class="mb-3">
         <label for="file" class="form-label fw-bold">프로필 사진:</label>
         <br>
-        {% if object.profile_img %}
+        {% if object.profile_img and object.profile_img.strip %}
             <img src="{{ object.profile_img }}" alt="프로필 사진" class="img-fluid rounded-circle" style="max-width: 100px; max-height: 100px;">
         {% else %}
             <img src="{% static 'img/logo.jpg' %}" alt="기본 프로필 사진" class="img-fluid rounded-circle" style="max-width: 100px; max-height: 100px;">
