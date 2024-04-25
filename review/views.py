@@ -5,11 +5,13 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def my_review(request):
-    objects = Review.objects.filter(user = request.user)
-    context ={
-        'user' : request.user,
-        'review_list':objects
-    }
+    review_list = Review.objects.filter(user = request.user)
+    if review_list.exists():
+        context ={
+            'object_list':review_list
+        }
+    else:
+        context = {
+            'message': '작성하신 리뷰가 없습니다.'
+        }
     return render(request, 'review/my_review.html', context)
-
- 
