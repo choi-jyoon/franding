@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %} MyPage {% endblock %}
+{% block title %} MyReview {% endblock %}
 
 {% block extra-style %}
 <style>
@@ -39,27 +39,36 @@
             </div>
             <div class="col-10" id="content-display">
                 <!-- 내용이 여기에 표시됩니다. -->
-                <h3 class="order-title">"{{user}}"의 주문내역</h3>
+                <h3 class="order-title">"{{user}}"의 리뷰</h3>
                 <hr class="mt-4 border-t-2 border-gray-500 md:mt-6">
                 
                 {% if object_list %}
                 <div class="row">
-                    {% for ordercart in object_list %}
+                    {% for review in object_list %}
                     <div class="card mb-4">
                         <div class="card-header">
-                            결제완료 {{ ordercart.order.datetime }}
+                            {{ review.item.name }}
                         </div>
                         <div class="card-body">
                             <div class="row">
                                 <!-- 이미지 열 -->
                                 <div class="col-1">
-                                    <img src="{{ ordercart.cart.item.image }}" alt="{{ ordercart.cart.item.name }}" class="img-fluid">
+                                    <img src="#" alt="{{ review.item.name }}" class="img-fluid">
                                 </div>
                                 <!-- 상품 정보 열 -->
                                 <div class="col-11">
-                                    <h5 class="card-title">주문상품 : {{ ordercart.cart.item.name }}</h5>
-                                    <p class="card-text">주문수량 : {{ ordercart.cart.amount }}</p>
-                                    <p class="card-text"><strong>{{ ordercart.order.total_price }}원</strong></p>
+                                    <div class="rating" data-value="{{ review.star }}">
+                                        {% for i in '12345' %}
+                                            {% if forloop.counter <= review.star %} <!-- i가 str으로 인식되어서 forloop.counter로 int맞춤 -->
+                                                <span>&#9733;</span>
+                                            {% else %}
+                                                <span>&#9734;</span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <br>
+                                    <p class="card-text"> {{ review.content }}</p>
+                                    {% comment %} <p class="card-text"> 작성날짜 </p> {% endcomment %}
                                 </div>
                             </div>
                         </div>

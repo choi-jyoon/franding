@@ -30,4 +30,7 @@ class Item(models.Model):
     summary = models.CharField(max_length=250)
     description = models.TextField()
     image = models.URLField()
+
+    def __str__(self):
+        return self.name
     
