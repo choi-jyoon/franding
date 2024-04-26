@@ -47,7 +47,14 @@
                     {% for review in object_list %}
                     <div class="card mb-4">
                         <div class="card-header">
-                            {{ review.item.name }}
+                            <div class="row">
+                                <div class="col-7">
+                                    {{ review.item.name }}
+                                </div>
+                                <div class="col-5 text-end">
+                                    작성일 : {{ review.datetime }}
+                                </div>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -55,8 +62,8 @@
                                 <div class="col-1">
                                     <img src="#" alt="{{ review.item.name }}" class="img-fluid">
                                 </div>
-                                <!-- 상품 정보 열 -->
-                                <div class="col-11">
+                                <!-- 리뷰 열 -->
+                                <div class="col-8">
                                     <div class="rating" data-value="{{ review.star }}">
                                         {% for i in '12345' %}
                                             {% if forloop.counter <= review.star %} <!-- i가 str으로 인식되어서 forloop.counter로 int맞춤 -->
@@ -68,7 +75,13 @@
                                     </div>
                                     <br>
                                     <p class="card-text"> {{ review.content }}</p>
-                                    {% comment %} <p class="card-text"> 작성날짜 </p> {% endcomment %}
+                                </div>
+                                <div class="col-3 d-flex flex-column justify-content-center align-items-center">
+                                    <a href="{% url 'review:update_review' review.id %}" class="btn btn-outline-secondary mb-2">리뷰수정</a>
+                                    <form action="{% url 'review:review_delete' review.id %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="submit" value="리뷰삭제" class="btn btn-outline-danger">
+                                    </form>
                                 </div>
                             </div>
                         </div>

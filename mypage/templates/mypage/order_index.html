@@ -38,7 +38,7 @@
                 <a href="#" class="btn btn-outline-secondary mb-4">판매자페이지</a>
             </div>
             <div class="col-10" id="content-display">
-                <!-- 내용이 여기에 표시됩니다. -->
+                <!-- 주문내역 -->
                 <h3 class="order-title">"{{user}}"의 주문내역</h3>
                 <hr class="mt-4 border-t-2 border-gray-500 md:mt-6">
                 
@@ -47,7 +47,7 @@
                     {% for ordercart in object_list %}
                     <div class="card mb-4">
                         <div class="card-header">
-                            결제완료 {{ ordercart.order.datetime }}
+                            결제일 : {{ ordercart.order.datetime }}
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -63,16 +63,14 @@
                                 </div>
                                 <!-- 버튼 열 -->
                                 <div class="col-3 d-flex justify-content-end align-items-center">
-                                    <!-- 안보이게하기 -->
-                                    {% if not ordercart.is_review %}
+                                    <!-- 비활성화 -->
+                                    {% if ordercart.is_review %}
+                                        <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Disabled popover">
+                                            <button class="btn btn-outline-secondary" type="button" disabled>리뷰쓰기</button>
+                                        </span>
+                                    {% else %}
                                         <a href="{% url 'review:create_review' ordercart.id %}" class="btn btn-outline-secondary">리뷰쓰기</a>
                                     {% endif %}
-                                    <!-- 비활성화 -->
-                                    {% comment %} {% if ordercart.is_review %}
-                                        <button class="btn btn-outline-secondary" type="button" disabled>리뷰쓰기</button>
-                                    {% else %}
-                                        <a href="#" class="btn btn-outline-secondary">리뷰쓰기</a>
-                                    {% endif %} {% endcomment %}
                                 </div>
                             </div>
                         </div>
@@ -87,4 +85,23 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block extra-script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 팝오버 대상 요소 선택
+        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+      
+        // 팝오버 초기화
+        var popoverList = popoverTriggerList.map(function(popoverTriggerEl) {
+          return new bootstrap.Popover(popoverTriggerEl, {
+            trigger: 'hover focus', // 트리거 이벤트 설정
+            placement: 'top', // 팝오버 위치 설정
+            content: '이미 리뷰를 작성하셨습니다' // 팝오버 내용 설정
+          });
+        });
+      });
+      
+</script>
 {% endblock %}

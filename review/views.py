@@ -39,3 +39,29 @@ def create_review(request, ordercart_id):
         ordercart.save()
                 
         return redirect('review:review_index')
+    
+@login_required
+def update_review(request, pk):
+    review = Review.objects.get(pk=pk)
+    # get
+    if request.method == 'GET':
+        context = {
+            'object': review
+        }
+        return render(request, 'review/update_review.html', context)
+    # post
+    elif request.method == 'POST':
+        # 폼에서 전달되는 각 값을 뽑아와서 DB에 저장
+        review.star = int(request.POST['star']) # 별점
+        review.content = request.POST['content']
+
+            
+        review.save()
+
+        return redirect('review:review_index')
+    
+@login_required
+def review_delete(request, pk):
+    object = Review.objects.get(pk=pk)
+    object.delete()
+    return redirect('review:review_index')
