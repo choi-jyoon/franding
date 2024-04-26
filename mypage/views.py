@@ -43,11 +43,15 @@ def add_user_info(request):
         user_address = request.POST['address']
         user_phone = request.POST['phone']
         
-        # 이미지 저장 및 url 설정 내용
-        fs=FileSystemStorage()
-        uploaded_file = request.FILES['file']
-        name = fs.save(uploaded_file.name, uploaded_file)
-        url = fs.url(name)
+        # 파일 업로드가 있는지 확인
+        if 'file' in request.FILES:
+            # 이미지 저장 및 url 설정 내용
+            fs = FileSystemStorage()
+            uploaded_file = request.FILES['file']
+            name = fs.save(uploaded_file.name, uploaded_file)
+            url = fs.url(name)
+        else:
+            url = None  # 파일이 없을 경우 None으로 설정
         
         UserAddInfo.objects.create(user=user, address=user_address, phone=user_phone, profile_img = url)
 

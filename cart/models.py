@@ -31,6 +31,7 @@ class Order(models.Model):
 class OrderCart(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    is_review = models.BooleanField(default=False)  # 리뷰 작성 여부 확인 위함. 
 
 """ cart = 1, cart = 2 cart = 3
 cartitem 
