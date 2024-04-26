@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block title %} Item Detail {% endblock %}
+{% block extra-style %}
+<style>
+    body {
+        background-image: url('../../../static/img/logo.jpg');
+    }
+
+    .h-100 {
+        height: 100%;
+    }
+
+    .w-100 {
+        width: 100%;
+    }
+
+    .top-0 {
+        top: 0;
+    }
+
+    .left-0 {
+        left: 0;
+    }
+
+    .d-flex {
+        display: flex;
+    }
+
+    .flex-column {
+        flex-direction: column;
+    }
+    .cont {
+            width: 90%;
+            height: 100vh;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+  
+        }
+        .mb-5 {
+        width:60%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #ffffff;
+    }
+        .top-box {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: row;
+        }
+        .image-cont {
+            flex: 1;
+            /* 이미지 스타일링을 위한 추가 CSS를 적용하세요 */
+        }
+        .right-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            text-align: center;   
+         align-items: center;
+         justify-content: center;
+            /* 추가적인 스타일링이 필요한 경우 여기에 적용하세요 */
+        }
+        .bottom-box {
+            /* 밑 상자의 스타일링을 위한 추가 CSS를 적용하세요 */
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            text-align: center;   
+         align-items: center;
+   
+        }
+
+        .description
+        {
+            margin-top: 50px;
+        }
+    /*플로팅 배너*/
+    .floating-banner {
+    position: fixed;
+    top: 100px;
+    right: -300px; /* 초기에는 오른쪽 밖으로 숨김 */
+    width: 300px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: right 0.3s ease-in-out;
+}
+
+.floating-banner.show {
+    right: 20px; /* 스크롤 내리면 오른쪽으로 나타남 */
+}
+
+.banner-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+
+</style>
+{% endblock %}
+{% load static%}
+{% block content %}
+
+<div class="cont">
+    <div class="top-box">
+        <div class="image-cont">
+            <!-- 이미지를 여기에 추가하세요 -->
+            <img src="{{item.image}}" alt="{{ item.name }}" class="img-fluid">
+        </div>
+        <div class="right-box">
+            <div class="right-box-item center" >
+                <!-- 오른쪽 상자의 상위 항목 -->
+                <h1 class="text">{{ item.name }}</h1>
+                <p>Price: {{ item.price }}원</p>
+                <p>Size: {{ item.size.ml }}ml</p>
+            </div>
+            <div class="right-box-item">
+                <!-- 오른쪽 상자의 하위 항목 -->
+                <div class="d-flex justify-content-center">
+                    <button class="btn btn-secondary btn-sm decrease-btn">-</button>
+                    <span class="mx-2" id="current-quantity">0</span>
+                    <button class="btn btn-secondary btn-sm increase-btn">+</button>
+                </div>
+                <button class="btn btn-primary mt-3 add-to-cart-btn center ">장바구니 추가</button>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-box">
+        <!-- 아이템 설명을 여기에 추가하세요 -->
+        <h2 class="description">상세 설명</h2>
+        <p class=>{{ item.description }}</p>
+    </div>
+</div>
+<!-- 플로팅배너-->
+<div id="floating-banner" class="floating-banner">
+    <div class="banner-content">
+        <h3>{{ item.name }}</h3>
+        <p>Price: {{ item.price }}원</p>
+        <p>Size: {{ item.size.ml }}ml</p>
+        <div class="d-flex justify-content-center">
+            <button class="btn btn-secondary btn-sm decrease-btn">-</button>
+            <span class="mx-2" id="current-quantity">0</span>
+            <button class="btn btn-secondary btn-sm increase-btn">+</button>
+        </div>
+        <button class="btn btn-primary mt-3 add-to-cart-btn">장바구니 추가</button>
+    </div>
+</div>
+
+
+
+{% endblock %}
+{% block extra-script %}
+<script>
+    let currentQuantity = 0;
+//수량 조절
+    document.querySelector('.decrease-btn').addEventListener('click', () => {
+        if (currentQuantity > 0) {
+            currentQuantity--;
+            document.getElementById('current-quantity').textContent = currentQuantity;
+        }
+    });
+
+    document.querySelector('.increase-btn').addEventListener('click', () => {
+        currentQuantity++;
+        document.getElementById('current-quantity').textContent = currentQuantity;
+    });
+
+    document.querySelector('.add-to-cart-btn').addEventListener('click', () => {
+        console.log('장바구니에 추가:', currentQuantity, '개의', '{{ item.name }}');
+    });
+//플로팅 배너
+    window.addEventListener('scroll', function() {
+    var floatingBanner = document.getElementById('floating-banner');
+    var scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+    if (scrollPosition > 10) { // 300px 이상 스크롤하면 배너 표시
+        floatingBanner.classList.add('show');
+    } else {
+        floatingBanner.classList.remove('show');
+    }
+});
+
+</script>
+{% endblock %}

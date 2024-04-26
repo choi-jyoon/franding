@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Review{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Update Review</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="star" class="form-label fw-bold">별점</label>
+            <select name="star" id="star" class="form-control" value="{{object.star}}">
+                <option value="1" {% if object.star == 1 %} selected {% endif %}>1</option>
+                <option value="2" {% if object.star == 2 %} selected {% endif %}>2</option>
+                <option value="3" {% if object.star == 3 %} selected {% endif %}>3</option>
+                <option value="4" {% if object.star == 4 %} selected {% endif %}>4</option>
+                <option value="5" {% if object.star == 5 %} selected {% endif %}>5</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="content" class="form-label fw-bold">후기</label>
+            <textarea name="content" rows="5" class="form-control">{{object.content}}</textarea>
+        </div>
+        <div class="text-center">
+            <input type="submit" value="수정하기" class="btn btn-outline-secondary">
+        </div>
+    </form>
+</div>
+{% endblock %}
