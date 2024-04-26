@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Write Review{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Write Review</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="star" class="form-label fw-bold">Star:</label>
+            <select name="star" id="star" class="form-control">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="content" class="form-label fw-bold">후기:</label>
+            <textarea name="content" rows="5" class="form-control"></textarea>
+        </div>
+        <div class="text-center">
+            <input type="submit" value="저장하기" class="btn btn-outline-secondary">
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -56,10 +56,23 @@
                                     <img src="{{ ordercart.cart.item.image }}" alt="{{ ordercart.cart.item.name }}" class="img-fluid">
                                 </div>
                                 <!-- 상품 정보 열 -->
-                                <div class="col-11">
+                                <div class="col-8">
                                     <h5 class="card-title">주문상품 : {{ ordercart.cart.item.name }}</h5>
                                     <p class="card-text">주문수량 : {{ ordercart.cart.amount }}</p>
                                     <p class="card-text"><strong>{{ ordercart.order.total_price }}원</strong></p>
+                                </div>
+                                <!-- 버튼 열 -->
+                                <div class="col-3 d-flex justify-content-end align-items-center">
+                                    <!-- 안보이게하기 -->
+                                    {% if not ordercart.is_review %}
+                                        <a href="{% url 'review:create_review' ordercart.id %}" class="btn btn-outline-secondary">리뷰쓰기</a>
+                                    {% endif %}
+                                    <!-- 비활성화 -->
+                                    {% comment %} {% if ordercart.is_review %}
+                                        <button class="btn btn-outline-secondary" type="button" disabled>리뷰쓰기</button>
+                                    {% else %}
+                                        <a href="#" class="btn btn-outline-secondary">리뷰쓰기</a>
+                                    {% endif %} {% endcomment %}
                                 </div>
                             </div>
                         </div>

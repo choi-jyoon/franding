@@ -5,5 +5,5 @@ app_name='review'
 
 urlpatterns = [
     path('', views.my_review, name='review_index'),
-    # path('create/', views.create_review, name='review_create'),
+    path('create_review/<int:ordercart_id>/', views.create_review, name='create_review'),
 ]
