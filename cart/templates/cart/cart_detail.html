@@ -1,3 +1,4 @@
+{% load humanize %}
 <h1>{{ cart.first.user }}장바구니 페이지입니다.</h1>
 
 {% for show in cart %}
@@ -32,7 +33,7 @@
     <input type="submit" value="쇼핑 계속하기">
 </form>
 
-<h3>총 합계 : <span id='total_price'>{{ total_price }}</span></h3>
+<h3>총 합계 : <span id='total_price'>{{ total_price|intcomma }}</span></h3>
 
 <script>
     function getCsrfToken() {
