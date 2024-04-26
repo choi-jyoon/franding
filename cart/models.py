@@ -24,7 +24,6 @@ class Order(models.Model):
     total_price = models.IntegerField(default=0)
 
 
-
 # 나에겐 필요가 없다.
 class OrderCart(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)

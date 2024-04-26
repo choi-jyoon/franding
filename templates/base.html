@@ -8,12 +8,83 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 
-    {% block extra-style %}
     <style>
-        .navbar {
-            background-color: ;
+        html, body {
+            height: 100%;
         }
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        .content {
+            flex: 1 0 auto; /* 콘텐츠가 차지할 수 있는 최대 공간을 차지하도록 설정 */
+        }
+        
+        .footer {
+            flex-shrink: 0; /* 푸터가 축소되지 않도록 설정 */
+        }
+        .navbar {
+            background-color: #5B574F !important;
+        }
+        .nav-part {
+            text-align: center; /* 로고 중앙 정렬 */
+        }
+        
+        .navbar-part {
+            display: flex; /* Flexbox 레이아웃 적용 */
+            justify-content: center; /* 항목들을 수평 중앙에 배치 */
+            margin-left: auto; /* 좌측에 자동 마진을 적용하여 우측 항목들을 오른쪽으로 밀어냄 */
+            margin-right: 20%; /* 우측 항목들이 화면 중앙으로 조금 더 이동하도록 설정 */
+        }
+        
+        .navbar-nav {
+            align-items: center; /* 항목들을 세로 중앙에 배치 */
+        }
+        /* nav-item에 적용되는 기본 스타일 */
+        .nav-item .nav-link {
+            color: white; /* 기본 텍스트 색상 */
+            transition: color 0.3s; /* 색상 변경 애니메이션 효과 */
+        }
+        /* 마우스 hover 시 적용되는 스타일 */
+        .nav-item .nav-link:hover {
+            color: black; /* hover 시 텍스트 색상 변경 */
+        }
+        /* 드롭다운 메뉴가 기본적으로 숨겨져 있도록 설정 */
+        .navbar-nav .dropdown-menu {
+            display: none;
+        }
+        /* 드롭다운 메뉴 아이템 옆의 삼각형 아이콘 제거 */
+        .nav-link.dropdown-toggle::after {
+            display: none;
+        }
+        /* 호버 시 드롭다운 메뉴가 표시되도록 설정 */
+        .navbar-nav .nav-item:hover .dropdown-menu {
+            display: flex; /* 블록 대신 flex를 사용하여 내용물을 가로로 배열 */
+            flex-direction: row; /* 항목들을 가로 방향으로 정렬 */
+        }
+
+        /* horizontal-dropdown 클래스가 적용된 드롭다운 메뉴의 항목 스타일 */
+        .horizontal-dropdown .dropdown-menu .dropdown-item {
+            flex: 0 1 auto; /* flex-grow는 0, flex-shrink는 1, flex-basis는 auto로 설정하여 항목들이 필요한 만큼의 공간을 차지하도록 함 */
+            white-space: nowrap; /* 항목 텍스트가 줄바꿈되지 않도록 설정 */
+            padding: 0.5rem 1rem; /* 상하 0.5rem, 좌우 1rem의 패딩을 추가하여 항목 간격 조정 */
+        }
+
+        /* 호버 시 드롭다운 항목의 배경색 변경 등의 추가 스타일 */
+        .horizontal-dropdown .dropdown-menu .dropdown-item:hover {
+            background-color: #f8f9fa; /* 호버 시 항목의 배경색을 변경 */
+            color: #000; /* 호버 시 항목의 텍스트 색상을 검은색으로 변경 */
+        }
+        .nav-profile-img {
+            width: 40px; /* 아이콘과 동일한 크기로 설정 */
+            height: 40px; /* 아이콘과 동일한 크기로 설정 */
+            border-radius: 50%; /* 원형 모양 만들기 */
+            object-fit: cover; /* 이미지 비율을 유지하면서 요소에 맞춤 */
+        }
+        
     </style>
+    {% block extra-style %}
+
     {% endblock %}
 </head>
 
@@ -21,40 +92,62 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container-fluid justify-content-center">
             <!-- 좌측 항목들 -->
+            <div class="navbar-part">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 justify-content-center">
-                <li class="nav-item" style="margin-right: 30px;">
-                    <a class="nav-link" href="{% url 'item:item_list' %}">Perfume</a>
+                <li class="nav-item horizontal-dropdown" style="margin-right: 20px;">
+                    <a class="nav-link dropdown-toggle" href="{% url 'item:cat_list' cat_id=401 %}">Perfume</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">Citrus</a></li>
+                        <li><a class="dropdown-item" href="#">Sweet</a></li>
+                        <li><a class="dropdown-item" href="#">Floral</a></li>
+                        <li><a class="dropdown-item" href="#">Woody</a></li>
+                        <li><a class="dropdown-item" href="#">Musk</a></li>
+                    </ul>
                 </li>
-                <li class="nav-item" style="margin-right: 30px;">
-                    <a class="nav-link" href="{% url 'item:item_list' %}">Others</a>
+                <li class="nav-item" style="margin-right: 20px;">
+                    <a class="nav-link" href="{% url 'item:cat_list' cat_id=402 %}">Others</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">Diffuser</a></li>
+                        <li><a class="dropdown-item" href="#">Fabric Perfume</a></li>
+                    </ul>
                 </li>
-                <li class="nav-item" style="margin-right: 30px;">
-                    <a class="nav-link" href="{% url 'item:item_list' %}">Brand</a> 
+                <li class="nav-item" style="margin-right: 20px;">
+                    <a class="nav-link" href="{% url 'item:cat_list' cat_id=300 %}">Brand</a> 
+                </li>
+                <li class="nav-item" style="margin-right: 20px;">
+                    <a class="nav-link" href="#">Event</a> 
                 </li>
             </ul>
-    
+            </div>
             <!-- 로고 -->
-            <a class="navbar-brand mx-auto" href="{% url 'home' %}">
-                <img src="{% static 'img/logo.jpg' %}" alt="Logo" width="62" height="62" class="d-inline-block align-text-top">
+            <div class="nav-part mx-auto">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'img/logo.jpg' %}" alt="Logo" width="65" height="65" class="d-inline-block align-text-top">
             </a>
-    
+            </div>
             <!-- 우측 항목들 -->
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0 justify-content-center align-items-center">
+            <div class="navbar-part" >
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0  align-items-center">
                 <li class="nav-item me-5">
                     <form action='' method='post'>
                         {% csrf_token %}
                     <div class="input-group mb-0">
                         <input type="text" class="form-control" placeholder="검색어를 입력하세요" aria-label="Search_word" aria-describedby="button-addon2" name="search_word">
-                        <button class="btn btn-outline-secondary" type="submit" id="button-addon2"><i class="bi bi-search"></i></button>
+                        <button class="btn btn-secondary" type="submit" id="button-addon2"><i class="bi bi-search"></i></button>
                     </div>
                 </form>
                 </li>
                 <li class="nav-item dropdown">
                     {% if user.is_active %}
                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user-circle"></i>&nbsp;{% firstof user.get_short_name user.get_username %}
+                        <!-- 프로필 이미지 표시 -->
+                        {% if profile_img %}
+                            <img src="{{profile_img}}" alt="profile_img" class="nav-profile-img"></i>&nbsp;{% firstof user.get_short_name user.get_username %}
+                        {% else %}
+                            <i class="fas fa-user-circle"></i>&nbsp;{% firstof user.get_short_name user.get_username %}
+                        {% endif %}
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarUserDropdown">
+                    <ul class="dropdown-menu-end dropdown-menu " aria-labelledby="navbarUserDropdown">
                         <form action="{% url 'logout' %}" method="post">
                             {% csrf_token %}
                             <button type="submit" class="dropdown-item">Logout</button>
@@ -65,13 +158,14 @@
                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarAnonymousDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-user-circle"></i>&nbsp;Anonymous
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarAnonymousDropdown">
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarAnonymousDropdown">
                         <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
                         <li><a class="dropdown-item" href="{% url 'register' %}">Register</a></li>
                     </ul>
                     {% endif %}
                 </li>
             </ul>
+        </div>
         </div>
     </nav>
     
@@ -80,7 +174,7 @@
     </div>
 
     {% block footer %}
-    <footer class="footer mt-auto py-3 bg-light fixed-bottom">
+    <footer class="footer mt-auto py-3 bg-light">
         <div class="container text-center">
             <p>© 2024 Franding. All rights reserved.</p>
             <p>Follow us: <a href="#">Facebook</a> | <a href="#">Twitter</a> | <a href="#">Instagram</a></p>

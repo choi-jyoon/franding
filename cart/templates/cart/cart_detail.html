@@ -1,5 +1,63 @@
+{% load humanize %}
 <h1>{{ cart.first.user }}장바구니 페이지입니다.</h1>
 
-{% for show in cart%}
-{{ show.item }}<br><br>
+{% for show in cart %}
+<div class="item">
+    <img src="{{ show.item.image }}" alt="{{ show.item.name }}" class="item-image"><br>
+    {{ show.item }}<br>
+    <div class="container">
+        <input type="hidden" id="csrfToken" value="{{csrf_token}}">
+        <button type="button" onclick="modifyCartAmount('{{show.item.id}}', 1)">+</button>
+        <span id={{show.item.id}}>{{show.amount}}</span>
+        <!-- <h1>currentQuantity {{show.item.id }}</h1>
+        <h1>현재 상품에 id에 들어가는 값</h1> -->
+        <button type="button" onclick="modifyCartAmount('{{show.item.id}}', -1)">-</button>
+
+    </div>
+    {{ show.item.summary}}<br>
+    {{ show.item.description }}<br>
+    {{ show.item.price }}원<br><br>
+    <form method="POST" action="{% url 'cart:delete_cart' %}">
+        {% csrf_token %}
+        <!-- Form fields here -->
+        <input type="hidden" name="cart_id" value="{{ show.id }}">
+        <input type="submit" value="삭제">
+    </form>
+</div>
 {% endfor%}
+
+<form method="POST" action="{% url 'item:item_list' %}">
+    {% csrf_token %}
+    <!-- Form fields here -->
+    <input type="hidden" name="" value="">
+    <input type="submit" value="쇼핑 계속하기">
+</form>
+
+<h3>총 합계 : <span id='total_price'>{{ total_price|intcomma }}</span></h3>
+
+<script>
+    function getCsrfToken() {
+        return document.getElementById('csrfToken').value;
+    }
+    function modifyCartAmount(item_id, change) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '{% url "cart:ajax" %}', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.setRequestHeader('X-CSRFToken', getCsrfToken());
+
+        xhr.onload = function () {
+            if (this.status === 200) {
+                var response = JSON.parse(this.responseText);
+                // console.log('currentQuantity' + item_id);
+                // console.log('ajax가 새로운 값을 쓰려고 하는 곳');
+                // console.log(response.total_price);
+                document.getElementById(item_id).textContent = response.new_amount;
+                document.getElementById('total_price').textContent = response.total_price;
+                console.log('Update successful:', response.message);
+            } else {
+                console.error('Error updating:', this.statusText);
+            }
+        };
+        xhr.send(`item_id=${item_id}&amountChange=${change}`);
+    }
+</script>
