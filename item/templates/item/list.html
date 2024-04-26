@@ -59,19 +59,23 @@
 {% endblock %}
 {% block content %}
 
-    <div class="sidebar">
-        <h2>카테고리</h2>
-        <form action="" method="get">
-            {% for category in cat1 %}
-            <input type="checkbox" id="category{{ category.id }}"  name="category1" value="{{ category.id }}"  onchange="this.form.submit()">
-                <label for="category{{ category.id }}">{{ category.name }}</label><br>
-            {% endfor %}
-            {% for category in cat2 %}
-            <input type="checkbox" id="category{{ category.id }}"  name="category2" value="{{ category.id }}"  onchange="this.form.submit()">
-                <label for="category{{ category.id }}">{{ category.name }}</label><br>
-            {% endfor %}
-        </form>
-    </div>
+<div class="sidebar">
+    <h2>카테고리</h2>
+    <form action="" method="get">
+        <h3>Main Note</h3>
+        {% for category1 in cat1 %}
+        <input type="checkbox" id="category1:{{ category1.id }}" {% if category1.id in selected_cat1 %}checked{% endif %} name="cat1" value="{{ category1.id }}"  onchange="this.form.submit()">
+        <label for="category1:{{ category1.id }}">{{ category1.name }}</label><br>
+        {% endfor %}
+        
+        <br>
+        {% for category2 in cat2 %}
+        <input type="checkbox" id="category2:{{ category2.id }}" {% if category2.id in selected_cat2 %}checked{% endif %} name="cat2" value="{{ category2.id }}"  onchange="this.form.submit()">
+        <label for="category2:{{ category2.id }}">{{ category2.name }}</label><br>
+        {% endfor %}
+
+    </form>
+</div>
     <div class="item-list">
         <div class="section-title">
             <h2>LIST</h2>
