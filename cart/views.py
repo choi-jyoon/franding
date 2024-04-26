@@ -73,6 +73,7 @@ def delete_cart(request):
 
 def cart_detail(request, total_price=0):
     cart = Cart.objects.filter(user=request.user, status=False).order_by('user', '-status', '-id')
+
     for c in cart:
         total_price += (c.item.price * c.amount)
     
@@ -83,18 +84,41 @@ def cart_detail(request, total_price=0):
     return render(request, 'cart/cart_detail.html', context)
 
 
-def accept_ajax(request):
+def accept_ajax(request, total_price=0):
     if request.method == 'POST':
-        item_id = request.POST['item_id']
+        item_id = request.POST['item_id'] # 새로운 카트 수량을 1개 업데이트
+        # new_amount = request.POST['new_amount']
         item = get_object_or_404(Item, id=item_id)
         cart, created = Cart.objects.get_or_create(user=request.user, item=item, status=False)
         cart.amount += int(request.POST['amountChange'])
+
+        # 수량이 1개 이상일 때만 저장
         if cart.amount >= 1:
             cart.save()
+        
+        # total_price 만들기
+        # total_price는 어떤 모양이어야 되는가? int형 값을 할당시켜야 한다.
+        # cart_total_count를 하나씩 c에 할당을 시키면 c는 cart[0]이 출력이 된다.
+        # cart[0]의 가격 * 수량을 해서 total_price에 더해준다.
+        # total_price를 context에 담아서 반환해준다.
+        cart_total_count = Cart.objects.filter(user=request.user, status=False).order_by('user', '-status', '-id')
+
+        for c in cart_total_count:
+            total_price += (c.item.price * c.amount)
+        
+        
+
         # 변경된 값을 반환
         context ={
             'new_amount': cart.amount,
+            'total_price': total_price,
             'massage': '수량이 변경되었습니다.',
             'success': True,
         }
         return JsonResponse(context)
+
+# 컨텍스트에 다가 total_price를 담아서 보내자
+# 상품 price 가져온다.
+# for 문을 돌려서 price 아이템 가격을 1개씩 꺼내와서 total_price에 넣어준다.
+# total_price를 컨텍스트에 담아서 json으로 반환한다.
+# funtion에서 total_price키 값을 받아서 출력해준다??
