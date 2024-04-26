@@ -23,9 +23,6 @@ class Order(models.Model):
     datetime = models.DateTimeField(auto_now_add=True)
     total_price = models.IntegerField(default=0)
 
-    def __str__(self):
-        return self.pk
-
 
 # 나에겐 필요가 없다.
 class OrderCart(models.Model):
