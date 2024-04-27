@@ -50,5 +50,5 @@ def searchItem(request):
     
     return render(request, 'search.html', context)
 
-# def about(request):
-#     return render(request, 'about.html')
+def about(request):
+    return render(request, 'about.html')
