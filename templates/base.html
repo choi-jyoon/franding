@@ -19,29 +19,33 @@
         .content {
             flex: 1 0 auto; /* 콘텐츠가 차지할 수 있는 최대 공간을 차지하도록 설정 */
             margin-top: 70px; /* 네비바 높이만큼 컨텐츠 위에 마진 추가 */
-            margin-bottom: 50px; /* 푸터 높이만큼 컨텐츠 아래에 마진 추가 */
+            {% comment %} margin-bottom: 50/px; /* 푸터 높이만큼 컨텐츠 아래에 마진 추가 */ {% endcomment %}
         }
         .footer {
+            background-color: #f8f9fa; /* 밝은 회색 */
             flex-shrink: 0; /* 푸터가 축소되지 않도록 설정 */
-            height: 50px; /* 푸터 높이 설정 */
         }
         .navbar {
             background-color: #5B574F !important;
             height: 70px; /* 네비바 높이 설정 */
         }
-        .nav-part {
-            text-align: center; /* 로고 중앙 정렬 */
+        .navbar-part, .nav-part {
+            display: flex;
+            flex: 1; /* 네비게이션의 세 부분이 동일한 공간을 차지하도록 함 */
+            justify-content: center; /* 항목들을 가로축 중앙에 배치 */
         }
-        
-        .navbar-part {
-            display: flex; /* Flexbox 레이아웃 적용 */
-            justify-content: center; /* 항목들을 수평 중앙에 배치 */
-            margin-left: auto; /* 좌측에 자동 마진을 적용하여 우측 항목들을 오른쪽으로 밀어냄 */
-            margin-right: 20%; /* 우측 항목들이 화면 중앙으로 조금 더 이동하도록 설정 */
+    
+        .navbar-part:first-child, .navbar-part:last-child {
+            justify-content: flex-start; /* 첫 번째와 마지막 네비게이션 파트는 시작점에 맞춰 정렬 */
         }
-        
+    
+        .navbar-part:last-child {
+            justify-content: flex-end; /* 마지막 네비게이션 파트는 끝점에 맞춰 정렬 */
+        }
+    
         .navbar-nav {
-            align-items: center; /* 항목들을 세로 중앙에 배치 */
+            flex-direction: row; /* 네비게이션 항목들을 가로로 배열 */
+            padding: 0; /* 기본 패딩 제거 */
         }
         /* nav-item에 적용되는 기본 스타일 */
         .nav-item .nav-link {
@@ -120,6 +124,9 @@
                 <li class="nav-item" style="margin-right: 20px;">
                     <a class="nav-link" href="#">Event</a> 
                 </li>
+                <li class="nav-item" style="margin-right: 20px;">
+                    <a class="nav-link" href="{% url 'about' %}">About</a> 
+                </li>
             </ul>
             </div>
             <!-- 로고 -->
@@ -133,8 +140,8 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0  align-items-center">
                 <!--검색-->
                 <li class="nav-item me-5">
-                    {% comment %} <form action='{% url 'search' %}'/ method='post'> {% endcomment %}
-                    <form action='' method='post'>
+                    <form action='{% url 'search' %}' method='post'>
+                    {% comment %} <form action='' method='post'> {% endcomment %}
                         {% csrf_token %}
                     <div class="input-group mb-0">
                         <input type="text" class="form-control" placeholder="검색어를 입력하세요" aria-label="Search_word" aria-describedby="button-addon2" name="search_word">
@@ -159,7 +166,7 @@
                             <i class="fas fa-user-circle"></i>&nbsp;{% firstof user.get_short_name user.get_username %}
                         {% endif %}
                     </a>
-                    <ul class="dropdown-menu-end dropdown-menu " aria-labelledby="navbarUserDropdown">
+                    <ul class="dropdown-menu-start dropdown-menu " aria-labelledby="navbarUserDropdown">
                         <form action="{% url 'logout' %}" method="post">
                             {% csrf_token %}
                             <button type="submit" class="dropdown-item">Logout</button>
@@ -170,7 +177,7 @@
                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarAnonymousDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-user-circle"></i>&nbsp;Anonymous
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarAnonymousDropdown">
+                    <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="navbarAnonymousDropdown">
                         <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
                         <li><a class="dropdown-item" href="{% url 'register' %}">Register</a></li>
                     </ul>
@@ -200,6 +207,7 @@
     {% block extra-script %}{% endblock %}
 
     <script>
+
         // 사용자의 활성 상태를 Django 템플릿에서 JavaScript 변수로 전달
         var isUserActive = {{ user.is_active|yesno:"true,false" }};
         
@@ -215,6 +223,7 @@
                 alert("로그인이 필요합니다.");
             }
         }
+
     </script>
 </body>
 </html>

@@ -28,8 +28,12 @@ urlpatterns = [
     path('mypage/', include('mypage.urls')),
     path('cart/', include('cart.urls')),
     path('review/', include('review.urls')),
-    # path('/seller', ),
+    # path('seller/', ),
+    # path('Event/', ),
+    path('About/',views.about, name='about' ),
+    path('search/', views.searchItem, name='search' ),
     path('accounts/', include('django.contrib.auth.urls')),
+    # path('accounts/', include('allauth.urls')),
     path('accounts/register/', views.UserCreateView.as_view(), name='register'),
     path('accounts/register/done/', views.UserCreateDoneTV.as_view(), name='register_done'),
     
