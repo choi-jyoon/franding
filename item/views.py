@@ -22,12 +22,17 @@ def list_item(request):
     # 체크박스 필터링 기능 추가
     category1_ids = request.GET.getlist('cat1')
     category2_ids = request.GET.getlist('cat2')
-    
+    category3_ids = request.GET.getlist('brand')
+    category4_ids = request.GET.getlist('type')
     if category1_ids:
         items = items.filter(cat1__id__in=category1_ids)
     if category2_ids:
         items = items.filter(cat2__id__in=category2_ids)
-    
+    if category3_ids:
+        items = items.filter(brand__id__in=category3_ids)
+    if category4_ids:
+        items = items.filter(item_type__id__in=category4_ids)
+
     paginator = Paginator(items, 4)  # 한 페이지에 20개씩 표시
     page_number = request.GET.get('page')
     
@@ -42,8 +47,12 @@ def list_item(request):
         'items': page_obj,
         'cat1': Category1.objects.all(),
         'cat2': Category2.objects.all(),
+        'brand':Brand.objects.all(),
+        'type':ItemType.objects.all(),
         'selected_cat1':[int(cat_id) for cat_id in category1_ids],
         'selected_cat2':[int(cat_id) for cat_id in category2_ids],
+        'selected_brand':[int(cat_id) for cat_id in category3_ids],
+        'selected_type':[int(cat_id) for cat_id in category4_ids],
     }
     return render(request, 'item/list.html', context)
 
