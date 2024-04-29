@@ -30,77 +30,83 @@
     .flex-column {
         flex-direction: column;
     }
+
     .cont {
-            width: 90%;
-            height: 100vh;
-            background-color: #ffffff;
-            display: flex;
-            flex-direction: column;
-  
-        }
-        .mb-5 {
-        width:60%;
+        width: 90%;
+        height: 100vh;
+        background-color: #ffffff;
+        display: flex;
+        flex-direction: column;
+
+    }
+
+    .mb-5 {
+        width: 60%;
         display: flex;
         justify-content: center;
         align-items: center;
         background-color: #ffffff;
     }
-        .top-box {
-            margin-top: 30px;
-            display: flex;
-            flex-direction: row;
-        }
-        .image-cont {
-            flex: 1;
-            /* 이미지 스타일링을 위한 추가 CSS를 적용하세요 */
-        }
-        .right-box {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            text-align: center;   
-         align-items: center;
-         justify-content: center;
-            /* 추가적인 스타일링이 필요한 경우 여기에 적용하세요 */
-        }
-        .bottom-box {
-            /* 밑 상자의 스타일링을 위한 추가 CSS를 적용하세요 */
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            text-align: center;   
-         align-items: center;
-   
-        }
 
-        .description
-        {
-            margin-top: 50px;
-        }
+    .top-box {
+        margin-top: 30px;
+        display: flex;
+        flex-direction: row;
+    }
+
+    .image-cont {
+        flex: 1;
+        /* 이미지 스타일링을 위한 추가 CSS를 적용하세요 */
+    }
+
+    .right-box {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        /* 추가적인 스타일링이 필요한 경우 여기에 적용하세요 */
+    }
+
+    .bottom-box {
+        /* 밑 상자의 스타일링을 위한 추가 CSS를 적용하세요 */
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+
+    }
+
+    .description {
+        margin-top: 50px;
+    }
+
     /*플로팅 배너*/
     .floating-banner {
-    position: fixed;
-    top: 100px;
-    right: -300px; /* 초기에는 오른쪽 밖으로 숨김 */
-    width: 300px;
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    transition: right 0.3s ease-in-out;
-}
+        position: fixed;
+        top: 100px;
+        right: -300px;
+        /* 초기에는 오른쪽 밖으로 숨김 */
+        width: 300px;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        transition: right 0.3s ease-in-out;
+    }
 
-.floating-banner.show {
-    right: 20px; /* 스크롤 내리면 오른쪽으로 나타남 */
-}
+    .floating-banner.show {
+        right: 20px;
+        /* 스크롤 내리면 오른쪽으로 나타남 */
+    }
 
-.banner-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-
+    .banner-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
 </style>
 {% endblock %}
 {% load static%}
@@ -113,7 +119,7 @@
             <img src="{{item.image}}" alt="{{ item.name }}" class="img-fluid">
         </div>
         <div class="right-box">
-            <div class="right-box-item center" >
+            <div class="right-box-item center">
                 <!-- 오른쪽 상자의 상위 항목 -->
                 <h1 class="text">{{ item.name }}</h1>
                 <p>Price: {{ item.price }}원</p>
@@ -157,7 +163,7 @@
 {% block extra-script %}
 <script>
     let currentQuantity = 0;
-//수량 조절
+    //수량 조절
     document.querySelector('.decrease-btn').addEventListener('click', () => {
         if (currentQuantity > 0) {
             currentQuantity--;
@@ -173,17 +179,17 @@
     document.querySelector('.add-to-cart-btn').addEventListener('click', () => {
         console.log('장바구니에 추가:', currentQuantity, '개의', '{{ item.name }}');
     });
-//플로팅 배너
-    window.addEventListener('scroll', function() {
-    var floatingBanner = document.getElementById('floating-banner');
-    var scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+    //플로팅 배너
+    window.addEventListener('scroll', function () {
+        var floatingBanner = document.getElementById('floating-banner');
+        var scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
 
-    if (scrollPosition > 10) { // 300px 이상 스크롤하면 배너 표시
-        floatingBanner.classList.add('show');
-    } else {
-        floatingBanner.classList.remove('show');
-    }
-});
+        if (scrollPosition > 10) { // 300px 이상 스크롤하면 배너 표시
+            floatingBanner.classList.add('show');
+        } else {
+            floatingBanner.classList.remove('show');
+        }
+    });
 
 </script>
 {% endblock %}

@@ -1,0 +1,31 @@
+<h1>결제창</h1>
+
+<form action="{% url 'payment:payment_save' %}" method="post">
+    {% csrf_token %}
+    <div class="Delivery">
+        <h3>배송지 정보를 입력해주세요.</h3>
+        <label for="receiver">받는 사람 </label>
+        <input type="text" id="receiver" name="receiver" value=""><br>
+        <label for="receiver_address">배송지 주소 </label>
+        <input type="text" id="receiver_address" name="receiver_address" value=""><br>
+        <label for="receiver_phone">전화번호 </label>
+        <input type="tel" id="receiver_phone" name="receiver_phone" value=""><br>
+        <label for="receiver_email">이메일 </label>
+        <input type="email" id="receiver_email" name="receiver_email" value=""><br>
+    </div>
+
+    {% for items in item_list %}
+    <div class="item_list">
+        <h3>주문 상품 내역</h3>
+    </div>
+    {% endfor %}
+
+    <div class="Payment">
+        <h3>결제 수단을 선택해주세요.</h3>
+        <input type="hidden" name="payment_method" value="">
+        <input type="submit" value="카카오페이">
+    </div>
+
+    <h3>총 합계 : </h3>
+    <input type="submit" value="결제하기">
+</form>
