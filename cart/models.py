@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from item.models import Item
-
+from payment.models import Delivery
 # Create your models here.
 
 # CartItem
@@ -9,26 +9,24 @@ class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     item = models.ForeignKey(Item , on_delete=models.CASCADE)
     amount = models.IntegerField(default=1)
-    status = models.BooleanField(default=True)
+    status = models.BooleanField(default=False) # 주문 전 = False, 주문 후 = True
 
     def __str__(self):
         return self.item.name
     
 
-# 나에겐 필요가 없다.
-# Cart
 class Order(models.Model):
-    # cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
-    # order_cart=models.ForeignKey(OrderCart, on_delete=models.CASCADE)
-    datetime = models.DateTimeField(auto_now_add=True)
-    total_price = models.IntegerField(default=0)
+    datetime = models.DateTimeField(auto_now_add=True)  # 주문 시간
+    total_price = models.IntegerField(default=0)    # 총 가격
+    delivery_info =models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True)  # 배송지 정보 
 
+# 결제완료시 차례대로 delivery, order, ordercart  데이터 생성 
 
-# 나에겐 필요가 없다.
 class OrderCart(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     is_review = models.BooleanField(default=False)  # 리뷰 작성 여부 확인 위함. 
+
 
 """ cart = 1, cart = 2 cart = 3
 cartitem 
