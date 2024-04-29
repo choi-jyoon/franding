@@ -122,3 +122,6 @@ def accept_ajax(request, total_price=0):
 # for 문을 돌려서 price 아이템 가격을 1개씩 꺼내와서 total_price에 넣어준다.
 # total_price를 컨텍스트에 담아서 json으로 반환한다.
 # funtion에서 total_price키 값을 받아서 출력해준다??
+
+
+# 결제창

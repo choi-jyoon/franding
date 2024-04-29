@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra-style %}
+<style>
+    .grid-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* 내부 컨텐츠를 상하로 균등 분포 */
+        border: 2px solid #f0f0f0;
+        border-radius: 1rem;
+        width: 18rem;
+        height: 25rem;
+        margin: 10px;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        transition: 0.3s;
+      }
+      
+      .card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* 내부 텍스트를 하단으로 정렬 */
+        padding: 2px 16px;
+      }  
+    
+      .grid-container:hover {
+          box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); /* 마우스를 올렸을 때 그림자 효과 변경 */
+      }
+    
+      .grid-item img {
+          width: 100%; /* 이미지를 grid-container의 너비에 맞춤 */
+          height: auto; /* 이미지의 비율을 유지하면서 높이 조정 */
+      }
+      .my-divider {
+        margin-top: 50px; /* 공간 넓히기 */
+        margin-bottom: 50px; /* 공간 넓히기 */
+        border-top: 1px solid #ccc; /* 구분선 추가 */
+    }
+    
+</style>
+{% endblock %}
+{% block content %}
+
+
+<!-- 검색 결과 표시 -->
+<div class="row justify-content-center mt-4">
+    <div class='col'>
+        <div class="row mb-4">
+            <div class="col-md-auto">
+                <h3 class="mb-0">검색 결과</h3>
+            </div>
+        </div>
+        <!-- 검색창 -->
+        <div class="input-group mb-3">
+            <form action='{% url 'search' %}' method='post' class="d-flex flex-grow-1">
+                {% csrf_token %}
+                <select class="form-select" name="select_option" aria-label="Category select" style="max-width: 150px;">
+                    <option selected>분류</option>
+                    <option value="cat1" {% if select_option == "cat1" %}selected{% endif %}>카테고리1</option>
+                    <option value="cat2" {% if select_option == "cat2" %}selected{% endif %}>카테고리2</option>
+                    <option value="name" {% if select_option == "name" %}selected{% endif %}>제품명</option>
+                    <option value="item_type" {% if select_option == "item_type" %}selected{% endif %}>제품유형</option>
+                    <option value="brand" {% if select_option == "brand" %}selected{% endif %}>브랜드</option>
+                    <option value="desc" {% if select_option == "desc" %}selected{% endif %}>설명</option>
+                </select>
+                <div class="d-flex flex-grow-1" style="max-width: 450px;">
+                    <input type="text" name="search_word" value="{{ search_word }}" class="form-control" placeholder="검색어 입력" aria-label="Text input with select">
+                    <button class="btn btn-secondary" type="submit" id="button-addon2"><i class="bi bi-search"></i></button>
+                </div>
+            </form>
+        </div>
+
+        <div class="my-divider"></div>
+
+        <!-- 아이템 리스트 -->
+        <ul class="list-inline">
+            {% for item in result %}
+            <li class="list-inline-item">
+                <div class="grid-container" style="width: 18rem;">
+                  <a  href="{% url 'item:detail' item.id %}" role="button"><div class="grid-item">
+                    <img src="{{item.image}}"  alt="...">
+                    <div class="card-body">
+                      <p class="card-text">
+                        <h3>{{item.name}}</h3>
+                        <p>가격: {{ item.price }}원</p>
+                        <p>유형: {{ item.item_type.name }}</p>
+                        <p>{{ item.summary }}</p>
+                      </p>
+                    </div>
+                </a>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
