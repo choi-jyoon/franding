@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from .models import Cart
+# from .models import Cart
 
 
 # Create your views here.
