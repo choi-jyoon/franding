@@ -83,9 +83,8 @@
             </h3>
             <div class="category1-container">
                 {% for category1 in cat1 %}
-                <input type="checkbox" id="category1:{{ category1.id }}" {% if category1.id in selected_cat1 %}checked{%
-                    endif %} name="cat1" value="{{ category1.id }}" onchange="this.form.submit()">
-                <label for="category1:{{ category1.id }}">{{ category1.name }}</label><br>
+                    <input type="checkbox" id="category1:{{ category1.id }}" {% if category1.id in selected_cat1 %}checked{%endif %} name="cat1" value="{{ category1.id }}" onchange="this.form.submit()">
+                    <label for="category1:{{ category1.id }}">{{ category1.name }}</label><br>
                 {% endfor %}
             </div>
         </div>
@@ -96,8 +95,7 @@
             </h3>
             <div class="category2-container">
                 {% for category2 in cat2 %}
-                <input type="checkbox" id="category2:{{ category2.id }}" {% if category2.id in selected_cat2 %}checked{%
-                    endif %} name="cat2" value="{{ category2.id }}" onchange="this.form.submit()">
+                <input type="checkbox" id="category2:{{ category2.id }}" {% if category2.id in selected_cat2 %}checked{%endif %} name="cat2" value="{{ category2.id }}" onchange="this.form.submit()">
                 <label for="category2:{{ category2.id }}">{{ category2.name }}</label><br>
                 {% endfor %}
             </div>
@@ -109,8 +107,7 @@
             </h3>
             <div class="brand-container">
                 {% for brand in brand %}
-                <input type="checkbox" id="brand:{{ brand.id }}" {% if brand.id in selected_brand %}checked{% endif %}
-                    name="brand" value="{{ brand.id }}" onchange="this.form.submit()">
+                <input type="checkbox" id="brand:{{ brand.id }}" {% if brand.id in selected_brand %}checked{% endif %}name="brand" value="{{ brand.id }}" onchange="this.form.submit()">
                 <label for="brand:{{ brand.id }}">{{ brand.name }}</label><br>
                 {% endfor %}
             </div>
@@ -122,8 +119,7 @@
             </h3>
             <div class="type-container">
                 {% for type in type %}
-                <input type="checkbox" id="type:{{ type.id }}" {% if type.id in selected_type %}checked{% endif %}
-                    name="type" value="{{ type.id }}" onchange="this.form.submit()">
+                <input type="checkbox" id="type:{{ type.id }}" {% if type.id in selected_type %}checked{% endif %}name="type" value="{{ type.id }}" onchange="this.form.submit()">
                 <label for="type:{{ type.id }}">{{ type.name }}</label><br>
                 {% endfor %}
             </div>
