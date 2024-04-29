@@ -1,0 +1,15 @@
+asgiref==3.8.1
+Django==5.0.4
+django-classy-tags==4.1.0
+django-filter==24.2
+django-taggit==5.0.1
+django-taggit-templatetags2==1.6.1
+django-widget-tweaks==1.5.0
+djangorestframework==3.15.1
+Markdown==3.6
+pillow==10.3.0
+psycopg2-binary==2.9.9
+python-dotenv==1.0.1
+sqlparse==0.4.4
+typing_extensions==4.10.0
+tzdata==2024.1
