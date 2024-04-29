@@ -1,5 +1,5 @@
 from django.db import models
-from cart.models import Order
+# from cart.models import Order
 # Create your models here.
 
 # payment
