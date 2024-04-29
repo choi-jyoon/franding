@@ -51,8 +51,6 @@ INSTALLED_APPS = [
     'review',
     'seller',
     'cart',
-    'bootstrap4'
-
     'payment',
     #allauth
     'allauth',
