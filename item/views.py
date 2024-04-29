@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import ListView,DetailView
 from django.views.generic import FormView
 
 from django.db.models import Q
 from .models import *
+from cart.models import Cart
 # Create your views here.
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -57,8 +58,30 @@ def list_item(request):
     return render(request, 'item/list.html', context)
 
 def detail_list_item(request,item_id):
-    model=Item.objects.get(id=item_id)
+    item=Item.objects.get(id=item_id)
     context={
-        "item":model
+        "item":item
     }
-    return render(request,'item/detail.html',context)
+    if request.method == 'POST':
+        item = Item.objects.get(id=item_id)
+        user = request.user
+
+        # 장바구니에 동일한 상품이 있는지 확인
+        cart_item = Cart.objects.filter(user=user, item=item).first()
+        if cart_item and cart_item.status is True:
+            # 있다면 수량 증가
+            cart_item.amount = cart_item.amount +int(request.POST['current-amount'])
+            cart_item.save()
+            context={
+            "item":item
+            }
+        else:
+            # 없다면 새로 생성
+            Cart.objects.create(user=user, item=item, amount=int(request.POST['current-amount']))
+            context={
+            "item":item
+            }
+        return redirect(request.path)
+    else:
+        return render(request,'item/detail.html',context)    
+    
