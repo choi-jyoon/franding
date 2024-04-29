@@ -55,6 +55,17 @@
         text-align: center;
         margin-bottom: 30px;
     }
+    .toggle-btn {
+    float: right;
+    cursor: pointer;
+}
+
+.category1-container,
+.category2-container,
+.brand-container ,
+.type-container{
+    display: none;
+}
 </style>
 {% endblock %}
 {% block content %}
@@ -62,18 +73,46 @@
 <div class="sidebar">
     <h2>카테고리</h2>
     <form action="" method="get">
-        <h3>Main Note</h3>
-        {% for category1 in cat1 %}
-        <input type="checkbox" id="category1:{{ category1.id }}" {% if category1.id in selected_cat1 %}checked{% endif %} name="cat1" value="{{ category1.id }}"  onchange="this.form.submit()">
-        <label for="category1:{{ category1.id }}">{{ category1.name }}</label><br>
-        {% endfor %}
-        
-        <br>
-        {% for category2 in cat2 %}
-        <input type="checkbox" id="category2:{{ category2.id }}" {% if category2.id in selected_cat2 %}checked{% endif %} name="cat2" value="{{ category2.id }}"  onchange="this.form.submit()">
-        <label for="category2:{{ category2.id }}">{{ category2.name }}</label><br>
-        {% endfor %}
-
+        <h3>
+            Main Note
+            <span class="toggle-btn">▼</span>
+        </h3>
+        <div class="category1-container">
+            {% for category1 in cat1 %}
+            <input type="checkbox" id="category1:{{ category1.id }}" {% if category1.id in selected_cat1 %}checked{% endif %} name="cat1" value="{{ category1.id }}"  onchange="this.form.submit()">
+            <label for="category1:{{ category1.id }}">{{ category1.name }}</label><br>
+            {% endfor %}
+        </div>
+        <h3>
+            Note
+            <span class="toggle-btn">▼</span>
+        </h3>
+        <div class="category2-container">
+            {% for category2 in cat2 %}
+            <input type="checkbox" id="category2:{{ category2.id }}" {% if category2.id in selected_cat2 %}checked{% endif %} name="cat2" value="{{ category2.id }}"  onchange="this.form.submit()">
+            <label for="category2:{{ category2.id }}">{{ category2.name }}</label><br>
+            {% endfor %}
+        </div>
+        <h3>
+            Brand
+            <span class="toggle-btn">▼</span>
+        </h3>
+        <div class="brand-container">
+            {% for brand in brand %}
+            <input type="checkbox" id="brand:{{ brand.id }}" {% if brand.id in selected_brand %}checked{% endif %} name="brand" value="{{ brand.id }}"  onchange="this.form.submit()">
+            <label for="brand:{{ brand.id }}">{{ brand.name }}</label><br>
+            {% endfor %}
+        </div>
+        <h3>
+            Type
+            <span class="toggle-btn">▼</span>
+        </h3>
+        <div class="type-container">
+            {% for type in type %}
+            <input type="checkbox" id="type:{{ type.id }}" {% if type.id in selected_type %}checked{% endif %} name="type" value="{{ type.id }}"  onchange="this.form.submit()">
+            <label for="type:{{ type.id }}">{{ type.name }}</label><br>
+            {% endfor %}
+        </div>
     </form>
 </div>
     <div class="item-list">
@@ -112,4 +151,25 @@
         </div>
     </div>
 
+{% endblock %}
+{% block extra-script %}
+<script>
+const toggleBtns = document.querySelectorAll('.toggle-btn');
+let isToggled = false;
+
+toggleBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const container = btn.parentElement.nextElementSibling;
+        
+        // 토글 상태 변경
+        isToggled = !isToggled;
+        
+        // 토글 컨테이너의 표시 여부 변경
+        container.style.display = isToggled ? 'block' : 'none';
+        
+        // 세모 버튼의 텍스트 내용 변경
+        btn.textContent = isToggled ? '▲' : '▼';
+    });
+});
+</script>
 {% endblock %}
