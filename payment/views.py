@@ -22,3 +22,5 @@ def payment_save(request):
     # 결제 완료 페이지에서 결제 정보 보여주기, 결제 취소하기, 배송 정보 확인하기, Q&A 게시판으로 이동하기
     if request.method == 'POST':
         pass
+
+# Create your views here.

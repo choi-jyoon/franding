@@ -14,14 +14,14 @@ from cart.models import Order
     # card_cvc = models.CharField(max_length=3)
 
 
-class Delivery(models.Model):
-    # 배송지 -> 받는사람, 주소, 휴대전화, 이메일, 배송 상태, 배송상품 
-    payment_info = models.ForeignKey(Order, on_delete=models.CASCADE)
-    delivery_status = models.BooleanField()
-    receiver = models.CharField(max_length=30)
-    receiver_address = models.CharField(max_length=100)
-    receiver_phone = models.CharField(max_length=11)
-    receiver_email = models.EmailField()
+# class Delivery(models.Model):
+#     # 배송지 -> 받는사람, 주소, 휴대전화, 이메일, 배송 상태, 배송상품 
+#     payment_info = models.ForeignKey(Order, on_delete=models.CASCADE)
+#     delivery_status = models.BooleanField()
+#     receiver = models.CharField(max_length=30)
+#     receiver_address = models.CharField(max_length=100)
+#     receiver_phone = models.CharField(max_length=11)
+#     receiver_email = models.EmailField()
 
 
 # class Coupon(models.Model):
@@ -34,3 +34,11 @@ class Delivery(models.Model):
 
 # 쿠폰이라는 정체가 되게 애매함.
 # 사람이 쿠폰을 가져옴.
+
+# Create your models here.
+class Delivery(models.Model):
+    status= models.IntegerField(default=0)  # 상태: 배송 전(0), 배송 중(1) , 배송 완료(2)
+    receiver = models.CharField(max_length=30)  #  받는사람
+    receiver_address=models.CharField(max_length=150)   # 받는 사람 주소
+    receiver_phone = models.CharField(max_length=20)    # 받는 사람 전화번호
+    receiver_email = models.EmailField()    # 받는 사람 이메일
