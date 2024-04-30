@@ -1,5 +1,5 @@
 from django.db import models
-from cart.models import Order
+
 # Create your models here.
 
 # payment
@@ -42,3 +42,6 @@ class Delivery(models.Model):
     receiver_address=models.CharField(max_length=150)   # 받는 사람 주소
     receiver_phone = models.CharField(max_length=20)    # 받는 사람 전화번호
     receiver_email = models.EmailField()    # 받는 사람 이메일
+
+
+    
