@@ -18,7 +18,7 @@ class Delivery(models.Model):
     receiver = models.CharField(max_length=30)  #  받는사람
     receiver_address=models.CharField(max_length=150)   # 받는 사람 주소
     receiver_phone = models.CharField(max_length=20)    # 받는 사람 전화번호
-    receiver_email = models.EmailField()    # 받는 사람 이메일
+    receiver_email = models.EmailField(null=True)    # 받는 사람 이메일
 
 
     
