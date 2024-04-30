@@ -1,41 +1,80 @@
-from django.shortcuts import render, redirect
-from .models import Item
+from multiprocessing import context
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ItemForm
-from .models import Review
-from .models import Product
-from .models import Order
+from item.models import Item
+from django.contrib.auth.decorators import login_required
 
-def add_item(request):
-    # POST 요청을 처리하여 새 Item 객체를 생성하고 저장합니다.
+
+
+@login_required
+def seller_page(request):
+    return render(request, 'seller/seller_index.html')
+
+
+
+
+@login_required
+def item_create(request):
     if request.method == 'POST':
         form = ItemForm(request.POST)
-        if form.is_valid():  # 폼의 유효성을 검증합니다.
-            form.save()  # 데이터가 유효하면 폼 데이터를 데이터베이스에 저장합니다.
-            return redirect('seller_dashboard')  # 저장 후 판매자 대시보드로 리디렉션합니다.
+        if form.is_valid():
+            item = form.save(commit=False)
+            item.user = request.user  # 현재 로그인한 사용자를 상품의 소유자로 지정합니다.
+            item.save()
+            return redirect('item_list')  # 상품 목록 페이지로 리디렉션합니다.
     else:
-        form = ItemForm()  # GET 요청인 경우 빈 폼을 생성합니다.
-    return render(request, 'seller/add_item.html', {'form': form})
+        form = ItemForm()
+    return render(request, 'seller/item_form.html', {'form': form})
 
-def view_item(request):
-    # 모든 제품을 검색하여 view_item.html 템플릿으로 렌더링합니다.
-    products = Product.objects.all()
-    return render(request, 'seller/view_item.html', {'products': products})
 
-def review_list(request):
-    # 모든 리뷰를 검색하여 review_list.html 템플릿으로 렌더링합니다.
-    reviews = Review.objects.all()
-    return render(request, 'seller/review_list.html', {'reviews': reviews})
+@login_required
+def item_list(request):
+    items = Item.objects.all()
+    return render(request, 'seller/item_list.html', {'items': items})
 
-def product_search(request):
-    # 쿼리 매개변수를 기반으로 제품 검색을 처리합니다.
-    query = request.GET.get('q')
-    if query:
-        products = Product.search(query)  # 쿼리에 기반하여 제품을 검색합니다.
+
+@login_required
+def item_detail(request, pk):
+    item = get_object_or_404(Item, pk=pk)
+    return render(request, 'seller/item_detail.html', {'item': item})
+
+
+@login_required
+def item_update(request, pk):
+    item = get_object_or_404(Item, pk=pk)
+    if request.method == 'POST':
+        form = ItemForm(request.POST, instance=item)
+        if form.is_valid():
+            form.save()
+            return redirect('item_list')
     else:
-        products = None
-    return render(request, 'seller/product_search.html', {'products': products, 'query': query})
+        form = ItemForm(instance=item)
+    return render(request, 'seller/item_form.html', {'form': form})
 
-def sales_history(request):
-    # 모든 주문을 검색하여 sales_history.html 템플릿으로 렌더링합니다.
-    orders = Order.objects.all()
-    return render(request, 'seller/sales_history.html', {'orders': orders})
+
+@login_required
+def item_delete(request, pk):
+    item = get_object_or_404(Item, pk=pk)
+    if request.method == 'POST':
+        item.delete()
+        return redirect('item_list')
+    return render(request, 'seller/item_confirm_delete.html', {'item': item})
+
+
+
+
+
+
+# @login_required
+# def seller_info(request):
+#     try:
+#         seller_info = Item.objects.get(item_list=request.seller)
+#         context={
+#             'object':seller_index
+#         }
+#     except:
+#         context = {
+#             'message':'판매자가 아닙니다.' 
+#         }
+#     return render(request, 'seller/seller_index.html', context)
+
