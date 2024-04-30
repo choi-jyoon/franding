@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'review',
     'seller',
     'cart',
+    'payment',
     #allauth
     'allauth',
     'allauth.account',
@@ -166,3 +167,12 @@ ACCOUNT_LOGOUT_ON_GET = True
 
 MEDIA_URL='/media/'
 MEDIA_ROOT=BASE_DIR/'media'
+
+# rest_framework 추가
+# REST_FRAMEWORK = {
+#     # Use Django's standard `django.contrib.auth` permissions,
+#     # or allow read-only access for unauthenticated users.
+#     'DEFAULT_PERMISSION_CLASSES': [
+#         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+#     ]
+# }
