@@ -1,0 +1,83 @@
+{% extends 'base.html'%}
+{% load static %}
+
+{% block extra-style %}
+<style>
+    .grid-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* 내부 컨텐츠를 상하로 균등 분포 */
+        border: 2px solid #f0f0f0;
+        border-radius: 1rem;
+        width: 80vh;
+        height: 10rem;
+        margin: 10px;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        transition: 0.3s;
+      }
+    .my-divider {
+        margin-top: 50px; /* 공간 넓히기 */
+        margin-bottom: 50px; /* 공간 넓히기 */
+        border-top: 1px solid #ccc; /* 구분선 추가 */
+    }
+    .item-card {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div>
+    <h3> 구독 페이지 </h3>
+</div>
+
+<div class="my-divider"></div>
+
+<div>
+    <h5> 이달의 키워드 </h5>
+</div>
+
+<div class="grid-container">
+    <ul class="list-inline text-center">
+        <li class="list-inline-item">
+            <a href="item/?cat1=1" class="btn btn-secondary rounded-pill">Citrus</a>
+        </li>
+        <li class="list-inline-item">
+            <a href="item/?cat1=2" class="btn btn-secondary rounded-pill">Floral</a>
+        </li>
+        <li class="list-inline-item">
+            <a href="item/?cat1=3" class="btn btn-secondary rounded-pill">Sweet</a>
+        </li>
+        <li class="list-inline-item">
+            <a href="item/?cat1=4" class="btn btn-secondary rounded-pill">Woody</a>
+        </li>
+        <li class="list-inline-item">
+            <a href="item/?cat1=5" class="btn btn-secondary rounded-pill">Musk</a>
+        </li>
+    </ul>
+</div>
+
+<div class="my-divider"></div>
+
+<div>
+    <h5> 이전 구독 내역 </h5>
+    <ul class="list-inline text-center">
+        <div class="item-card">
+            <li>1월</li>
+        </div>
+        <div class="item-card">
+            <li>1월</li>
+        </div>
+        <div class="item-card">
+            <li>1월</li>
+        </div>
+    </ul>
+</div>
+
+{% endblock%}
