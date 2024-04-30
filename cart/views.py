@@ -74,12 +74,13 @@ def delete_cart(request):
 def cart_detail(request, total_price=0):
     cart = Cart.objects.filter(user=request.user, status=False).order_by('user', '-status', '-id')
 
-    for c in cart:
+    for c in cart:        
         total_price += (c.item.price * c.amount)
     
     context = {
         'cart': cart,
-        'total_price': total_price
+        'total_price': total_price,
+        
     }
     return render(request, 'cart/cart_detail.html', context)
 
@@ -104,8 +105,7 @@ def accept_ajax(request, total_price=0):
         cart_total_count = Cart.objects.filter(user=request.user, status=False).order_by('user', '-status', '-id')
 
         for c in cart_total_count:
-            total_price += (c.item.price * c.amount)
-        
+            total_price += (c.item.price * c.amount)       
         
 
         # 변경된 값을 반환

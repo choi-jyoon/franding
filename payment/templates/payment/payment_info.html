@@ -1,31 +1,85 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block content %}
+
 <h1>결제창</h1>
 
-<form action="{% url 'payment:payment_save' %}" method="post">
+<form action="{% url 'payment:payment_done' %}" method="post">
     {% csrf_token %}
-    <div class="Delivery">
-        <h3>배송지 정보를 입력해주세요.</h3>
-        <label for="receiver">받는 사람 </label>
-        <input type="text" id="receiver" name="receiver" value=""><br>
-        <label for="receiver_address">배송지 주소 </label>
-        <input type="text" id="receiver_address" name="receiver_address" value=""><br>
-        <label for="receiver_phone">전화번호 </label>
-        <input type="tel" id="receiver_phone" name="receiver_phone" value=""><br>
-        <label for="receiver_email">이메일 </label>
-        <input type="email" id="receiver_email" name="receiver_email" value=""><br>
-    </div>
 
-    {% for items in item_list %}
-    <div class="item_list">
-        <h3>주문 상품 내역</h3>
-    </div>
-    {% endfor %}
+    <h3 style="margin-bottom: 20px;">배송 정보를 입력해주세요.</h3>
+    <div class="input-group-delivery_info">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">받는 사람</span>
+            <input type="text" class="form-control" aria-label="receiver" aria-describedby="basic-addon1">
+        </div>
 
-    <div class="Payment">
-        <h3>결제 수단을 선택해주세요.</h3>
-        <input type="hidden" name="payment_method" value="">
-        <input type="submit" value="카카오페이">
-    </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text">배송지 주소</span>
+            <textarea class="form-control" aria-label="receiver_address"></textarea>
+        </div>
 
-    <h3>총 합계 : </h3>
-    <input type="submit" value="결제하기">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">전화번호</span>
+            <input type="tel" class="form-control" placeholder="-를 붙이지 말고 입력해주세요" aria-label="phone-number"
+                aria-describedby="basic-addon1">
+        </div>
+
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">e-mail</span>
+            <input type="email" class="form-control" aria-label="Text input with dropdown button"
+                placeholder="이메일을 입력해주세요">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">e-mail</button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#">네이버</a></li>
+                <li><a class="dropdown-item" href="#">다음</a></li>
+                <li><a class="dropdown-item" href="#">구글</a></li>
+            </ul>
+        </div>
+
+        <table class="table">
+            <h3>주문 상품 내역</h3>
+            <thead>
+                <tr>
+
+                    <th scope="col">상품명</th>
+                    <th scope="col">용량</th>
+                    <th scope="col">수량</th>
+                    <th scope="col">가격</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for items in item_list %}
+                <tr>
+                    <td>{{ items }}</td>
+                    <td>{{ items.item.size.ml }}ml</td>
+                    <td>{{ items.amount }}</td>
+                    <td>{{ items.sub_total|intcomma }}원</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+
+        <div class="input-group" style='width: 30%;'>
+            <select class="form-select" id="inputGroupSelect04" aria-label="Example select with button addon">
+                <option selected>쿠폰을 선택해주세요</option>
+                <option value="1">10% 할인권</option>
+                <option value="2">20% 할인권</option>
+                <option value="3">30% 할인권</option>
+            </select>
+            <button class="btn btn-outline-secondary" type="button">적용</button>
+        </div>
+
+
+        <h3>총 합계 : {{total_price|intcomma}}</h3>
+
+        <div class="Payment">
+            <h3>결제 수단을 선택해주세요.</h3>
+            <button type="button" class="btn btn-warning">kakao pay</button>
+        </div>
+    </div>
 </form>
+{% endblock %}
