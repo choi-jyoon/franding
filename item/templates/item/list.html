@@ -76,7 +76,7 @@
 <div class="sidebar">
     <h2>카테고리</h2>
     <form action="" method="get">
-        <div>
+        <div {% if show_note is False%} hidden {% endif %}>
             <h3>
                 Main Note
                 <span class="toggle-btn">▼</span>
@@ -87,8 +87,8 @@
                     <label for="category1:{{ category1.id }}">{{ category1.name }}</label><br>
                 {% endfor %}
             </div>
-        </div>
-        <div>
+        
+        
             <h3>
                 Note
                 <span class="toggle-btn">▼</span>
@@ -100,30 +100,31 @@
                 {% endfor %}
             </div>
         </div>
-        <div>
+        
             <h3>
                 Brand
                 <span class="toggle-btn">▼</span>
             </h3>
             <div class="brand-container">
                 {% for brand in brand %}
-                <input type="checkbox" id="brand:{{ brand.id }}" {% if brand.id in selected_brand %}checked{% endif %}name="brand" value="{{ brand.id }}" onchange="this.form.submit()">
+                <input type="checkbox" id="brand:{{ brand.id }}" {% if brand.id in selected_brand %}checked{% endif %} name="brand" value="{{ brand.id }}" onchange="this.form.submit()">
                 <label for="brand:{{ brand.id }}">{{ brand.name }}</label><br>
                 {% endfor %}
             </div>
-        </div>
-        <div>
+        
+        <div {% if show_type is False%} hidden {% endif %}>
             <h3>
                 Type
                 <span class="toggle-btn">▼</span>
             </h3>
             <div class="type-container">
-                {% for type in type %}
-                <input type="checkbox" id="type:{{ type.id }}" {% if type.id in selected_type %}checked{% endif %}name="type" value="{{ type.id }}" onchange="this.form.submit()">
+                {% for type in item_type %}
+                <input type="checkbox" id="type:{{ type.id }}" {% if type.id in selected_type %}checked{% endif %} name="item_type" value="{{ type.id }}" onchange="this.form.submit()">
                 <label for="type:{{ type.id }}">{{ type.name }}</label><br>
                 {% endfor %}
             </div>
         </div>
+        
     </form>
 </div>
 <div class="item-list">
