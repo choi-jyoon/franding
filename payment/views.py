@@ -124,6 +124,6 @@ def paysuccess(request):
     return render(request, 'payment/paysuccess.html', context)
     
 def payfail(request):
-    return render(request, 'payfail.html')
+    return render(request, 'payment/payfail.html')
 def paycancel(request):
-    return render(request, 'paycancel.html')
+    return render(request, 'payment/paycancel.html')
