@@ -132,14 +132,22 @@
                     <span class="mx-2" id="current-quantity">0</span>
                     <button class="btn btn-secondary btn-sm increase-btn">+</button>
                 </div>
-                <button class="btn btn-primary mt-3 add-to-cart-btn center ">장바구니 추가</button>
+                <form action="{% url 'item:detail' item.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" id="current-quantity-hidden" value="" name="current-amount">
+                    <button class="btn btn-primary mt-3 add-to-cart-btn" type="submit">장바구니에 담기</button>
+                </form>
             </div>
+
         </div>
     </div>
     <div class="bottom-box">
         <!-- 아이템 설명을 여기에 추가하세요 -->
         <h2 class="description">상세 설명</h2>
         <p class=>{{ item.description }}</p>
+    </div>
+    <div>
+        <!-- 리뷰 칸 입니다.-->
     </div>
 </div>
 <!-- 플로팅배너-->
@@ -149,11 +157,15 @@
         <p>Price: {{ item.price }}원</p>
         <p>Size: {{ item.size.ml }}ml</p>
         <div class="d-flex justify-content-center">
-            <button class="btn btn-secondary btn-sm decrease-btn">-</button>
-            <span class="mx-2" id="current-quantity">0</span>
-            <button class="btn btn-secondary btn-sm increase-btn">+</button>
+            <button class="btn btn-secondary btn-sm decrease-btn-float">-</button>
+            <span class="mx-2" id="current-quantity-float">0</span>
+            <button class="btn btn-secondary btn-sm increase-btn-float">+</button>
         </div>
-        <button class="btn btn-primary mt-3 add-to-cart-btn">장바구니 추가</button>
+        <form action="{% url 'item:detail' item.id %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" id="current-quantity-hidden" value="" name="current-amount">
+            <button class="btn btn-primary mt-3 add-to-cart-btn" type="submit" disabled>장바구니 추가</button>
+        </form>
     </div>
 </div>
 
@@ -163,22 +175,50 @@
 {% block extra-script %}
 <script>
     let currentQuantity = 0;
+
     //수량 조절
-    document.querySelector('.decrease-btn').addEventListener('click', () => {
+
+    // current-quantity 요소 가져오기
+    const currentQuantityElement = document.getElementById('current-quantity');
+
+    // decreaseQuantity 함수 정의
+    function decreaseQuantity() {
+        // current-quantity 값 가져오기
+        let currentQuantity = parseInt(currentQuantityElement.textContent);
+
+        // 현재 수량이 0보다 큰 경우에만 감소
         if (currentQuantity > 0) {
             currentQuantity--;
-            document.getElementById('current-quantity').textContent = currentQuantity;
+            currentQuantityElement.textContent = currentQuantity;
+            document.getElementById('current-quantity-hidden').value = currentQuantity;
+            document.getElementById('current-quantity-float').textContent = currentQuantity;
+
         }
-    });
+    }
 
-    document.querySelector('.increase-btn').addEventListener('click', () => {
+    // decrease-btn에 이벤트 리스너 등록
+    document.querySelector('.decrease-btn').addEventListener('click', decreaseQuantity);
+    document.querySelector('.decrease-btn-float').addEventListener('click', decreaseQuantity);
+
+
+    function increaseQuantity() {
+        // current-quantity 값 가져오기
+        let currentQuantity = parseInt(currentQuantityElement.textContent);
+
+        // 현재 수량이 0보다 큰 경우에만 감소
+
         currentQuantity++;
-        document.getElementById('current-quantity').textContent = currentQuantity;
-    });
+        currentQuantityElement.textContent = currentQuantity;
+        document.getElementById('current-quantity-hidden').value = currentQuantity;
+        document.getElementById('current-quantity-float').textContent = currentQuantity;
 
-    document.querySelector('.add-to-cart-btn').addEventListener('click', () => {
-        console.log('장바구니에 추가:', currentQuantity, '개의', '{{ item.name }}');
-    });
+    }
+
+    document.querySelector('.increase-btn').addEventListener('click', increaseQuantity);
+    document.querySelector('.increase-btn-float').addEventListener('click', increaseQuantity);
+
+
+
     //플로팅 배너
     window.addEventListener('scroll', function () {
         var floatingBanner = document.getElementById('floating-banner');

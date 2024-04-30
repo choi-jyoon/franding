@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import ListView,DetailView
 from django.views.generic import FormView
 
 from django.db.models import Q
 from .models import *
+from cart.models import Cart
 # Create your views here.
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -22,12 +23,17 @@ def list_item(request):
     # 체크박스 필터링 기능 추가
     category1_ids = request.GET.getlist('cat1')
     category2_ids = request.GET.getlist('cat2')
-    
+    category3_ids = request.GET.getlist('brand')
+    category4_ids = request.GET.getlist('type')
     if category1_ids:
         items = items.filter(cat1__id__in=category1_ids)
     if category2_ids:
         items = items.filter(cat2__id__in=category2_ids)
-    
+    if category3_ids:
+        items = items.filter(brand__id__in=category3_ids)
+    if category4_ids:
+        items = items.filter(item_type__id__in=category4_ids)
+
     paginator = Paginator(items, 4)  # 한 페이지에 20개씩 표시
     page_number = request.GET.get('page')
     
@@ -42,14 +48,40 @@ def list_item(request):
         'items': page_obj,
         'cat1': Category1.objects.all(),
         'cat2': Category2.objects.all(),
+        'brand':Brand.objects.all(),
+        'type':ItemType.objects.all(),
         'selected_cat1':[int(cat_id) for cat_id in category1_ids],
         'selected_cat2':[int(cat_id) for cat_id in category2_ids],
+        'selected_brand':[int(cat_id) for cat_id in category3_ids],
+        'selected_type':[int(cat_id) for cat_id in category4_ids],
     }
     return render(request, 'item/list.html', context)
 
 def detail_list_item(request,item_id):
-    model=Item.objects.get(id=item_id)
+    item=Item.objects.get(id=item_id)
     context={
-        "item":model
+        "item":item
     }
-    return render(request,'item/detail.html',context)
+    if request.method == 'POST':
+        item = Item.objects.get(id=item_id)
+        user = request.user
+
+        # 장바구니에 동일한 상품이 있는지 확인
+        cart_item = Cart.objects.filter(user=user, item=item).first()
+        if cart_item and cart_item.status is True:
+            # 있다면 수량 증가
+            cart_item.amount = cart_item.amount +int(request.POST['current-amount'])
+            cart_item.save()
+            context={
+            "item":item
+            }
+        else:
+            # 없다면 새로 생성
+            Cart.objects.create(user=user, item=item, amount=int(request.POST['current-amount']))
+            context={
+            "item":item
+            }
+        return redirect(request.path)
+    else:
+        return render(request,'item/detail.html',context)    
+    

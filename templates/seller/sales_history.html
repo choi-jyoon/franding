@@ -1,0 +1,31 @@
+<!-- templates/seller/sales_history.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}주문 내역{% endblock %}
+
+{% block content %}
+    <h2>주문 내역</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>상품</th>
+                <th>고객 이름</th>
+                <th>수량</th>
+                <th>총 가격</th>
+                <th>주문 일시</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+                <tr>
+                    <td>{{ order.product }}</td>
+                    <td>{{ order.customer_name }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>{{ order.total_price }}</td>
+                    <td>{{ order.ordered_at }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

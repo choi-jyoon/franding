@@ -1,0 +1,15 @@
+<!-- templates/seller/view_item.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}제품 목록{% endblock %}
+
+{% block content %}
+    <h2>제품 목록</h2>
+    <ul>
+        {% for product in products %}
+            <li>{{ product.name }} - 가격: {{ product.price }}</li>
+            <p>{{ product.description }}</p>
+        {% endfor %}
+    </ul>
+{% endblock %}

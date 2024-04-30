@@ -1,21 +1,22 @@
-
 {% extends 'base.html' %}
 
 {% block title %} Category_List {% endblock %}
-{% block extra-style %}  
+{% block extra-style %}
 <style>
     a {
-  text-decoration: none;
-  color: black;
-}
+        text-decoration: none;
+        color: black;
+    }
+
     /* 사이드바 스타일 */
     .sidebar {
         width: 20%;
         float: left;
         background-color: #f1f1f1;
         padding: 20px;
-        margin-top: 50px; 
-        border-right: 1px solid #ccc; /* 사이드바와 그리드 사이에 구분선 추가 */
+        margin-top: 50px;
+        border-right: 1px solid #ccc;
+        /* 사이드바와 그리드 사이에 구분선 추가 */
     }
 
     /* 상품 목록 스타일 */
@@ -44,16 +45,29 @@
     }
 
     /* 페이징 스타일 */
-    .pagination {  
-         display: flex;
+    .pagination {
+        display: flex;
         justify-content: center;
         align-items: center;
         text-align: center;
         margin-top: 20px;
     }
+
     .section-title {
         text-align: center;
         margin-bottom: 30px;
+    }
+
+    .toggle-btn {
+        float: right;
+        cursor: pointer;
+    }
+
+    .category1-container,
+    .category2-container,
+    .brand-container,
+    .type-container {
+        display: none;
     }
 </style>
 {% endblock %}
@@ -62,54 +76,111 @@
 <div class="sidebar">
     <h2>카테고리</h2>
     <form action="" method="get">
-        <h3>Main Note</h3>
-        {% for category1 in cat1 %}
-        <input type="checkbox" id="category1:{{ category1.id }}" {% if category1.id in selected_cat1 %}checked{% endif %} name="cat1" value="{{ category1.id }}"  onchange="this.form.submit()">
-        <label for="category1:{{ category1.id }}">{{ category1.name }}</label><br>
-        {% endfor %}
-        
-        <br>
-        {% for category2 in cat2 %}
-        <input type="checkbox" id="category2:{{ category2.id }}" {% if category2.id in selected_cat2 %}checked{% endif %} name="cat2" value="{{ category2.id }}"  onchange="this.form.submit()">
-        <label for="category2:{{ category2.id }}">{{ category2.name }}</label><br>
-        {% endfor %}
-
+        <div>
+            <h3>
+                Main Note
+                <span class="toggle-btn">▼</span>
+            </h3>
+            <div class="category1-container">
+                {% for category1 in cat1 %}
+                    <input type="checkbox" id="category1:{{ category1.id }}" {% if category1.id in selected_cat1 %}checked{%endif %} name="cat1" value="{{ category1.id }}" onchange="this.form.submit()">
+                    <label for="category1:{{ category1.id }}">{{ category1.name }}</label><br>
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <h3>
+                Note
+                <span class="toggle-btn">▼</span>
+            </h3>
+            <div class="category2-container">
+                {% for category2 in cat2 %}
+                <input type="checkbox" id="category2:{{ category2.id }}" {% if category2.id in selected_cat2 %}checked{%endif %} name="cat2" value="{{ category2.id }}" onchange="this.form.submit()">
+                <label for="category2:{{ category2.id }}">{{ category2.name }}</label><br>
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <h3>
+                Brand
+                <span class="toggle-btn">▼</span>
+            </h3>
+            <div class="brand-container">
+                {% for brand in brand %}
+                <input type="checkbox" id="brand:{{ brand.id }}" {% if brand.id in selected_brand %}checked{% endif %}name="brand" value="{{ brand.id }}" onchange="this.form.submit()">
+                <label for="brand:{{ brand.id }}">{{ brand.name }}</label><br>
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <h3>
+                Type
+                <span class="toggle-btn">▼</span>
+            </h3>
+            <div class="type-container">
+                {% for type in type %}
+                <input type="checkbox" id="type:{{ type.id }}" {% if type.id in selected_type %}checked{% endif %}name="type" value="{{ type.id }}" onchange="this.form.submit()">
+                <label for="type:{{ type.id }}">{{ type.name }}</label><br>
+                {% endfor %}
+            </div>
+        </div>
     </form>
 </div>
-    <div class="item-list">
-        <div class="section-title">
-            <h2>LIST</h2>
-        </div>
-        <div class="grid-container">
-            {% for item in items %}
-            <a href="{% url 'item:detail' item.id %}" role="button">
-                <div class="grid-item">
-                    <img src="{{ item.image }}" alt="{{ item.name }}">
-                    <h3>{{ item.name }}</h3>
-                    <p>가격: {{ item.price }}원</p>
-                    <p>{{ item.summary }}</p>
-                </div>
-            </a>
-            {% endfor %}
-        </div>
-        
-        <div class="pagination">
-            {% if items.has_previous %}
-            <a href="?page={{ items.previous_page_number }}">이전</a>
-            {% endif %}
-        
-            {% for page_num in items.paginator.page_range %}
-            {% if items.number == page_num %}
-            <span>{{ page_num }}</span>
-            {% else %}
-            <a href="?page={{ page_num }}">{{ page_num }}</a>
-            {% endif %}
-            {% endfor %}
-        
-            {% if items.has_next %}
-            <a href="?page={{ items.next_page_number }}">다음</a>
-            {% endif %}
-        </div>
+<div class="item-list">
+    <div class="section-title">
+        <h2>LIST</h2>
+    </div>
+    <div class="grid-container">
+        {% for item in items %}
+        <a href="{% url 'item:detail' item.id %}" role="button">
+            <div class="grid-item">
+                <img src="{{ item.image }}" alt="{{ item.name }}">
+                <h3>{{ item.name }}</h3>
+                <p>가격: {{ item.price }}원</p>
+                <p>{{ item.summary }}</p>
+            </div>
+        </a>
+        {% endfor %}
     </div>
 
+    <div class="pagination">
+        {% if items.has_previous %}
+        <a href="?page={{ items.previous_page_number }}">이전</a>
+        {% endif %}
+
+        {% for page_num in items.paginator.page_range %}
+        {% if items.number == page_num %}
+        <span>{{ page_num }}</span>
+        {% else %}
+        <a href="?page={{ page_num }}">{{ page_num }}</a>
+        {% endif %}
+        {% endfor %}
+
+        {% if items.has_next %}
+        <a href="?page={{ items.next_page_number }}">다음</a>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+{% block extra-script %}
+<script>
+    const toggleBtns = document.querySelectorAll('.toggle-btn');
+    let isToggled = false;
+
+    toggleBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const container = btn.parentElement.nextElementSibling;
+
+            // 토글 상태 변경
+            isToggled = !isToggled;
+
+            // 토글 컨테이너의 표시 여부 변경
+            container.style.display = isToggled ? 'block' : 'none';
+
+            // 세모 버튼의 텍스트 내용 변경
+            btn.textContent = isToggled ? '▲' : '▼';
+        });
+    });
+</script>
 {% endblock %}

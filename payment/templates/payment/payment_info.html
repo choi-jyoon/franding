@@ -58,7 +58,6 @@
                     <td>{{ items.amount }}</td>
                     <td>{{ items.sub_total|intcomma }}원</td>
                 </tr>
-
                 {% endfor %}
             </tbody>
         </table>
@@ -79,8 +78,7 @@
 
         <div class="Payment">
             <h3>결제 수단을 선택해주세요.</h3>
-            <input type="hidden" name="payment_method" value="">
-            <input type="submit" value="카카오페이">
+            <button type="button" class="btn btn-warning">kakao pay</button>
         </div>
     </div>
 </form>
