@@ -25,17 +25,27 @@ def list_item(request):
     category2_ids = request.GET.getlist('cat2')
     category3_ids = request.GET.getlist('brand')
     category4_ids = request.GET.getlist('item_type')
+
     if category1_ids:
         items = items.filter(cat1__id__in=category1_ids)
     if category2_ids:
         items = items.filter(cat2__id__in=category2_ids)
     if category3_ids:
         items = items.filter(brand__id__in=category3_ids)
-    if category4_ids:
-        items = items.filter(item_type__id__in=category4_ids)
+    if request.path == '/item/perfume/':
+        items = items.filter(item_type__id__in= ['1'])
+    elif request.path == '/item/other/':
+        items = items.exclude(item_type__id__in=['1'])
+        if category4_ids:
+            items = items.filter(item_type__id__in=category4_ids)
+    else:
+        if category4_ids:
+            items = items.filter(item_type__id__in=category4_ids)
     
     show_note = bool(request.path != '/item/brand/')
     show_type = bool(request.path != '/item/perfume/')
+
+
 
     paginator = Paginator(items, 4)  # 한 페이지에 20개씩 표시
     page_number = request.GET.get('page')
@@ -45,22 +55,23 @@ def list_item(request):
         page_obj = paginator.page(1)
     except EmptyPage:
         page_obj = paginator.page(paginator.num_pages)
-    if request.path == '/item/perfume/':
-          context = {
+    if request.path == '/item/other/':
+        context = {
         'items': page_obj,
         'cat1': Category1.objects.all(),
         'cat2': Category2.objects.all(),
         'brand':Brand.objects.all(),
-        'item_type':ItemType.objects.filter(id=1),
+        'item_type':ItemType.objects.exclude(id=1),
         'selected_cat1':[int(cat_id) for cat_id in category1_ids],
         'selected_cat2':[int(cat_id) for cat_id in category2_ids],
         'selected_brand':[int(cat_id) for cat_id in category3_ids],
         'selected_type':[int(cat_id) for cat_id in category4_ids],
         'show_note':show_note,
         'show_type':show_type,
+        'show_cat':False
         }
-    else:
-          context = {
+    else:    
+        context = {
         'items': page_obj,
         'cat1': Category1.objects.all(),
         'cat2': Category2.objects.all(),
