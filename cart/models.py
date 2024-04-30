@@ -14,11 +14,15 @@ class Cart(models.Model):
     def __str__(self):
         return self.item.name
     
+    def sub_total(self):
+        return self.item.price * self.amount
+    
 
 class Order(models.Model):
     datetime = models.DateTimeField(auto_now_add=True)  # 주문 시간
     total_price = models.IntegerField(default=0)    # 총 가격
     delivery_info =models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True)  # 배송지 정보 
+
 
 # 결제완료시 차례대로 delivery, order, ordercart  데이터 생성 
 
@@ -27,16 +31,5 @@ class OrderCart(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     is_review = models.BooleanField(default=False)  # 리뷰 작성 여부 확인 위함. 
 
-
-""" cart = 1, cart = 2 cart = 3
-cartitem 
-cart1 명훈 item3 status = True
-cart2 명훈 자동차 
-cart3 명훈 컴퓨터
-cart4 명훈 노트북
-cart5 명훈 자동차
-누가 뭐를 
-명훈이라는 id로 조회할 수 있다.
-
-
-user 1 조회를 해서 user1이 산 상품을 조회를 하겠다"""
+    def __str__(self):
+        return self.cart.item.name

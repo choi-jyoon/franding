@@ -51,8 +51,13 @@ INSTALLED_APPS = [
     'review',
     'seller',
     'cart',
+<<<<<<< HEAD
     'bootstrap4',
+=======
+>>>>>>> 9065078e3c22a421d0569045478c719f1e5f81dd
     'payment',
+    'event',
+    'subscribe',
     #allauth
     'allauth',
     'allauth.account',
@@ -88,6 +93,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'utils.context_processors.get_profile_image',
+                
             ],
         },
     },
@@ -169,11 +175,7 @@ ACCOUNT_LOGOUT_ON_GET = True
 MEDIA_URL='/media/'
 MEDIA_ROOT=BASE_DIR/'media'
 
-# rest_framework 추가
-# REST_FRAMEWORK = {
-#     # Use Django's standard `django.contrib.auth` permissions,
-#     # or allow read-only access for unauthenticated users.
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-#     ]
-# }
+
+
+
+

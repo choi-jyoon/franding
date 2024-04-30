@@ -42,6 +42,26 @@
       height: auto; /* 이미지의 비율을 유지하면서 높이 조정 */
   }
 
+  .carousel-control-prev, .carousel-control-next {
+    width: 5%; /* 버튼의 너비 조정 */
+  }
+
+  .carousel-control-prev {
+      left: -30px; /* 왼쪽 버튼의 위치 조정 */
+  }
+
+  .carousel-control-next {
+      right: -30px; /* 오른쪽 버튼의 위치 조정 */
+  }
+
+  {% comment %} .items .carousel-control-prev-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23ff0000' viewBox='0 0 8 8'%3E%3Cpath d='M5.854 7.146a.5.5 0 0 1 0-.708L7.293 5H1.5a.5.5 0 0 1 0-1h5.793L5.854 2.562a.5.5 0 1 1 .708-.708l2.5 2.5a.5.5 0 0 1 0 .708l-2.5 2.5a.5.5 0 0 1-.708 0z'/%3E%3C/svg%3E");
+  }
+
+  .items .carousel-control-next-icon {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23ff0000' viewBox='0 0 8 8'%3E%3Cpath d='M2.146.854a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L4.293 4 2.146 1.854a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+  } {% endcomment %}
+
 
 </style>
 {% endblock %}
@@ -52,13 +72,13 @@
 <div id="carouselExample" class="carousel slide">
   <div class="carousel-container">
     <div class="carousel-inner">
-      <div class="carousel-item active" style="height: 380px; overflow: hidden;">
+      <div class="carousel-item active" data-bs-interval="1" style="height: 380px; overflow: hidden;">
         <img src="{% static "img/main-1.jpg" %}" class="d-block w-100" alt="..." style="object-fit: contain; object-position: center;">
       </div>
-      <div class="carousel-item" style="height: 380px; overflow: hidden;">
+      <div class="carousel-item" data-bs-interval="1" style="height: 380px; overflow: hidden;">
         <img src="{% static 'img/perfume-f.jpg' %}" class="d-block w-100" alt="..." style="object-fit: contain;">
       </div>
-      <div class="carousel-item" style="height: 380px; overflow: hidden;">
+      <div class="carousel-item" data-bs-interval="1" style="height: 380px; overflow: hidden;">
         <img src="{% static 'img/main-2.jpg' %}" class="d-block w-100" alt="..." style="object-fit: contain;">
       </div>
     </div>
@@ -79,19 +99,19 @@
       <div class= "category-button">
         <ul class="list-inline text-center">
             <li class="list-inline-item">
-                <a href="{{ url }}" class="btn btn-secondary rounded-pill">Citrus</a>
+                <a href="item/?cat1=1" class="btn btn-secondary rounded-pill">Citrus</a>
             </li>
             <li class="list-inline-item">
-                <a href="{{ url }}" class="btn btn-secondary rounded-pill">Sweet</a>
+                <a href="item/?cat1=2" class="btn btn-secondary rounded-pill">Floral</a>
             </li>
             <li class="list-inline-item">
-                <a href="{{ url }}" class="btn btn-secondary rounded-pill">Floral</a>
+                <a href="item/?cat1=3" class="btn btn-secondary rounded-pill">Sweet</a>
             </li>
             <li class="list-inline-item">
-                <a href="{{ url }}" class="btn btn-secondary rounded-pill">Woody</a>
+                <a href="item/?cat1=4" class="btn btn-secondary rounded-pill">Woody</a>
             </li>
             <li class="list-inline-item">
-                <a href="{{ url }}" class="btn btn-secondary rounded-pill">Musk</a>
+                <a href="item/?cat1=5" class="btn btn-secondary rounded-pill">Musk</a>
             </li>
         </ul>
       </div>
@@ -111,25 +131,45 @@
             </div>
         </div>
         
-
-        <ul class="list-inline">
+        <div class="items">
+        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+          <div class="carousel-inner">
             {% for item in item_list %}
-            <li class="list-inline-item">
-                <div class="grid-container" style="width: 18rem;">
-                  <a  href="{% url 'item:item_list' %}" role="button"><div class="grid-item">
-                    <img src="{{item.image}}"  alt="...">
-                    <div class="card-body">
-                      <p class="card-text">
-                        <h3>{{item.name}}</h3>
-                        <p>가격: {{ item.price }}원</p>
-                        <p>{{ item.summary }}</p>
-                      </p>
+              {% if forloop.first %}
+              <div class="carousel-item active">
+              {% elif forloop.counter0|divisibleby:4 %}
+              <div class="carousel-item">
+              {% endif %}
+                <div class="col-md-3" style="float:left;">
+                  <a href="{% url 'item:detail' item.id %}" role="button">
+                    <div class="grid-item">
+                      <div class="grid-container" style="width: 18rem;">
+                        <img src="{{item.image}}"  alt="...">
+                        <div class="card-body">
+                          <h3>{{item.name}}</h3>
+                          <p>가격: {{ item.price }}원</p>
+                          <p>{{ item.summary }}</p>
+                        </div>
+                      </div>
                     </div>
-                </a>
+                  </a>
                 </div>
-            </li>
+              {% if forloop.counter|divisibleby:4 and not forloop.last %}
+              </div>
+              {% endif %}
             {% endfor %}
-        </ul>
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev" style="color: red;">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next" style="color: blue;">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+      </div>
     </div>
 </div>
   {% endblock%}

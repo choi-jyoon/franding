@@ -29,13 +29,15 @@ urlpatterns = [
     path('cart/', include('cart.urls')),
     path('review/', include('review.urls')),
     # path('seller/', ),
-    # path('Event/', ),
-    path('About/',views.about, name='about' ),
+    path('event/', include('event.urls')),
+    path('subscribe/', include('subscribe.urls')),
+    path('about/',views.about, name='about' ),
     path('search/', views.searchItem, name='search' ),
     path('accounts/', include('django.contrib.auth.urls')),
     # path('accounts/', include('allauth.urls')),
     path('accounts/register/', views.UserCreateView.as_view(), name='register'),
     path('accounts/register/done/', views.UserCreateDoneTV.as_view(), name='register_done'),
     path('seller/', include('seller.urls')),
+    path('payment/', include('payment.urls')),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

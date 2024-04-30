@@ -1,10 +1,13 @@
-from django.urls import path, include
-from .views import payment_save, PaymentListView
+from django.urls import path
+from . import views
+
 
 app_name = 'payment'
 
 urlpatterns = [
-    # Add your URL patterns here
-    path('', PaymentListView.as_view(), name='payment_list'),
-    path('payment_save/', payment_save, name='payment_save'),
+    # Add your URL patterns heree
+    path('', views.payment_list, name='payment_list'),
+    path('paysuccess/', views.paysuccess, name='paysuccess'),
+    path('payfail/', views.payfail, name='payfail'),
+    path('paycancel/', views.paycancel, name='paycancel'),
 ]
