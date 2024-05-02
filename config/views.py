@@ -1,10 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import CreateView, TemplateView
-from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from item.models import Item
 from django.db.models import Q
 from django.core.paginator import Paginator
+from .forms import UserAddInfoForm, UserCreateForm
 # Create your views here.
 
 def index(request):
@@ -15,10 +15,44 @@ def index(request):
     }
     return render(request, 'home.html', context)
 
-class UserCreateView(CreateView):
-    template_name='registration/register.html'
-    form_class = UserCreationForm
-    success_url = reverse_lazy('register_done')
+def register(request):
+    if request.method == 'POST':
+        user_form = UserCreateForm(request.POST)
+        add_info_form = UserAddInfoForm(request.POST)
+        
+        if user_form.is_valid() and add_info_form.is_valid():
+            # User 모델 저장
+            user = user_form.save()
+
+            # UserAddInfo 모델 저장 
+            add_info = add_info_form.save(commit=False)
+            # UserAddinfo 에 user, 주소 정보 추가
+            add_info.user = user
+            add_info.postcode = request.POST.get('postcode')  
+            add_info.address = request.POST.get('address')   
+            add_info.detailAddress = request.POST.get('detailAddress')  
+            add_info.extraAddress = request.POST.get('extraAddress')    
+            add_info.save()
+
+            return redirect('register_done')
+        else:
+            # 유효성 검사에 실패한 경우
+            context = {
+                'user_form': user_form,
+                'add_info_form': add_info_form
+            }
+            return render(request, 'registration/register.html', context)
+    else:
+        user_form = UserCreateForm()
+        add_info_form = UserAddInfoForm()
+        
+        context = {
+            'user_form': user_form,
+            'add_info_form': add_info_form
+        }
+
+        return render(request, 'registration/register.html', context)
+
     
 class UserCreateDoneTV(TemplateView):
     template_name = 'registration/register_done.html'

@@ -35,7 +35,7 @@ urlpatterns = [
     path('search/', views.searchItem, name='search' ),
     path('accounts/', include('django.contrib.auth.urls')),
     # path('accounts/', include('allauth.urls')),
-    path('accounts/register/', views.UserCreateView.as_view(), name='register'),
+    path('accounts/register/', views.register, name='register'),
     path('accounts/register/done/', views.UserCreateDoneTV.as_view(), name='register_done'),
     path('seller/', include('seller.urls')),
     path('payment/', include('payment.urls')),
