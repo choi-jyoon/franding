@@ -45,35 +45,27 @@
                 <h3 class="order-title">"{{user}}"의 주문내역</h3>
                 <hr class="mt-4 border-t-2 border-gray-500 md:mt-6">
                 
-                {% if object_list %}
+                {% if orders %}
                 <div class="row">
-                    {% for ordercart in object_list %}
+                    {% for order in orders %}
                     <div class="card mb-4">
                         <div class="card-header">
-                            결제일 : {{ ordercart.order.datetime }}
+                            결제일 : {{ order.datetime }}
                         </div>
                         <div class="card-body">
                             <div class="row">
                                 <!-- 이미지 열 -->
                                 <div class="col-1">
-                                    <img src="{{ ordercart.cart.item.image }}" alt="{{ ordercart.cart.item.name }}" class="img-fluid">
+                                    <img src="{{ order.ordercart_set.first.cart.item.image }}" alt="{{ order.ordercart_set.first.cart.item.name }}" class="img-fluid">
                                 </div>
                                 <!-- 상품 정보 열 -->
                                 <div class="col-8">
-                                    <h5 class="card-title">주문상품 : {{ ordercart.cart.item.name }}</h5>
-                                    <p class="card-text">주문수량 : {{ ordercart.cart.amount }}</p>
-                                    <p class="card-text"><strong>{{ ordercart.order.total_price }}원</strong></p>
+                                    <h5 class="card-title">주문상품 : {{ order.ordercart_set.first.cart.item.name }} 등</h5>
+                                    <p class="card-text"><strong>{{ order.total_price }}원</strong></p>
                                 </div>
                                 <!-- 버튼 열 -->
                                 <div class="col-3 d-flex justify-content-end align-items-center">
-                                    <!-- 비활성화 -->
-                                    {% if ordercart.is_review %}
-                                        <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Disabled popover">
-                                            <button class="btn btn-outline-secondary" type="button" disabled>리뷰쓰기</button>
-                                        </span>
-                                    {% else %}
-                                        <a href="{% url 'review:create_review' ordercart.id %}" class="btn btn-outline-secondary">리뷰쓰기</a>
-                                    {% endif %}
+                                    <a href="{% url 'mypage:order_detail' order.id %}" class="btn btn-outline-secondary">주문상세보기</a>
                                 </div>
                             </div>
                         </div>
@@ -88,23 +80,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block extra-script %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // 팝오버 대상 요소 선택
-        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-      
-        // 팝오버 초기화
-        var popoverList = popoverTriggerList.map(function(popoverTriggerEl) {
-          return new bootstrap.Popover(popoverTriggerEl, {
-            trigger: 'hover focus', // 트리거 이벤트 설정
-            placement: 'top', // 팝오버 위치 설정
-            content: '이미 리뷰를 작성하셨습니다' // 팝오버 내용 설정
-          });
-        });
-      });
-      
-</script>
 {% endblock %}

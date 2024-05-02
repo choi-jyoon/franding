@@ -5,6 +5,7 @@ app_name='mypage'
 urlpatterns = [
     # 주문내역
     path('', views.order_index, name='order_index'),
+    path('order_detail/<int:pk>', views.order_detail, name='order_detail'),
     
     # 회원정보
     path('userinfo/', views.user_info, name='user_info'), # 회원정보

@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load humanize %}
+
+{% block title %} OrderDetail {% endblock %}
+
+{% block extra-style %}
+<style>
+    /* 화면 전체를 사용하기 위한 스타일 */
+    html, body {
+        height: 100%;
+        margin: 0;
+    }
+    /* 내비게이션 바를 제외한 전체 화면을 채우는 컨테이너 */
+    .container-fluid {
+        height: calc(100% - 56px); /* 내비게이션 바 높이만큼 제외 */
+    }
+    /* 높이 100% 설정 */
+    .full-height {
+        height: 100%;
+    }
+    #content-display {
+        height: 100%;
+        overflow-y: auto; /* 내용이 많을 경우 스크롤 가능 */
+    }
+    .order-title {
+        margin-bottom: 20px; /* 하단 마진을 20px로 설정 */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row full-height">
+        <div class="col-2 d-flex flex-column p-3 bg-light full-height">
+            <!-- 버튼들 -->
+            <a href="{% url 'mypage:order_index' %}" class="btn btn-outline-secondary mb-4">주문 내역</a>
+            <a href="{% url 'review:review_index' %}" class="btn btn-outline-secondary mb-4">작성 리뷰</a>
+            <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary mb-4">회원정보</a>
+            <a href="#" class="btn btn-outline-secondary mb-4">구독</a>
+            {% if user.is_staff %}
+                <a href="#" class="btn btn-outline-secondary mb-4">판매자페이지</a>
+            {% endif %}
+        </div>
+    
+    <div class="col-10" id="content-display">
+        <h3>주문상세</h3>
+        <hr class="mt-4 border-t-2 border-gray-500 md:mt-6">
+        <!-- 주문 정보 -->
+        <div class="p-4 border rounded">
+            <div class="row mb-3">
+                <div class="col-3 fw-bold">배송 상태</div>
+                <div class="col-9">
+                    {% if order.delivery_info.status == 0 %}
+                    <div class="row">
+                        <div class="col-12">
+                            상품준비중
+                        </div>
+                        <div class="col-12">
+                            <img src="https://i.imgur.com/8F8Mx11.jpg" alt="상품준비중" class="img-fluid" style="max-width: 100px; max-height: 100px;">
+                        </div>
+                    </div>
+                    {% elif order.delivery_info.status == 1 %}
+                    <div class="row">
+                        <div class="col-12">
+                            배송 중
+                        </div>
+                        <div class="col-12">
+                            <img src="https://imgur.com/EclMU0T.jpg" alt="배송 중" class="img-fluid" style="max-width: 100px; max-height: 100px;">
+                        </div>
+                    </div>
+                    {% elif order.delivery_info.status == 2 %}
+                    <div class="row">
+                        <div class="col-12">
+                            배송 완료
+                        </div>
+                        <div class="col-12">
+                            <img src="https://imgur.com/NiNnDXH.jpg" alt="배송 완료" class="img-fluid" style="max-width: 100px; max-height: 100px;">
+                        </div>
+                    </div>
+                    {% else %}
+                        알 수 없는 상태
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-3 fw-bold">받는 사람</div>
+                <div class="col-9">{{order.delivery_info.receiver}}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-3 fw-bold">배송지 주소</div>
+                <div class="col-9">{{order.delivery_info.receiver_address}}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-3 fw-bold">전화번호</div>
+                <div class="col-9">{{order.delivery_info.receiver_phone}}</div>
+            </div>
+            {% if order.delivery_info.receiver_email is not None %}
+                <div class="row mb-3">
+                    <div class="col-3 fw-bold">이메일</div>
+                    <div class="col-9">{{order.delivery_info.receiver_email}}</div>
+                </div>
+            {% endif %}
+
+            <table class="table mb-3">
+                <strong>주문 상품 내역</strong>
+                <hr class="mt-4 border-t-2 border-gray-500 md:mt-6">
+                <br>
+                <thead>
+                    <tr>
+                        <th scope="col">상품명</th>
+                        <th scope="col">용량</th>
+                        <th scope="col">수량</th>
+                        <th scope="col">가격</th>
+                        <th scope="col">리뷰</th>
+                    </tr>
+                </thead>
+    
+                <tbody>
+                    {% for ordercart in ordercarts %}
+                    <tr>
+                        <td>{{ ordercart.cart }}</td>
+                        <td>{{ ordercart.cart.item.size.ml }}ml</td>
+                        <td>{{ ordercart.cart.amount }}</td>
+                        <td>{{ ordercart.cart.sub_total|intcomma }}원</td>
+                        <td>
+                            {% if order.delivery_info.status == 2 %}
+                                {% if ordercart.is_review %}
+                                    <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Disabled popover">
+                                        <button class="btn btn-outline-secondary" type="button" disabled>리뷰쓰기</button>
+                                    </span>
+                                {% else %}
+                                    <a href="{% url 'review:create_review' ordercart.id %}" class="btn btn-outline-secondary">리뷰쓰기</a>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <hr class="mt-4 border-t-2 border-gray-500 md:mt-6">
+
+            <div class="row mb-3">
+                <div class="col-3 fw-bold">총 가격</div>
+                <div class="col-9">{{order.total_price|intcomma}}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-3 fw-bold">결제일</div>
+                <div class="col-9">{{order.datetime}}</div>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra-script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 팝오버 대상 요소 선택
+        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+      
+        // 팝오버 초기화
+        var popoverList = popoverTriggerList.map(function(popoverTriggerEl) {
+          return new bootstrap.Popover(popoverTriggerEl, {
+            trigger: 'hover focus', // 트리거 이벤트 설정
+            placement: 'top', // 팝오버 위치 설정
+            content: '이미 리뷰를 작성하셨습니다' // 팝오버 내용 설정
+          });
+        });
+      });
+      
+</script>
+{% endblock %}
