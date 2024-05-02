@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %} Franding {% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link href="https://unpkg.com/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 
     <style>
         html, body {
@@ -142,7 +142,7 @@
             <!-- 로고 -->
             <div class="nav-part mx-auto">
             <a class="navbar-brand" href="{% url 'home' %}">
-                <img src="{% static 'img/logo.jpg' %}" alt="Logo" width="65" height="65" class="d-inline-block align-text-top">
+                <img src="{% static 'img/logo-2.png' %}" alt="Logo" width="65" height="65" class="d-inline-block align-text-top">
             </a>
             </div>
             <!-- 우측 항목들 -->
@@ -213,7 +213,7 @@
     {% endblock %}
 
     <script src="https://kit.fontawesome.com/c998a172fe.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     {% block extra-script %}{% endblock %}
 
     <script>

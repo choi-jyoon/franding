@@ -74,24 +74,43 @@
 
         <!-- 아이템 리스트 -->
         <ul class="list-inline">
-            {% for item in result %}
-            <li class="list-inline-item">
-                <div class="grid-container" style="width: 18rem;">
-                  <a  href="{% url 'item:detail' item.id %}" role="button"><div class="grid-item">
-                    <img src="{{item.image}}"  alt="...">
-                    <div class="card-body">
-                      <p class="card-text">
-                        <h3>{{item.name}}</h3>
-                        <p>가격: {{ item.price }}원</p>
-                        <p>유형: {{ item.item_type.name }}</p>
-                        <p>{{ item.summary }}</p>
-                      </p>
+            {% for item in page_obj %}
+                <li class="list-inline-item">
+                    <div class="grid-container" style="width: 18rem;">
+                    <a  href="{% url 'item:detail' item.id %}" role="button"><div class="grid-item">
+                        <img src="{{item.image}}"  alt="...">
+                        <div class="card-body">
+                        <p class="card-text">
+                            <h3>{{item.name}}</h3>
+                            <p>가격: {{ item.price }}원</p>
+                            <p>유형: {{ item.item_type.name }}</p>
+                            <p>{{ item.summary }}</p>
+                        </p>
+                        </div>
+                    </a>
                     </div>
-                </a>
-                </div>
-            </li>
+                </li>
             {% endfor %}
         </ul>
+
+        <!-- 페이지네이션 컨트롤 -->
+        <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; </a>
+                <a href="?page={{ page_obj.previous_page_number }}">이전</a>
+            {% endif %}
+            
+            {% comment %} <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span> {% endcomment %}
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">다음</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}"> &raquo;</a>
+            {% endif %}
+        </span>
+        </div>
     </div>
 </div>
 {% endblock %}
