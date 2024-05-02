@@ -40,9 +40,12 @@
     }
 
     .my-divider {
-        margin-top: 50px; /* 공간 넓히기 */
-        margin-bottom: 50px; /* 공간 넓히기 */
-        border-top: 1px solid #ccc; /* 구분선 추가 */
+        margin-top: 50px;
+        /* 공간 넓히기 */
+        margin-bottom: 50px;
+        /* 공간 넓히기 */
+        border-top: 1px solid #ccc;
+        /* 구분선 추가 */
     }
 
 
@@ -61,37 +64,50 @@
         cursor: pointer;
         margin-right: 10px;
     }
+
     .form-container {
-        display: flex; /* Flexbox를 사용하여 내부 요소들을 가로로 나열 */
-        justify-content: space-around; /* 요소 사이에 균등한 간격을 둠 */
+        display: flex;
+        /* Flexbox를 사용하여 내부 요소들을 가로로 나열 */
+        justify-content: space-around;
+        /* 요소 사이에 균등한 간격을 둠 */
     }
-    
+
     .form-container form {
-        margin-right: 10px; /* 오른쪽 마진을 추가하여 폼 사이에 간격을 줌 */
+        margin-right: 10px;
+        /* 오른쪽 마진을 추가하여 폼 사이에 간격을 줌 */
     }
-    
+
     .form-container form:last-child {
-        margin-right: 0; /* 마지막 폼의 오른쪽 마진을 제거 */
+        margin-right: 0;
+        /* 마지막 폼의 오른쪽 마진을 제거 */
     }
 
     .bottom-container {
-        text-align: center; /* 컨테이너 내의 내용을 중앙 정렬합니다. */
+        text-align: center;
+        /* 컨테이너 내의 내용을 중앙 정렬합니다. */
     }
-    
+
     .button-container {
         display: flex;
-        justify-content: center; /* 버튼들을 가운데 정렬합니다. */
-        gap: 20px; /* 버튼 사이의 간격을 조절합니다. */
+        justify-content: center;
+        /* 버튼들을 가운데 정렬합니다. */
+        gap: 20px;
+        /* 버튼 사이의 간격을 조절합니다. */
     }
+
     .amount .btn {
-        width: 30px; /* 버튼의 너비 */
-        height: 30px; /* 버튼의 높이 */
-        padding: 0; /* 내부 여백 제거 */
-        font-size: 16px; /* 글자 크기 */
+        width: 30px;
+        /* 버튼의 너비 */
+        height: 30px;
+        /* 버튼의 높이 */
+        padding: 0;
+        /* 내부 여백 제거 */
+        font-size: 16px;
+        /* 글자 크기 */
         text-align: center;
-        line-height: 30px; /* 글자 수직 중앙 정렬 */
+        line-height: 30px;
+        /* 글자 수직 중앙 정렬 */
     }
-    
 </style>
 
 {% endblock%}
@@ -107,45 +123,58 @@
     </div>
 
     <div class="my-divider"></div>
-        
-    {% for show in cart %}
-    <div class="item-card">
-        <img src="{{ show.item.image }}" alt="{{ show.item.name }}" class="item-image">
-        <div class="item-details">
-            <div class="item_name">{{ show.item.name }}</div>
-            <div class="amount">
-                <input type="hidden" id="csrfToken" value="{{csrf_token}}">
-                <button type="button" onclick="modifyCartAmount({{show.item.id}}, -1)" class="btn btn-secondary">-</button>
-                <span id="{{show.item.id}}">{{show.amount}}</span>
-                <button type="button" onclick="modifyCartAmount({{show.item.id}} , 1)" class="btn btn-secondary">+</button>
-            </div>
-            <div>{{ show.item.summary}}</div>
-            <div>{{ show.item.price }}원</div>
-        </div>
-        <form method="POST" action="{% url 'cart:delete_cart' %}">
-            {% csrf_token %}
+
+    <div class="item-card list-group-item">
+        <form id="check-item" method="GET" action="{% url 'payment:payment_list' %}" style="display: inline;">
+            {% for show in cart %}
+
             <!-- Form fields here -->
-            <input type="hidden" name="cart_id" value="{{ show.id }}">
-            <button type="submit" class="btn btn-outline-secondary">삭제</button>
+            <input class="form-check-input me-4" type="checkbox" name="checkbox" value="{{ show.item.id }}"
+                id="firstCheckboxStretched">
+            <label class="form-check-label" for="firstCheckboxStretched">
+                <img src="{{ show.item.image }}" alt="{{ show.item.name }}" class="item-image">
+            </label>
+
+            <div class="item-details">
+                <div class="item_name">{{ show.item.name }}</div>
+                <div class="amount">
+                    <input type="hidden" id="csrfToken" value="{{csrf_token}}">
+                    <button type="button" onclick="modifyCartAmount('{{show.item.id}}', -1)"
+                        class="btn btn-secondary">-</button>
+                    <span id="{{show.item.id}}">{{show.amount}}</span>
+                    <button type="button" onclick="modifyCartAmount('{{show.item.id}}', 1)"
+                        class="btn btn-secondary">+</button>
+                </div>
+                <div>{{ show.item.summary}}</div>
+                <div>{{ show.item.price|intcomma }}원</div>
+            </div>
+            {% endfor%}
         </form>
     </div>
-    {% endfor%}
+
+    <form method="POST" action="{% url 'cart:delete_cart' %}">
+        {% csrf_token %}
+        <!-- Form fields here -->
+        <input type="hidden" name="cart_id" value="{{ show.id }}">
+        <button type="submit" class="btn btn-outline-secondary">삭제</button>
+    </form>
+
     <div class="bottom-container">
-        <h5>총 합계 : <span id='total_price'>{{ total_price|intcomma }}</span></h5>
-        
+        <h5>총 합계 : <span id='total_price'>{{ total_price|intcomma }}원</span></h5>
+
         <div class="button-container">
             <form method="GET" action="{% url 'item:item_list' %}" style="display: inline;">
                 <input type="submit" value="쇼핑 계속하기">
             </form>
-    
-            <form method="GET" action="{% url 'payment:payment_list' %}" style="display: inline;">
-                <!-- Form fields here -->
+
+            <!-- <form method="GET" action="{% url 'payment:payment_list' %}" style="display: inline;">
                 <input type="hidden" name="" value="">
                 <input type="submit" value="결제창으로 이동">
-            </form>
+            </form> -->
+            <button onclick="document.getElementById('check-item').submit()">결제창으로 이동</button>
         </div>
     </div>
-    
+
 
 </div>
 {% endblock %}
