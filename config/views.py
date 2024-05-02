@@ -24,18 +24,19 @@ def register(request):
             # User 모델 저장
             user = user_form.save()
 
-            # UserAddInfo 모델 저장 (새로운 주소 데이터와 함께)
+            # UserAddInfo 모델 저장 
             add_info = add_info_form.save(commit=False)
+            # UserAddinfo 에 user, 주소 정보 추가
             add_info.user = user
-            add_info.postcode = request.POST.get('postcode')  # 새로운 필드 데이터 할당
-            add_info.address = request.POST.get('address')    # 새로운 필드 데이터 할당
-            add_info.detailAddress = request.POST.get('detailAddress')  # 새로운 필드 데이터 할당
-            add_info.extraAddress = request.POST.get('extraAddress')    # 새로운 필드 데이터 할당
+            add_info.postcode = request.POST.get('postcode')  
+            add_info.address = request.POST.get('address')   
+            add_info.detailAddress = request.POST.get('detailAddress')  
+            add_info.extraAddress = request.POST.get('extraAddress')    
             add_info.save()
 
             return redirect('register_done')
         else:
-            # 여기를 추가합니다: 유효성 검사에 실패한 경우
+            # 유효성 검사에 실패한 경우
             context = {
                 'user_form': user_form,
                 'add_info_form': add_info_form
