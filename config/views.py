@@ -7,7 +7,7 @@ from django.db.models import Q
 # Create your views here.
 
 def index(request):
-    objects = Item.objects.all()[:4]
+    objects = Item.objects.all().order_by('-id')
     context = {
         'item_list' : objects
     }
@@ -24,6 +24,7 @@ class UserCreateDoneTV(TemplateView):
 def searchItem(request):
     search_word = request.POST.get('search_word', '')
     select_option = request.POST.get('select_option', '')
+    objects = None
     
     if select_option == '':
         objects = Item.objects.filter(Q(name__icontains=search_word)| Q(summary__icontains=search_word)|Q(description__icontains=search_word)
