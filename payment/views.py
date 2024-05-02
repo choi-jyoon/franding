@@ -79,6 +79,9 @@ def paysuccess(request):
     deliveryinfo_session = request.session.get('delivery_info')
     total_price = request.session.get('total_price')
     
+    if not deliveryinfo_session or not total_price:
+        return redirect('mypage:order_index')
+    
     # 배송 정보 생성
     delivery_info = Delivery.objects.create(
         receiver=deliveryinfo_session['receiver'],
@@ -120,7 +123,16 @@ def paysuccess(request):
     res = res.json()
     context = {
         'res': res,
+        'order':order,
+        'cart_list':cart_list,
     }
+    
+    # 세션에서 delivery_info 및 total_price 제거
+    if 'delivery_info' in request.session:
+        del request.session['delivery_info']
+    if 'total_price' in request.session:
+        del request.session['total_price']
+        
     return render(request, 'payment/paysuccess.html', context)
     
 def payfail(request):
