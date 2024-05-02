@@ -152,13 +152,6 @@
         </form>
     </div>
 
-    <form method="POST" action="{% url 'cart:delete_cart' %}">
-        {% csrf_token %}
-        <!-- Form fields here -->
-        <input type="hidden" name="cart_id" value="{{ show.id }}">
-        <button type="submit" class="btn btn-outline-secondary">삭제</button>
-    </form>
-
     <div class="bottom-container">
         <h5>총 합계 : <span id='total_price'>{{ total_price|intcomma }}원</span></h5>
 
@@ -167,11 +160,8 @@
                 <input type="submit" value="쇼핑 계속하기">
             </form>
 
-            <!-- <form method="GET" action="{% url 'payment:payment_list' %}" style="display: inline;">
-                <input type="hidden" name="" value="">
-                <input type="submit" value="결제창으로 이동">
-            </form> -->
-            <button onclick="document.getElementById('check-item').submit()">결제창으로 이동</button>
+            <button type="submit" onclick="document.getElementById('check-item').submit()">선택 상품 결제</button>
+            <button onclick="delete_form()">선택 상품 삭제</button>
         </div>
     </div>
 
@@ -205,5 +195,11 @@
         };
         xhr.send(`item_id=${item_id}&amountChange=${change}`);
     }
+
+    function delete_form() {
+        var form = document.getElementById('check-item');
+        form.action = '{% url "payment:cart_delete" %}';
+        form.submit();
+    }    
 </script>
 {% endblock %}

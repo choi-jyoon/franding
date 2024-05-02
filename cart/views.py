@@ -48,12 +48,13 @@ def add_cart(request,) -> Any:
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/')) # 현재 페이지 그래로 유지
 
 
-def delete_cart(request):
-    if request.method == 'POST':
-        cart_id = request.POST['cart_id']
-        cart = Cart.objects.get(pk=cart_id)
-        cart.delete()
-        return redirect('cart:cart_detail')
+# 카트 삭제 기능 payment로 옮겼습니다!!
+# def delete_cart(request):
+#     if request.method == 'GET':
+#         cart_id = request.GET['cart_id']
+#         cart = Cart.objects.get(pk=cart_id)
+#         cart.delete()
+#         return redirect('cart:cart_detail')
 
 
     # 만약에 추가로 담을거면 있는 카트에 담아야 한다.  
