@@ -7,7 +7,7 @@ from django.core.files.storage import FileSystemStorage
 
 @login_required
 def order_index(request):
-    user_order_carts = OrderCart.objects.filter(cart__user=request.user)
+    user_order_carts = OrderCart.objects.filter(cart__user=request.user).order_by('-order__datetime')
     if user_order_carts.exists():
         context = {
             'object_list': user_order_carts

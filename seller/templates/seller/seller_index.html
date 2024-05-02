@@ -37,20 +37,21 @@
             <a href="{% url 'mypage:order_index' %}" class="btn btn-outline-secondary mb-4">주문 내역</a>
             <a href="{% url 'review:review_index' %}" class="btn btn-outline-secondary mb-4">작성 리뷰</a>
             <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary mb-4">회원정보</a>
-            <a href="#" class="btn btn-outline-secondary mb-4">구독</a>
-            {% if user.is_staff %}
-                <a href="#" class="btn btn-outline-secondary mb-4">판매자페이지</a>
-            {% endif %}
+            <a href="{% url 'seller:seller_index' %}" class="btn btn-outline-secondary mb-4">판매자페이지</a>
         </div>
     
     <div class="col-10" id="content-display">
-    {% if object %}
-        <h3>{{user}}님의 회원정보</h3>
-        <hr class="mt-4 border-t-2 border-gray-500 md:mt-6">
-        <!-- 사용자 정보 -->
-        <div class="p-4 border rounded">
-            <div class="row mb-3">
-                <div class="col-3 fw-bold">프로필 사진</div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+
+<!-- 참고용 코드
+
+<div class="col-3 fw-bold">프로필 사진</div>
                 <div class="col-9">
                     {% if object.profile_img and object.profile_img.strip %}
                         <img src="{{ object.profile_img }}" alt="{{ user }}" class="img-fluid rounded-circle" style="max-width: 100px; max-height: 100px;">
@@ -76,7 +77,7 @@
                 <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                     회원탈퇴
                 </button>
-                <!-- Modal -->
+                    Modal 
                 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
@@ -97,33 +98,4 @@
                         </div>
                     </div>
                     </div>
-                </div>
-
-            </div>
-        </div>
-
-    {% else %}
-        <h1>No User Info Found</h1>
-        <p>{{ message }}</p>
-        <div>
-            <a href="{% url 'mypage:add_user_info' %}" class="btn btn-outline-secondary">회원정보등록</a>
-        </div>
-    {% endif %}
-    </div>
-
-</div>
-
-{% endblock %}
-
-{% block extra-script %}
-<script>
-    // 회원탈퇴 모달 script
-    document.getElementById('withdrawButton').addEventListener('click', function() {
-        const myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'), {
-            keyboard: false, // 키보드로 모달을 닫을 수 없도록 설정
-            backdrop: 'static' // 바깥 영역을 클릭해도 모달이 닫히지 않도록 설정
-        });
-        myModal.show();
-    });
-</script>
-{% endblock %}
+                </div> -->

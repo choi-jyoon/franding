@@ -4,30 +4,30 @@
 
 <h1>결제창</h1>
 
-<form action="{% url 'payment:payment_done' %}" method="post">
+<form action="" method="post" onsubmit="return validateForm()">
     {% csrf_token %}
 
     <h3 style="margin-bottom: 20px;">배송 정보를 입력해주세요.</h3>
     <div class="input-group-delivery_info">
         <div class="input-group mb-3">
             <span class="input-group-text" id="basic-addon1">받는 사람</span>
-            <input type="text" class="form-control" aria-label="receiver" aria-describedby="basic-addon1">
+            <input type="text" class="form-control" name="receiver" id="receiver" aria-label="receiver" aria-describedby="basic-addon1" {% if userinfo %} value="{{ user }}" {% endif %}>
         </div>
 
         <div class="input-group mb-3">
             <span class="input-group-text">배송지 주소</span>
-            <textarea class="form-control" aria-label="receiver_address"></textarea>
+            <textarea class="form-control" name="receiver_address" id="receiver_address" aria-label="receiver_address">{% if userinfo %}{{userinfo.address}}{% endif %}</textarea>
         </div>
 
         <div class="input-group mb-3">
             <span class="input-group-text" id="basic-addon1">전화번호</span>
-            <input type="tel" class="form-control" placeholder="-를 붙이지 말고 입력해주세요" aria-label="phone-number"
-                aria-describedby="basic-addon1">
+            <input type="text" class="form-control" placeholder="-를 붙여서 입력해주세요" name="receiver_phone" id="receiver_phone" aria-label="phone-number"
+                aria-describedby="basic-addon1" {% if userinfo %}value="{{userinfo.phone}}"{% endif %}>
         </div>
 
         <div class="input-group mb-3">
             <span class="input-group-text" id="basic-addon1">e-mail</span>
-            <input type="email" class="form-control" aria-label="Text input with dropdown button"
+            <input type="email" class="form-control" name="receiver_email" aria-label="Text input with dropdown button"
                 placeholder="이메일을 입력해주세요">
             <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
                 aria-expanded="false">e-mail</button>
@@ -78,8 +78,24 @@
 
         <div class="Payment">
             <h3>결제 수단을 선택해주세요.</h3>
-            <button type="button" class="btn btn-warning">kakao pay</button>
+            <button type="submit" class="btn btn-warning">kakao pay</button>
         </div>
     </div>
 </form>
+{% endblock %}
+{% block extra-script %}
+<script>
+    function validateForm() {
+        var receiverValue = document.getElementById("receiver").value.trim();
+        var addressValue = document.getElementById("receiver_address").value.trim();
+        var phoneValue = document.getElementById("receiver_phone").value.trim();
+
+        if (receiverValue === "" || addressValue === "" || phoneValue === "") {
+            alert("필수 정보를 모두 입력해주세요.");
+            return false; // 폼 제출 막기
+        }
+        
+        return true; // 폼 제출 허용
+    }
+</script>
 {% endblock %}

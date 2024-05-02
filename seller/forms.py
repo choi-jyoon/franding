@@ -1,10 +1,12 @@
-# franding/seller/forms.py
-
 from django import forms
-from .models import Item
-from .models import Order
-from .models import Review
-from .models import Product
+from item.models import Item
+
+
+# class ItemForm(forms.ModelForm):
+#     class Meta:
+#         model = Item
+#         fields = '__all__'  # 이렇게 하면 모든 필드를 폼에 포함시킵니다.
+
 
 class ItemForm(forms.ModelForm):
     class Meta:
@@ -39,19 +41,3 @@ class ItemForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'rows': 4, 'cols': 15})  # 설명을 위한 텍스트 영역 설정
         }
 
-class OrderForm(forms.ModelForm):
-    class Meta:
-        model = Order
-        fields = ['product', 'customer_name', 'quantity', 'total_price']  # 필드: 제품, 고객 이름, 수량, 총 가격
-
-class ReviewForm(forms.ModelForm):
-    class Meta:
-        model = Review
-        fields = ['product', 'author', 'text', 'rating']  # 필드: 제품, 작성자, 내용, 평점
-
-class SearchForm(forms.Form):
-    query = forms.CharField(label='검색어', max_length=100)  # 검색어 필드
-
-class AddToCartForm(forms.Form):
-    product = forms.ModelChoiceField(queryset=Product.objects.all(), label='제품')  # 제품 선택 필드
-    quantity = forms.IntegerField(label='수량', min_value=1)  # 수량 입력 필드

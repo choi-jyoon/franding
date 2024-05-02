@@ -57,9 +57,9 @@
         text-align: center;
         margin-bottom: 30px;
     }
-
+    /* 토글 버튼 스타일추후 변경 예정*/
     .toggle-btn {
-        float: right;
+        display: inline-block; width: 200px; background-color: #918779;
         cursor: pointer;
     }
 
@@ -78,8 +78,7 @@
     <form action="" method="get">
         <div {% if show_note is False%} hidden {% endif %}>
             <h3>
-                Main Note
-                <span class="toggle-btn">▼</span>
+                <span class="toggle-btn">Main Note</span>
             </h3>
             <div class="category1-container">
                 {% for category1 in cat1 %}
@@ -87,11 +86,11 @@
                     <label for="category1:{{ category1.id }}">{{ category1.name }}</label><br>
                 {% endfor %}
             </div>
-        
+            
         
             <h3>
-                Note
-                <span class="toggle-btn">▼</span>
+               
+                <span class="toggle-btn"> Note</span>
             </h3>
             <div class="category2-container">
                 {% for category2 in cat2 %}
@@ -102,8 +101,8 @@
         </div>
         
             <h3>
-                Brand
-                <span class="toggle-btn">▼</span>
+                
+                <span class="toggle-btn">Brand</span>
             </h3>
             <div class="brand-container">
                 {% for brand in brand %}
@@ -114,8 +113,8 @@
         
         <div {% if show_type is False%} hidden {% endif %}>
             <h3>
-                Type
-                <span class="toggle-btn">▼</span>
+                
+                <span class="toggle-btn" >Type</span>
             </h3>
             <div class="type-container">
                 {% for type in item_type %}
@@ -167,20 +166,39 @@
 {% block extra-script %}
 <script>
     const toggleBtns = document.querySelectorAll('.toggle-btn');
-    let isToggled = false;
-
+    let toggleStates = {
+        'Main Note': false, // 특정 토글 버튼을 초기에 열려있게 설정
+        'Note': false,
+        'Brand': false,
+        'Type': false
+    };
+    {% if selected_cat1 %}
+        toggleStates['Main Note'] = true;
+    {% endif %}
+    {% if selected_cat2 %}
+        toggleStates['Note'] = true;
+    {% endif %}
+    {% if selected_brand %}
+        toggleStates['Brand'] = true;
+    {% endif %}
+    {% if selected_type %}
+        toggleStates['Type'] = true;
+    {% endif %}
     toggleBtns.forEach(btn => {
+        const title = btn.textContent.trim(); // 공백 제거
+        const container = btn.parentElement.nextElementSibling;
+
+        // 초기 상태에 따라 컨테이너의 표시 여부 설정
+        container.style.display = toggleStates[title] ? 'block' : 'none';
+
+        // 초기 상태에 따라 토글 버튼의 배경색 설정
+        btn.style.backgroundColor = toggleStates[title] ? '#00FF00' : '#FF0000';
+
         btn.addEventListener('click', () => {
-            const container = btn.parentElement.nextElementSibling;
-
-            // 토글 상태 변경
-            isToggled = !isToggled;
-
-            // 토글 컨테이너의 표시 여부 변경
-            container.style.display = isToggled ? 'block' : 'none';
-
-            // 세모 버튼의 텍스트 내용 변경
-            btn.textContent = isToggled ? '▲' : '▼';
+            // 클릭 이벤트 핸들러 내용은 그대로 유지
+            toggleStates[title] = !toggleStates[title];
+            container.style.display = toggleStates[title] ? 'block' : 'none';
+            btn.style.backgroundColor = toggleStates[title] ? '#00FF00' : '#FF0000';
         });
     });
 </script>

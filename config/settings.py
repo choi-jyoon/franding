@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     'seller',
     'cart',
     'payment',
+    'event',
+    'subscribe',
     #allauth
     'allauth',
     'allauth.account',
