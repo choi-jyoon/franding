@@ -2,74 +2,127 @@
 {% load widget_tweaks %}
 
 {% block title %}register.html{% endblock %}
+{% block extra-style %}
+<style>
+    
+    .signup {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .info-id {
+        margin-bottom: 10px;
+    }
+
+    label {
+        display: inline-block; /* 또는 display: inline; 사용 가능 */
+        margin-bottom: 5px;
+        margin-right: 10px; /* 라벨과 다음 요소 사이의 간격을 조정합니다. 필요에 따라 값 조정 */
+        font-weight: bold;
+    }
+
+    .address {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0 15px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .info-id input[type=text], input[type=password] {
+        width: 40%;
+        padding: 8px;
+        margin: 5px 0 15px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+
+    
+</style>
+{% endblock %}
 
 {% block content %}
 
     <h1>회원가입</h1>
 
 
-    {% if form.errors %}
+    {% if user_form.errors %}
     <div class="alert alert-danger">
         <div class="font-weight-bold">Wrong! Please correct the error(s) below.</div>
-        {{ form.errors }}
+        {{ user_form.errors }}
     </div>
     {% endif %}
 
-    <form action="." method="post">
+    {% if add_info_form.errors %}
+    <div class="alert alert-danger">
+        <div class="font-weight-bold">Wrong! Please correct the error(s) below.</div>
+        {{ add_info_form.errors }}
+    </div>
+    {% endif %}
+
+    <form class='signup' action="." method="post">
         {% csrf_token %}
 
         <!-- User Form -->
-        <div>
+        <div class='info-id'>
             <label for="id_username">사용자 ID:</label>
             {{ user_form.username }}
         </div>
 
-        <div>
+        <div class='info-id'>
             <label for="id_first_name">이름:</label>
             {{ user_form.first_name }}
         </div>
 
-        <div>
+        <div class='info-id'>
             <label for="id_last_name">성:</label>
             {{ user_form.last_name }}
         </div>
 
-        <div>
+        <div class='info-id'>
             <label for="id_email">이메일:</label>
             {{ user_form.email }}
         </div>
 
-        <div>
+        <div class='info-id'>
             <label for="id_password1">비밀번호:</label>
             {{ user_form.password1 }}
         </div>
 
-        <div>
+        <div class='info-id'>
             <label for="id_password2">비밀번호 확인:</label>
             {{ user_form.password2 }}
         </div>
 
         <!-- Additional Info Form -->
-        <div>
-            <label for="id_address">주소:</label>
-            <input type="text" id="postcode" placeholder="우편번호" name='postcode'>
-            <input type="button" onclick="execDaumPostcode()" value="우편번호 찾기"><br>
-            <input type="text" id="address" placeholder="주소" name='address'><br>
-            <input type="text" id="detailAddress" placeholder="상세주소" name='detailAddress'>
-            <input type="text" id="extraAddress" placeholder="참고항목" name='extraAddress'>
+        <div class='info-id'>
+            <label for="id_address">주소:</label><br>
+            <input type="text" id="postcode" placeholder="우편번호" name='postcode' class='address'>
+            <input type="button" onclick="execDaumPostcode()" value="우편번호 찾기" class="btn btn-secondary"><br>
+            <input type="text" id="address" placeholder="주소" name='address' class='address'><br>
+            <input type="text" id="detailAddress" placeholder="상세주소" name='detailAddress' class='address'>
+            <input type="text" id="extraAddress" placeholder="참고항목" name='extraAddress' class='address'>
         </div>
 
-        <div>
+        <div class='info-id'>
             <label for="id_phone">핸드폰 번호:</label>
             {{ add_info_form.phone }}
         </div>
 
-        <button type="submit">가입</button>
+        <button type="submit" class="btn btn-success">가입</button>
     </form>
 
 {% endblock %}
 
 {% block extra-script %}
+<!--다음 우편번호 API 사용-->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
     function execDaumPostcode() {
