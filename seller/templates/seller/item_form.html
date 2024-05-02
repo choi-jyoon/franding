@@ -1,10 +1,38 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Item Form</h1>
+<style>
+    form {
+        text-align: left; /* 텍스트를 왼쪽으로 정렬 */
+        margin: 0 auto; /* 폼을 가운데로 정렬 */
+        width: 50%; /* 폼의 너비 지정 */
+    }
+
+    form input[type="text"],
+    form input[type="email"],
+    form select, /* 새로 추가된 스타일 */
+    form textarea {
+        width: 100%; /* 입력 필드의 너비를 폼에 맞춤 */
+        box-sizing: border-box; /* padding과 border를 너비에 포함 */
+        font-size: 20px; /* 폰트 크기 설정 */
+    }
+
+    form label {
+        display: block; /* 레이블을 블록 요소로 만들어 줄바꿈 */
+        margin-top: 10px; /* 레이블 상단의 마진 추가 */
+        font-size: 20px; /* 레이블 폰트 크기 설정 */
+    }
+
+    .large-button {
+        margin-top: 20px; /* 등록 버튼과 폼 사이의 간격 조정 */
+        width: 100%; /* 버튼을 폼 너비에 맞게 설정 */
+    }
+</style>
+
+<h1 style="text-align: center;">상품 입력</h1>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Save</button>
+    <button class="btn large-button">등 록</button>
 </form>
 {% endblock %}
