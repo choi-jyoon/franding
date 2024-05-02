@@ -3,6 +3,10 @@
 {% block title %} Category_List {% endblock %}
 {% block extra-style %}
 <style>
+    * {
+        padding: 0;
+        margin:0px;
+    }
     a {
         text-decoration: none;
         color: black;
@@ -13,35 +17,59 @@
         width: 20%;
         float: left;
         background-color: #f1f1f1;
-        padding: 20px;
+        padding: 10px 0px 10px 10px;
         margin-top: 50px;
         border-right: 1px solid #ccc;
         /* 사이드바와 그리드 사이에 구분선 추가 */
     }
+    .mb-5 {
+        width: 80%;
+        display: flex;
 
+    }
     /* 상품 목록 스타일 */
     .item-list {
-        width: 80%;
+        width: 70%;
         float: left;
         padding: 20px;
         margin-top: 50px;
         text-align: center;
+        
     }
 
     .grid-container {
+    
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         grid-template-rows: repeat(1, 1fr);
-        grid-gap: 20px;
+        grid-gap: 10px;
     }
 
     .grid-item {
+        width: 200px;
+        height: 220px;
         text-align: center;
-    }
+      
+        /*추후제거 할 구분선*/
 
+    }
+    .grid-item:hover{
+        border: 2px solid #b2b2b2;
+    }
+    .item {
+        padding: 0%;
+        margin: 0;
+    }
     .grid-item img {
         max-width: 100%;
-        height: auto;
+        height: 100px;
+    }
+    .summary{
+        width: 200px; /* 고정된 너비 필요 */
+  white-space: nowrap; /* 텍스트를 한 줄로 표시 */
+  overflow: hidden; /* 넘치는 텍스트 숨기기 */
+  text-overflow: ellipsis; /* 넘치는 텍스트를 ... 으로 표시 */
+  padding-right: 5px;
     }
 
     /* 페이징 스타일 */
@@ -59,8 +87,13 @@
     }
     /* 토글 버튼 스타일추후 변경 예정*/
     .toggle-btn {
-        display: inline-block; width: 200px; background-color: #918779;
+        display: inline-block; width: 200px; background-color: #ffffff;
         cursor: pointer;
+        border-radius: 15px 0px 0px 0px;
+    }
+    .title{
+        padding-bottom: 10px;
+ 
     }
 
     .category1-container,
@@ -74,12 +107,13 @@
 {% block content %}
 
 <div class="sidebar">
-    <h2>카테고리</h2>
+    <h2 class="title">Categoty</h2>
+    <br>
     <form action="" method="get">
         <div {% if show_note is False%} hidden {% endif %}>
-            <h3>
+            <h4>
                 <span class="toggle-btn">Main Note</span>
-            </h3>
+            </h4>
             <div class="category1-container">
                 {% for category1 in cat1 %}
                     <input type="checkbox" id="category1:{{ category1.id }}" {% if category1.id in selected_cat1 %}checked{%endif %} name="cat1" value="{{ category1.id }}" onchange="this.form.submit()">
@@ -88,10 +122,10 @@
             </div>
             
         
-            <h3>
+            <h4>
                
                 <span class="toggle-btn"> Note</span>
-            </h3>
+            </h4>
             <div class="category2-container">
                 {% for category2 in cat2 %}
                 <input type="checkbox" id="category2:{{ category2.id }}" {% if category2.id in selected_cat2 %}checked{%endif %} name="cat2" value="{{ category2.id }}" onchange="this.form.submit()">
@@ -100,10 +134,10 @@
             </div>
         </div>
         
-            <h3>
+            <h4>
                 
                 <span class="toggle-btn">Brand</span>
-            </h3>
+            </h4>
             <div class="brand-container">
                 {% for brand in brand %}
                 <input type="checkbox" id="brand:{{ brand.id }}" {% if brand.id in selected_brand %}checked{% endif %} name="brand" value="{{ brand.id }}" onchange="this.form.submit()">
@@ -112,10 +146,10 @@
             </div>
         
         <div {% if show_type is False%} hidden {% endif %}>
-            <h3>
+            <h4>
                 
                 <span class="toggle-btn" >Type</span>
-            </h3>
+            </h4>
             <div class="type-container">
                 {% for type in item_type %}
                 <input type="checkbox" id="type:{{ type.id }}" {% if type.id in selected_type %}checked{% endif %} name="item_type" value="{{ type.id }}" onchange="this.form.submit()">
@@ -123,7 +157,12 @@
                 {% endfor %}
             </div>
         </div>
-        
+        <hr>
+        <div>
+            <!-- 가격 필터링-->
+           
+        </div>
+
     </form>
 </div>
 <div class="item-list">
@@ -135,9 +174,9 @@
         <a href="{% url 'item:detail' item.id %}" role="button">
             <div class="grid-item">
                 <img src="{{ item.image }}" alt="{{ item.name }}">
-                <h3>{{ item.name }}</h3>
-                <p>가격: {{ item.price }}원</p>
-                <p>{{ item.summary }}</p>
+                <h5 class="item item-title" bold>{{ item.name }}</h5>
+                <p class="item">가격: {{ item.price }}원</p>
+                <p class="item summary">{{ item.summary }}</p>
             </div>
         </a>
         {% endfor %}
@@ -161,10 +200,13 @@
         {% endif %}
     </div>
 </div>
-
+<div>
+    <input type="checkbox"> 
+</div>
 {% endblock %}
 {% block extra-script %}
 <script>
+    
     const toggleBtns = document.querySelectorAll('.toggle-btn');
     let toggleStates = {
         'Main Note': false, // 특정 토글 버튼을 초기에 열려있게 설정
@@ -184,6 +226,7 @@
     {% if selected_type %}
         toggleStates['Type'] = true;
     {% endif %}
+    
     toggleBtns.forEach(btn => {
         const title = btn.textContent.trim(); // 공백 제거
         const container = btn.parentElement.nextElementSibling;
@@ -192,14 +235,34 @@
         container.style.display = toggleStates[title] ? 'block' : 'none';
 
         // 초기 상태에 따라 토글 버튼의 배경색 설정
-        btn.style.backgroundColor = toggleStates[title] ? '#00FF00' : '#FF0000';
-
+        btn.style.backgroundColor = toggleStates[title] ? '#FFFFFF' : '#FFFFFF';
+        btn.style.color = toggleStates[title] ? '#5B574F' : '#5B574F';
+        btn.style.fontWeight = toggleStates[title] ? 'bold' : 'normal';
         btn.addEventListener('click', () => {
             // 클릭 이벤트 핸들러 내용은 그대로 유지
             toggleStates[title] = !toggleStates[title];
             container.style.display = toggleStates[title] ? 'block' : 'none';
-            btn.style.backgroundColor = toggleStates[title] ? '#00FF00' : '#FF0000';
+            btn.style.backgroundColor = toggleStates[title] ? '#FFFFFF' : '#FFFFFF';
+            btn.style.color = toggleStates[title] ? '#5B574F' : '#5B574F';
+            btn.style.fontWeight = toggleStates[title] ? 'bold' : 'bold';
         });
+        btn.addEventListener('mouseover', () => {
+  
+        btn.style.backgroundColor = '#5B574F';
+        btn.style.color = '#FFFFFF';
+        btn.style.fontWeight = 'normal';
+        });
+
+        btn.addEventListener('mouseout', () => {
+        btn.style.backgroundColor = '#FFFFFF';
+        btn.style.color = '#5B574F';
+        btn.style.fontWeight = toggleStates[title] ? 'bold' : 'normal';
+});
+
+        
     });
+
+
+    
 </script>
 {% endblock %}

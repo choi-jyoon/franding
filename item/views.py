@@ -47,7 +47,9 @@ def list_item(request):
 
 
 
-    paginator = Paginator(items, 4)  # 한 페이지에 20개씩 표시
+    paginator = Paginator(items, 9)  # 한 페이지에 20개씩 표시
+
+
     page_number = request.GET.get('page')
     try:
         page_obj = paginator.page(page_number)
@@ -57,6 +59,7 @@ def list_item(request):
         page_obj = paginator.page(paginator.num_pages)
     if request.path == '/item/other/':
         context = {
+        'item':Item.objects.all(),
         'items': page_obj,
         'cat1': Category1.objects.all(),
         'cat2': Category2.objects.all(),
