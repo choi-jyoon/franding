@@ -51,10 +51,7 @@ INSTALLED_APPS = [
     'review',
     'seller',
     'cart',
-<<<<<<< HEAD
     'bootstrap4',
-=======
->>>>>>> 9065078e3c22a421d0569045478c719f1e5f81dd
     'payment',
     'event',
     'subscribe',

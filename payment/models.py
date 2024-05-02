@@ -1,10 +1,5 @@
 from django.db import models
-<<<<<<< HEAD
 # from cart.models import Order
-=======
-
-
->>>>>>> 9065078e3c22a421d0569045478c719f1e5f81dd
 # Create your models here.
 
 # class Coupon(models.Model):
