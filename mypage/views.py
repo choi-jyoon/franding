@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from cart.models import OrderCart
+from cart.models import OrderCart, Order
 from .models import UserAddInfo
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
@@ -7,16 +7,25 @@ from django.core.files.storage import FileSystemStorage
 
 @login_required
 def order_index(request):
-    user_order_carts = OrderCart.objects.filter(cart__user=request.user).order_by('-order__datetime')
-    if user_order_carts.exists():
+    orders = Order.objects.filter(ordercart__cart__user=request.user).order_by('-datetime').distinct()
+    if orders.exists():
         context = {
-            'object_list': user_order_carts
+            'orders':orders
         }
     else:
         context = {
             'message': '주문 내역이 없습니다.'
         }
     return render(request, 'mypage/order_index.html', context)
+
+def order_detail(request, pk):
+    order = Order.objects.get(pk=pk)
+    ordercarts = OrderCart.objects.filter(order_id = pk)
+    context={
+        'order' : order,
+        'ordercarts':ordercarts
+    }
+    return render(request, 'mypage/order_detail.html', context)
 
 @login_required
 def user_info(request):

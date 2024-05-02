@@ -38,6 +38,7 @@
             <a href="{% url 'review:review_index' %}" class="btn btn-outline-secondary mb-4">작성 리뷰</a>
             <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary mb-4">회원정보</a>
             <a href="{% url 'seller:seller_index' %}" class="btn btn-outline-secondary mb-4">판매자페이지</a>
+            <a href="#" class="btn btn-outline-secondary mb-4">구독</a>
         </div>
     
     <div class="col-10" id="content-display">
@@ -45,6 +46,15 @@
 
 </div>
 
+{% endblock %}
+
+{% block extra-script %}
+<h1>판매자 페이지 입니다.</h1>
+        <div>
+            <a href="{% url 'seller:item_create' %}" class="btn btn-outline-secondary">상품 등록</a>
+            <a href="{% url 'seller:item_update' pk=object.pk %}" class="btn btn-outline-secondary">상품 업데이트</a>
+            <a href="{% url 'seller:item_delete' pk=object.pk %}" class="btn btn-outline-secondary">상품 삭제</a>
+        </div>
 {% endblock %}
 
 

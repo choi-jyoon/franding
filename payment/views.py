@@ -9,7 +9,6 @@ from dotenv import load_dotenv
 load_dotenv()
 admin_key = os.getenv('admin_key')
 
-# Create your views here.
 def payment_list(request, total_price=0):
     template_name = 'payment/payment_info.html'
     user=request.user
@@ -21,14 +20,14 @@ def payment_list(request, total_price=0):
         checkbox_item = request.GET.getlist('checkbox')
         request.session['checkbox_item'] = checkbox_item 
 
-    checkbox_item = request.session.get('checkbox_item')           
+    checkbox_item = request.session.get('checkbox_item') 
                 
     try:
         userinfo = UserAddInfo.objects.get(user=request.user) # 유저정보가 있다면 가져오기
     except UserAddInfo.DoesNotExist:
         userinfo = None
-        
     
+
     for check in checkbox_item:   
         try:
             # 만약 check가 숫자가 아니라면 ValueError가 발생
@@ -45,10 +44,10 @@ def payment_list(request, total_price=0):
         total_amount += check_item.amount  # 총 수량
         item_name = check_item.item.name # 대표 구매 물품 이름
     if cnt > 1:
-        item_name += '외 {}건'.format(cnt-1)             
+        item_name += '외 {}건'.format(cnt-1)     
                           
            
-    if request.method == "POST": # False        
+    if request.method == "POST": # False
         # 배송정보를 session에 저장
         request.session['delivery_info'] = {
             'receiver': request.POST.get('receiver'),
@@ -94,7 +93,7 @@ def payment_list(request, total_price=0):
 
 def paysuccess(request):    
     cart_list = []
-    user=request.user
+    user=request.user    
     deliveryinfo_session = request.session.get('delivery_info')
     total_price = request.session.get('total_price')
     # 새로 추가
@@ -114,6 +113,19 @@ def paysuccess(request):
     
     if not deliveryinfo_session or not total_price:
         return redirect('mypage:order_index')
+    
+    checkbox_item = request.session.get('checkbox_item')
+    
+    for check in checkbox_item:   
+        try:
+            # 만약 check가 숫자가 아니라면 ValueError가 발생
+            check = int(check)   
+        except ValueError: 
+            print('선택된 상품이 없습니다.') 
+            
+        check_item = Cart.objects.get(user=request.user, item=check, status=False) 
+        cart_list.append(check_item)
+    
     
     # 배송 정보 생성
     delivery_info = Delivery.objects.create(
