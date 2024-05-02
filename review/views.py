@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def my_review(request):
-    review_list = Review.objects.filter(user = request.user)
+    review_list = Review.objects.filter(user = request.user).order_by('-datetime')
     if review_list.exists():
         context ={
             'object_list':review_list
