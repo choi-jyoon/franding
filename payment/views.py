@@ -5,6 +5,8 @@ from .models import Delivery
 import requests
 import os
 from dotenv import load_dotenv
+from django.contrib import messages
+from django.http import HttpResponseRedirect
 
 load_dotenv()
 admin_key = os.getenv('admin_key')
@@ -16,9 +18,16 @@ def payment_list(request, total_price=0):
     total_amount = 0
     check_item_list = []
 
+    
+
     if request.method == 'GET': # True
-        checkbox_item = request.GET.getlist('checkbox')
-        request.session['checkbox_item'] = checkbox_item 
+        if 'checkbox' not in request.GET:
+            messages.warning(request, '상품을 1개 이상 주문하셔야 합니다.')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        else:
+            checkbox_item = request.GET.getlist('checkbox') 
+            request.session['checkbox_item'] = checkbox_item
+    
         
     checkbox_item = request.session.get('checkbox_item')
                 

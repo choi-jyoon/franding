@@ -114,6 +114,16 @@
 
 {% block content %}
 <div class="row justify-content-center mt-4">
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <div class="alert alert-primary" role="alert">
+            상품을 1개 이상 담아주세요.
+        </div>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
     <div class='col'>
         <div class="row mb-4">
             <div class="col-md-auto">
