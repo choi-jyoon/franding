@@ -10,6 +10,27 @@ class UserCreateForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'password1', 'password2', 'email')
+       
+    def __init__(self, *args, **kwargs):
+        super(UserCreateForm, self).__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({
+            'placeholder': '사용자 ID를 입력하세요',  
+        })
+        self.fields['first_name'].widget.attrs.update({
+            'placeholder': '이름을 입력하세요',  
+        })
+        self.fields['last_name'].widget.attrs.update({
+            'placeholder': '성을 입력하세요',  
+        })
+        self.fields['email'].widget.attrs.update({
+            'placeholder': 'franding@example.com',  
+        })
+        self.fields['password1'].widget.attrs.update({
+            'placeholder': '비밀번호를 입력하세요',  
+        })
+        self.fields['password2'].widget.attrs.update({
+            'placeholder': '비밀번호를 다시 한 번 입력하세요',  
+        })
         
     def save(self, commit=True):
         user = super(UserCreateForm, self).save(commit=False)
@@ -25,3 +46,9 @@ class UserAddInfoForm(forms.ModelForm):
     class Meta:
         model = UserAddInfo
         fields = ('phone',)
+        
+    def __init__(self, *args, **kwargs):
+        super(UserAddInfoForm, self).__init__(*args, **kwargs)
+        self.fields['phone'].widget.attrs.update({
+            'placeholder': '010-0000-0000',  
+        })
