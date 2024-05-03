@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Confirm Delete</h1>
-<p>Are you sure you want to delete "{{ item.name }}"?</p>
+<h1>삭제 확인</h1>
+<p>정말로 상품을 삭제하시겠습니까? "{{ item.name }}"?</p>
 <form method="post">
     {% csrf_token %}
-    <button type="submit">Delete</button>
+    <button type="submit">삭제</button>
 </form>
 {% endblock %}

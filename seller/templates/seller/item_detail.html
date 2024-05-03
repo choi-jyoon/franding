@@ -1,8 +1,19 @@
 {% extends 'base.html' %}
 
+{% load humanize %}
+
 {% block content %}
-<h1>Item Detail</h1>
-<p>Name: {{ item.name }}</p>
-<p>Price: {{ item.price }}</p>
-<!-- 나머지 필드들도 추가하세요 -->
+    <div>
+        <!-- <img src="{{ item.image.url }}" alt="{{ item.name }}">
+        <img src="{{ item.back_image.url }}" alt="{{ item.name }}"> -->
+        <img src="{{ item.image.url }}" alt="{{ item.name }}" class="default-image">
+        <img src="{{ item.back_image.url }}" alt="{{ item.name }}" class="hover-image">
+        <h4 style="text-align: center;">{{ item.brand }}</h4>
+        <h2 style="text-align: center;">{{ item.name }}</h2>
+    <h5 style="text-align: center;">{{ item.price|intcomma }} ₩</h5>
+    <h5 style="text-align: center;">{{ item.size }} ml</h5>
+    <p style="text-align: center;">요약 : {{ item.summary }}</p>
+    <p>{{ item.description }}</p>
+    <!-- 나머지 필드들도 추가하세요 -->
+    </div>
 {% endblock %}
