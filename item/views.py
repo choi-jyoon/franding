@@ -41,7 +41,17 @@ def list_item(request):
     else:
         if category4_ids:
             items = items.filter(item_type__id__in=category4_ids)
-    
+    #price 필터링
+    price_filters = request.GET.getlist('price')
+    if '1' in price_filters:
+        items = items.filter(price__gte=0, price__lte=70000)
+    if '2' in price_filters:
+        items = items.filter(price__gte=70000, price__lte=150000)
+    if '3' in price_filters:
+        items = items.filter(price__gte=150000, price__lte=220000)
+    if '4' in price_filters:
+        items = items.filter(price__gte=220000)
+
     show_note = bool(request.path != '/item/brand/')
     show_type = bool(request.path != '/item/perfume/')
 

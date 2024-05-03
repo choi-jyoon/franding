@@ -50,7 +50,7 @@
         height: 220px;
         text-align: center;
       
-        /*추후제거 할 구분선*/
+    
 
     }
     .grid-item:hover{
@@ -160,7 +160,21 @@
         <hr>
         <div>
             <!-- 가격 필터링-->
-           
+            <form method="get" action="{% url 'item:item_list' %}">
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn " name="price" value="1">0 ~ 70,000</button>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn " name="price" value="2">70,000 ~ 150,000</button>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn " name="price" value="3">150,000 ~ 220,000</button>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn " name="price" value="4">220,000 ~ 290,000</button>
+                </div>
+                
+            </form>
         </div>
 
     </form>
@@ -263,6 +277,7 @@
     });
 
 
-    
+
+//가격 카테고리 설정 버튼 이벤트 스크립트 들어갈예정
 </script>
 {% endblock %}
