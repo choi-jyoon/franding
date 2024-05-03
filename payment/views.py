@@ -99,17 +99,6 @@ def paysuccess(request):
     # 새로 추가
     checkbox_item = request.session.get('checkbox_item')
     
-
-    for check in checkbox_item:   
-        try:
-            # 만약 check가 숫자가 아니라면 ValueError가 발생
-            check = int(check)   
-        except ValueError: 
-            print('선택된 상품이 없습니다.') 
-            
-        check_item = Cart.objects.get(user=request.user, item=check, status=False) 
-        cart_list.append(check_item)
-        total_price += (check_item.item.price * check_item.amount)
     
     if not deliveryinfo_session or not total_price:
         return redirect('mypage:order_index')
