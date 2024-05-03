@@ -1,7 +1,7 @@
 # franding
 franding ( perfume e-commerce )
 
-5팀 피어리뷰 브랜치입니다 
+6팀 피어리뷰 브랜치입니다 
 리뷰 부탁드립니다 ~! 
 
 --- 
