@@ -33,7 +33,7 @@
         box-sizing: border-box;
     }
 
-    .info-id input[type=text], input[type=password] {
+    .info-id input[type=text], input[type=password], input[type=email] {
         width: 40%;
         padding: 8px;
         margin: 5px 0 15px 0;
@@ -51,8 +51,6 @@
 {% block content %}
 
     <h1>회원가입</h1>
-
-
     {% if user_form.errors %}
     <div class="alert alert-danger">
         <div class="font-weight-bold">Wrong! Please correct the error(s) below.</div>
