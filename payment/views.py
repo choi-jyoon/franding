@@ -19,8 +19,8 @@ def payment_list(request, total_price=0):
     if request.method == 'GET': # True
         checkbox_item = request.GET.getlist('checkbox')
         request.session['checkbox_item'] = checkbox_item 
-
-    checkbox_item = request.session.get('checkbox_item') 
+        
+    checkbox_item = request.session.get('checkbox_item')
                 
     try:
         userinfo = UserAddInfo.objects.get(user=request.user) # 유저정보가 있다면 가져오기
@@ -83,22 +83,17 @@ def payment_list(request, total_price=0):
     context = {
             'item_list': check_item_list,
             'total_price': total_price,
-            'userinfo' : userinfo,
-            'item_name': item_name,
-            'total_amount': total_amount,
+            'userinfo' : userinfo
     }
     
     return render(request, template_name, context)
         
 
-def paysuccess(request):    
+def paysuccess(request):
+    user=request.user
     cart_list = []
-    user=request.user    
     deliveryinfo_session = request.session.get('delivery_info')
     total_price = request.session.get('total_price')
-    # 새로 추가
-    checkbox_item = request.session.get('checkbox_item')
-    
     
     if not deliveryinfo_session or not total_price:
         return redirect('mypage:order_index')
@@ -131,7 +126,7 @@ def paysuccess(request):
     )
 
     # 주문과 카트 아이템들 연결 및 카트 상태 변경
-    for cart in checkbox_item:
+    for cart in cart_list:
         order_cart = OrderCart.objects.create(
             order=order,
             cart=cart
@@ -158,7 +153,7 @@ def paysuccess(request):
     context = {
         'res': res,
         'order':order,
-        'cart_list':checkbox_item,
+        'cart_list':cart_list,
     }
     
     # 세션에서 delivery_info 및 total_price 제거
