@@ -5,17 +5,11 @@ from django.views.generic import FormView
 from django.db.models import Q
 from .models import *
 from cart.models import Cart
-# Create your views here.
+
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
-#category 정리
-#100번대->cat1
-#200번대->cat2
-#250번대->detail_cat2
-#300번대->brand
-#400번대->item_type
 
 def list_item(request):
     items = Item.objects.all()
@@ -41,13 +35,25 @@ def list_item(request):
     else:
         if category4_ids:
             items = items.filter(item_type__id__in=category4_ids)
-    
+    #price 필터링
+    price_filters = request.GET.getlist('price')
+    if '1' in price_filters:
+        items = items.filter(price__gte=0, price__lte=70000)
+    if '2' in price_filters:
+        items = items.filter(price__gte=70000, price__lte=150000)
+    if '3' in price_filters:
+        items = items.filter(price__gte=150000, price__lte=220000)
+    if '4' in price_filters:
+        items = items.filter(price__gte=220000)
+
     show_note = bool(request.path != '/item/brand/')
     show_type = bool(request.path != '/item/perfume/')
 
 
 
-    paginator = Paginator(items, 4)  # 한 페이지에 20개씩 표시
+    paginator = Paginator(items, 9)  # 한 페이지에 20개씩 표시
+
+
     page_number = request.GET.get('page')
     try:
         page_obj = paginator.page(page_number)
@@ -57,6 +63,7 @@ def list_item(request):
         page_obj = paginator.page(paginator.num_pages)
     if request.path == '/item/other/':
         context = {
+        'item':Item.objects.all(),
         'items': page_obj,
         'cat1': Category1.objects.all(),
         'cat2': Category2.objects.all(),
