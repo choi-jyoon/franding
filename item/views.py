@@ -5,17 +5,11 @@ from django.views.generic import FormView
 from django.db.models import Q
 from .models import *
 from cart.models import Cart
-# Create your views here.
+
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
-#category 정리
-#100번대->cat1
-#200번대->cat2
-#250번대->detail_cat2
-#300번대->brand
-#400번대->item_type
 
 def list_item(request):
     items = Item.objects.all()
