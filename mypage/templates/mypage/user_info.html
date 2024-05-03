@@ -60,16 +60,28 @@
                 </div>
             </div>
             <div class="row mb-3">
+                <div class="col-3 fw-bold">사용자 ID</div>
+                <div class="col-9">{{user}}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-3 fw-bold">성</div>
+                <div class="col-9">{{user.last_name}}</div>
+            </div>
+            <div class="row mb-3">
                 <div class="col-3 fw-bold">이름</div>
-                <div class="col-9">{{object.user_name}}</div>
+                <div class="col-9">{{user.first_name}}</div>
             </div>
             <div class="row mb-3">
                 <div class="col-3 fw-bold">주소</div>
-                <div class="col-9">{{object.address}}</div>
+                <div class="col-9">{{object.address}} {{object.detailAddress}} ({{object.postcode}}) {{object.extraAddress}}</div>
             </div>
             <div class="row mb-3">
                 <div class="col-3 fw-bold">전화번호</div>
                 <div class="col-9">{{object.phone}}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-3 fw-bold">email</div>
+                <div class="col-9">{{user.email}}</div>
             </div>
             <div class="text-center">
                 <a href="{% url 'mypage:update_user_info' %}" class="btn btn-outline-secondary">회원정보수정</a>

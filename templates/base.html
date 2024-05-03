@@ -170,7 +170,7 @@
                     {% if user.is_active %}
                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <!-- 프로필 이미지 표시 -->
-                        {% if profile_img %}
+                        {% if profile_img and profile_img.strip %}
                             <img src="{{profile_img}}" alt="profile_img" class="nav-profile-img"></i>&nbsp;{% firstof user.get_short_name user.get_username %}
                         {% else %}
                             <i class="fas fa-user-circle"></i>&nbsp;{% firstof user.get_short_name user.get_username %}
