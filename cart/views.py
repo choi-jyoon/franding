@@ -1,4 +1,5 @@
 from typing import Any
+from django.db.models.query import QuerySet
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, TemplateView,DetailView
 from cart.models import Cart, Order
@@ -8,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-
+from django.db.models import Sum
 
 
 # Create your views here.    
@@ -42,19 +43,33 @@ def add_cart(request,) -> Any:
 
 # 장바구니 페이지
 def cart_detail(request, total_price=0):
+
+    # 총 가격 계산
     cart = Cart.objects.filter(user=request.user, status=False).order_by('user', '-status', '-id')
 
     for c in cart:        
         total_price += (c.item.price * c.amount)
+
+    
+    # 상품 추천
+    product_paid_for = Cart.objects.filter(status=True).values('item_id').annotate(total_amount = Sum('amount')).order_by('-total_amount')[:3]
+    best_items = []
+
+    for item_id in product_paid_for:
+        best_i = Item.objects.get(id = item_id['item_id']) # id가 item_id인 Item을 가져온다.
+        best_items.append(best_i)    
+    
     
     context = {
         'cart': cart,
         'total_price': total_price,
+        'best_items': best_items,
         
     }
     return render(request, 'cart/cart_detail.html', context)
 
 
+# 장바구니 수량 변경
 def accept_ajax(request, total_price=0):
     if request.method == 'POST':
         item_id = request.POST['item_id'] # 새로운 카트 수량을 1개 업데이트
@@ -86,3 +101,9 @@ def accept_ajax(request, total_price=0):
         return JsonResponse(context)
 
 
+    
+    
+        
+    
+
+    

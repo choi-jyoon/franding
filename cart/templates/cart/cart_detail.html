@@ -67,9 +67,11 @@
 
     .form-container {
         display: flex;
+
         /* Flexbox를 사용하여 내부 요소들을 가로로 나열 */
         justify-content: space-around;
         /* 요소 사이에 균등한 간격을 둠 */
+
     }
 
     .form-container form {
@@ -108,12 +110,29 @@
         line-height: 30px;
         /* 글자 수직 중앙 정렬 */
     }
+
+    .best-item-image {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .best-item {
+        align-items: center;
+        margin-bottom: 20px;
+        margin-left: 80px;
+        padding: 15px;
+        background: #fff;
+        border-radius: 8px;
+        width: 200px;
+    }
 </style>
 
 {% endblock%}
 
 {% block content %}
-<div class="row justify-content-center mt-4">
+<div class="">
     {% if messages %}
     <ul class="messages">
         {% for message in messages %}
@@ -134,32 +153,49 @@
 
     <div class="my-divider"></div>
 
-    <div class="item-card list-group-item">
-        <form id="check-item" method="GET" action="{% url 'payment:payment_list' %}" style="display: inline;">
-            {% for show in cart %}
+    <div class="form-container">
+        <div class="item-card list-group-item">
+            <form id="check-item" method="GET" action="{% url 'payment:payment_list' %}" style="display: inline;">
+                {% for show in cart %}
 
-            <!-- Form fields here -->
-            <input class="form-check-input me-4" type="checkbox" name="checkbox" value="{{ show.item.id }}"
-                id="firstCheckboxStretched">
-            <label class="form-check-label" for="firstCheckboxStretched">
-                <img src="{{ show.item.image }}" alt="{{ show.item.name }}" class="item-image">
-            </label>
+                <!-- Form fields here -->
+                <input class="form-check-input me-4" type="checkbox" name="checkbox" value="{{ show.item.id }}"
+                    id="firstCheckboxStretched">
+                <label class="form-check-label" for="firstCheckboxStretched">
+                    <img src="{{ show.item.image }}" alt="{{ show.item.name }}" class="item-image">
+                </label>
 
-            <div class="item-details">
-                <div class="item_name">{{ show.item.name }}</div>
-                <div class="amount">
-                    <input type="hidden" id="csrfToken" value="{{csrf_token}}">
-                    <button type="button" onclick="modifyCartAmount('{{show.item.id}}', -1)"
-                        class="btn btn-secondary">-</button>
-                    <span id="{{show.item.id}}">{{show.amount}}</span>
-                    <button type="button" onclick="modifyCartAmount('{{show.item.id}}', 1)"
-                        class="btn btn-secondary">+</button>
+                <div class="item-details">
+                    <div class="item_name">{{ show.item.name }}</div>
+                    <div class="amount">
+                        <input type="hidden" id="csrfToken" value="{{csrf_token}}">
+                        <button type="button" onclick="modifyCartAmount('{{show.item.id}}', -1)"
+                            class="btn btn-secondary">-</button>
+                        <span id="{{show.item.id}}">{{show.amount}}</span>
+                        <button type="button" onclick="modifyCartAmount('{{show.item.id}}', 1)"
+                            class="btn btn-secondary">+</button>
+                    </div>
+                    <div>{{ show.item.summary}}</div>
+                    <div>{{ show.item.price|intcomma }}원</div>
                 </div>
-                <div>{{ show.item.summary}}</div>
-                <div>{{ show.item.price|intcomma }}원</div>
+                {% endfor%}
+            </form>
+        </div>
+
+        <!-- 추천 상품 목록 -->
+        <div class="best-item">
+            <h3>추천 상품</h3>
+            {% for product in best_items %}
+            <div class="best-item-{{prodect.id}}">
+                <img src="{{ product.image }}" alt="{{ product.name }}" class="best-item-image">
+                <ul>{{ product }}</ul>
+                <ul>{{ product.summary }}</ul>
+                <ul>{{ product.price }}원</ul>
             </div>
-            {% endfor%}
-        </form>
+            {% endfor %}
+        </div>
+
+
     </div>
 
     <div class="bottom-container">
