@@ -89,7 +89,7 @@
     </div>
     <ul class="list-inline text-center" style="margin-top:10px;">
         {% for subscribe in subscribes %}
-        <li class="item-card"  onclick="location.href='{% url 'subscribe:subscribe_detail' subscribe.subscribe.id %}';">
+        <li class="item-card"  onclick="location.href='{% url 'subscribe:subscribe_detail' subscribe.id %}';">
             <p>{{subscribe.subscribe.datetime}} </p>
             <p class="keyword">{{subscribe.keyword.word}}</p>
         </li>

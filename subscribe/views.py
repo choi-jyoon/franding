@@ -21,7 +21,7 @@ def index(request):
 
     keyword_objects = Keyword.objects.filter(month__year = now.year, month__month = now.month)
     subscribe_objects = SubscribeKeyword.objects.filter(subscribe__user = request.user)
-    is_subscribed = request.user.subscribe_set.exists()
+    is_subscribed = request.user.subscribe_set.filter(datetime__year = now.year, datetime__month = now.month).exists()
     
     context = {
         'keywords': keyword_objects,
