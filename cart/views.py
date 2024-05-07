@@ -10,7 +10,7 @@ from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.db.models import Sum
-
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.    
     
@@ -22,6 +22,7 @@ from django.db.models import Sum
 
 
 # 장바구니에 상품 추가
+@login_required
 def add_cart(request,) -> Any:    
     if request.method == 'POST':
 
@@ -42,6 +43,7 @@ def add_cart(request,) -> Any:
       
 
 # 장바구니 페이지
+@login_required
 def cart_detail(request, total_price=0):
 
     # 총 가격 계산
@@ -75,6 +77,7 @@ def cart_detail(request, total_price=0):
 
 
 # 장바구니 수량 변경
+@login_required
 def accept_ajax(request, total_price=0):
     if request.method == 'POST':
         item_id = request.POST['item_id'] # 새로운 카트 수량을 1개 업데이트
