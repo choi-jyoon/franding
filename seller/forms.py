@@ -8,6 +8,8 @@ class ItemForm(forms.ModelForm):
         fields = '__all__'  # 이렇게 하면 모든 필드를 폼에 포함시킵니다.
 
 
+# 머지 재시도
+
 # class ItemForm(forms.ModelForm):
 #     class Meta:
 #         model = Item

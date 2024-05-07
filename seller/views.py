@@ -9,6 +9,7 @@ from django.views.generic import ListView
 
 
 
+
 @login_required
 def seller_page(request):
     return render(request, 'seller/seller_index.html')
@@ -85,22 +86,4 @@ class ItemListView(ListView):
     model = Item
     template_name = 'seller/item_list.html'  # 'seller' 앱 내의 템플릿 경로로 수정
     paginate_by = 9
-
-
-
-
-
-
-# @login_required
-# def seller_info(request):
-#     try:
-#         seller_info = Item.objects.get(item_list=request.seller)
-#         context={
-#             'object':seller_index
-#         }
-#     except:
-#         context = {
-#             'message':'판매자가 아닙니다.' 
-#         }
-#     return render(request, 'seller/seller_index.html', context)
 
