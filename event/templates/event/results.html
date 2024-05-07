@@ -1,0 +1,68 @@
+{% extends 'base.html'%}
+{% load static %}
+
+{% block extra-style %}
+<style>
+    #franding {
+        display: flex;
+        flex-direction: column; /* 버튼들을 세로로 정렬 */
+        align-items: center; /* 버튼들을 중앙으로 정렬 */
+        background-color: transparent; /* 배경색 제거 */
+        border: 2px solid #5B574F; /* 테두리 색 설정 */
+        border-radius: 10px; /* 모서리를 둥글게 */
+        padding: 20px; /* 안쪽 여백 설정 */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 그림자 효과 */
+        max-width: 800px; /* 최대 너비 설정 */
+        margin: auto; /* 가운데 정렬 */
+    }
+    
+    h2 {
+        color: #5B574F; /* 제목 색상 */
+        margin-bottom: 20px; /* 제목 아래 여백 */
+    }
+    h4 {
+        color: #5B574F; /* 제목 색상 */
+        margin-bottom: 20px; /* 제목 아래 여백 */
+    }
+    hr {
+        margin-top: 1rem; /* 상단 여백 */
+        border-top: 2px solid #5B574F; /* 상단 테두리 설정 */
+        color: #5B574F; /* 테두리 색상 */
+    }   
+</style>
+
+{% endblock %}
+
+{% block content %}
+<div id="franding">
+<h2>{{user.first_name}}님의 franding 결과</h2>
+<h4><strong>{{franding.cat1}}, {{franding.cat2}}</strong>한 향을 선호시네요!</h4>
+<hr>
+{% if recommend %}
+  <!-- recommend가 존재하는 경우, recommend 보여주기 -->
+    <h5>당신의 향수는</h5>
+    <h2>{{recommend.name}}</h2>
+    <img src="{{ recommend.image }}" alt="{{ recommend.name }}">
+    <br>
+    {{ recommend.summary }}
+    <a href="{% url 'item:detail' recommend.id %}" class="btn btn-outline-secondary mt-4 mb-4">추천향수 주문하러가기</a>
+{% else %}
+  {% if recommendations %}
+    <div>
+      <p>{{ recommendations.first.name }}</p>
+      <p>{{ recommendations.first.description }}</p>
+      <!-- 기타 recommendations.first의 속성들을 여기에 추가 -->
+    </div>
+    <h5>당신의 향수는</h5>
+    <h2>{{recommendations.first.name}}</h2>
+    <img src="{{ recommendations.first.image }}" alt="{{ recommendations.first.name }}">
+    <br>
+    {{ recommendations.first.description }}
+    <a href="{% url 'item:detail' recommendations.first.id %}" class="btn btn-outline-secondary mt-4 mb-4">추천향수 주문하러가기</a>
+  {% else %}
+    <!-- recommendations도 비어있는 경우, 메시지 표시 -->
+    <p>추천할 향수가 없습니다.</p>
+  {% endif %}
+{% endif %}
+</div>
+{% endblock %}
