@@ -3,10 +3,28 @@
 
 {% block extra-style %}
 <style>
+
+  .full-width {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+  }
+
+  /* 전체 화면 너비를 사용하도록 캐로셀 스타일 조정 */
+  .carousel-container, .carousel-inner, .carousel-item, .carousel-item img {
+      width: 100%;
+      max-width: 100%; /* 최대 너비를 100%로 설정하여 큰 화면에서도 이미지가 확장되지 않도록 함 */
+  }
+
+
+
   .carousel-item img {
     object-fit: contain; /* 이미지 비율을 유지하면서 컨테이너에 맞춤 */
     width: 100%; /* 너비를 컨테이너에 맞춤 */
-    height: 100%; /* 높이를 컨테이너에 맞춤 */
+    height: 70%; /* 높이를 컨테이너에 맞춤 */
     margin: auto; /* 중앙 정렬 */
   }
 
@@ -69,17 +87,18 @@
 {% block content %}
 
 <!-- 메인 배너 -->
-<div id="carouselExample" class="carousel slide">
+<div class="full-width">
+<div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-container">
     <div class="carousel-inner">
-      <div class="carousel-item active" data-bs-interval="1" style="height: 380px; overflow: hidden;">
-        <img src="{% static "img/main-1.jpg" %}" class="d-block w-100" alt="..." style="object-fit: contain; object-position: center;">
+      <div class="carousel-item active" data-bs-interval="2000" style="verflow: hidden;">
+        <img src="{% static "img/main-2.jpg" %}" class="d-block w-100" alt="..." style="object-fit: contain; object-position: center;">
       </div>
-      <div class="carousel-item" data-bs-interval="1" style="height: 380px; overflow: hidden;">
+      <div class="carousel-item" data-bs-interval="2000" style="overflow: hidden;">
         <img src="{% static 'img/perfume-f.jpg' %}" class="d-block w-100" alt="..." style="object-fit: contain;">
       </div>
-      <div class="carousel-item" data-bs-interval="1" style="height: 380px; overflow: hidden;">
-        <img src="{% static 'img/main-2.jpg' %}" class="d-block w-100" alt="..." style="object-fit: contain;">
+      <div class="carousel-item" data-bs-interval="2000" style="overflow: hidden;">
+        <img src="{% static 'img/main-1.jpg' %}" class="d-block w-100" alt="..." style="object-fit: contain;">
       </div>
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
@@ -91,6 +110,7 @@
       <span class="visually-hidden">Next</span>
     </button>
   </div>
+</div>
 </div>
 
 <!-- 카테고리 1 -->
@@ -144,11 +164,11 @@
                   <a href="{% url 'item:detail' item.id %}" role="button">
                     <div class="grid-item">
                       <div class="grid-container" style="width: 18rem;">
-                        <img src="{{item.image}}"  alt="...">
+                        <img src="{{item.image}}"  alt="..." style="display: block; margin: 0 auto; width:100%; height:70%;">
                         <div class="card-body">
-                          <h3>{{item.name}}</h3>
-                          <p>가격: {{ item.price }}원</p>
-                          <p>{{ item.summary }}</p>
+                          <h5>{{item.name}}</h5>
+                          {% comment %} <p>가격: {{ item.price }}원</p> {% endcomment %}
+                          {% comment %} <p>{{ item.summary }}</p> {% endcomment %}
                         </div>
                       </div>
                     </div>
@@ -173,3 +193,4 @@
     </div>
 </div>
   {% endblock%}
+
