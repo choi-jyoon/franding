@@ -1,0 +1,257 @@
+{% extends 'base.html'%}
+{% load static %}
+
+{% block extra-style %}
+<style>
+    #seasonButtons, #genderButtons, #intensityButtons, #priceButtons, #ageButtons, #cat1Buttons, #cat2Buttons, #franding {
+        display: flex;
+        flex-direction: column; /* 버튼들을 세로로 정렬 */
+        align-items: center; /* 버튼들을 중앙으로 정렬 */
+        background-color: transparent; /* 배경색 제거 */
+        border: 2px solid #5B574F; /* 테두리 색 설정 */
+        border-radius: 10px; /* 모서리를 둥글게 */
+        padding: 20px; /* 안쪽 여백 설정 */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 그림자 효과 */
+        max-width: 800px; /* 최대 너비 설정 */
+        margin: auto; /* 가운데 정렬 */
+    }
+    
+    h2 {
+        color: #5B574F; /* 제목 색상 */
+        margin-bottom: 40px; /* 제목 아래 여백 */
+    }
+    
+    .season-btn, .gender-btn, .intensity-btn, .price-btn, .age-btn, .cat1-btn, .cat2-btn {
+        background-color: white;
+        color: #5B574F; /* 버튼 글자색 */
+        border: 2px solid #5B574F; /* 테두리 색 설정 */
+        padding: 10px 24px; /* 안쪽 여백 설정 */
+        margin: 5px 0; /* 버튼 사이의 여백 */
+        border-radius: 5px; /* 버튼 모서리 둥글게 */
+        cursor: pointer; /* 마우스 오버 시 커서 변경 */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 그림자 효과 */
+        transition: background-color 0.3s, transform 0.3s; /* 애니메이션 효과 */
+    }
+    
+    .season-btn:hover, .gender-btn:hover, .intensity-btn:hover, .price-btn:hover, .age-btn:hover, .cat1-btn:hover, .cat2-btn:hover {
+        background-color: #5B574F; /* 마우스 오버 시 버튼 배경색 변경 */
+        color: white;
+        transform: scale(1.05); /* 마우스 오버 시 버튼 확대 */
+    }
+    
+    .btn-block {
+        display: block; /* 버튼을 블록 요소로 설정 */
+        width: 100%; /* 너비를 부모 요소에 맞춤 */
+    }
+
+    .progress-container {
+        border-radius: 10px; /* 모서리를 둥글게 */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 그림자 효과 */
+        max-width: 800px;
+        background-color: whitesmoke;
+        margin: auto; /* 가운데 정렬 */
+        margin-bottom: 40px; /* 하단 여백 설정 */
+        margin-top: 40px; /* 하단 여백 설정 */
+    }
+      
+    .progress-bar {
+        border-radius: 10px; /* 모서리를 둥글게 */
+        width: 1%;
+        height: 30px;
+        background-color: #5B574F;
+        margin-bottom: 40px;
+    }
+      
+    
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="progress-container">
+    <div class="progress-bar" id="myBar"></div>
+</div>
+
+<form method="post" id="perfumeForm">
+    {% csrf_token %}
+    <div id="intensityButtons" style="display: flex; flex-direction: column; align-items: center;">
+        <h2>Q1 추천받고 싶은 향수는?</h2>
+        <button type="button" class="intensity-btn btn-block mb-4" value="subtle">향수는 처음이라, 은은하고 호불호가 갈리지 않는 향</button>
+        <button type="button" class="intensity-btn btn-block mb-4" value="strong">나를 강렬히 표현하고 싶어, 향이 뚜렷했으면 좋겠다!</button>
+    </div>
+    <div id="priceButtons" style="display: none;">
+        <h2>Q2 원하는 향수의 가격대</h2>
+        <button type="button" class="price-btn btn-block mb-4" value="1">7만원 이하</button>
+        <button type="button" class="price-btn btn-block mb-4" value="2">7~15만원</button>
+        <button type="button" class="price-btn btn-block mb-4" value="3">15~22만원</button>
+        <button type="button" class="price-btn btn-block mb-4" value="4">22만원 이상</button>
+        <button type="button" class="price-btn btn-block mb-4" value="5">상관없음</button>
+    </div>
+    <div id="genderButtons" style="display: none;">
+        <h2>Q3 당신의 성별은?</h2>
+        <button type="button" class="gender-btn btn-block mb-4" value="male">남성</button>
+        <button type="button" class="gender-btn btn-block mb-4" value="female">여성</button>
+        <button type="button" class="gender-btn btn-block mb-4" value="unisex">유니섹스</button>
+    </div>
+    <div id="ageButtons" style="display: none;">
+        <h2>Q4 당신의 나이는?</h2>
+        <button type="button" class="age-btn btn-block mb-4" value="~19">~19</button>
+        <button type="button" class="age-btn btn-block mb-4" value="(20~24)">20~24</button>
+        <button type="button" class="age-btn btn-block mb-4" value="(25~29)">25~29</button>
+        <button type="button" class="age-btn btn-block mb-4" value="(30~34)">30~34</button>
+        <button type="button" class="age-btn btn-block mb-4" value="35~">35~</button>
+    </div>
+    <div id="seasonButtons" style="display: none;">
+        <h2>Q5 어느 계절에 사용하실 건가요?</h2>
+        <button type="button" class="season-btn btn-block mb-4" value="spring">봄</button>
+        <button type="button" class="season-btn btn-block mb-4" value="summer">여름</button>
+        <button type="button" class="season-btn btn-block mb-4" value="fall">가을</button>
+        <button type="button" class="season-btn btn-block mb-4" value="winter">겨울</button>
+    </div>
+    <div id="cat1Buttons" style="display: none;">
+        <h2>Q6 다음 중 끌리는 향은?</h2>
+        <button type="button" class="cat1-btn btn-block mb-4" value="시트러스">레몬, 오렌지와 같은 상쾌하고 산뜻한 향</button>
+        <button type="button" class="cat1-btn btn-block mb-4" value="플로럴">장미, 라벤더와 같은 꽃향</button>
+        <button type="button" class="cat1-btn btn-block mb-4" value="스위트">사탕, 초콜릿 같은 달콤한 향</button>
+        <button type="button" class="cat1-btn btn-block mb-4" value="우디">산뜻하고 자연적인 나무 향</button>
+        <button type="button" class="cat1-btn btn-block mb-4" value="머스크">포근하고 따뜻한 은은한 살냄새</button>
+    </div>
+    <div id="cat2Buttons" style="display: none;">
+        <h2>Q7 다음 중 끌리는 단어는?</h2>
+        <button type="button" class="cat2-btn btn-block mb-4" value="Lovely">러블리</button>
+        <button type="button" class="cat2-btn btn-block mb-4" value="Casual">캐주얼</button>
+        <button type="button" class="cat2-btn btn-block mb-4" value="Cool">쿨</button>
+        <button type="button" class="cat2-btn btn-block mb-4" value="Femine">페미닌</button>
+    </div>
+    <div id="franding" style="display: none;">
+        <h2>당신의 향을 franding 중</h2>
+        <img src="https://imgur.com/1LqlYYZ.gif" alt="향수 프랜딩 이미지" style="width: 60%; height: auto;">
+    </div>
+    <input type="hidden" name="intensity" id="intensityInput">
+    <input type="hidden" name="price_range" id="priceInput">
+    <input type="hidden" name="gender" id="genderInput">
+    <input type="hidden" name="age_range" id="ageInput">
+    <input type="hidden" name="season" id="seasonInput">
+    <input type="hidden" name="cat1" id="cat1Input">
+    <input type="hidden" name="cat2" id="cat2Input">
+    <button type="submit" style="display: none;" id="submitBtn">제출</button>
+</form>
+
+{% endblock %}
+
+{% block extra-script %}
+
+<script>
+    // 각 단계별로 진행 상황을 업데이트하는 함수
+    function updateProgressBar(step) {
+        var bar = document.getElementById("myBar");
+        // 7개의 질문에 대한 진행 상태를 계산합니다.
+        var width = step * (100 / 7);
+        bar.style.width = width + '%';
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const intensityButtons = document.querySelectorAll(".intensity-btn");
+        const genderButtons = document.querySelectorAll(".gender-btn");
+        const seasonButtons = document.querySelectorAll(".season-btn");
+        const priceButtons = document.querySelectorAll(".price-btn");
+        const ageButtons = document.querySelectorAll(".age-btn");
+        const cat1Buttons = document.querySelectorAll(".cat1-btn");
+        const cat2Buttons = document.querySelectorAll(".cat2-btn");
+        const seasonInput = document.getElementById("seasonInput");
+        const genderInput = document.getElementById("genderInput");
+        const intensityInput = document.getElementById("intensityInput");
+        const priceInput = document.getElementById("priceInput");
+        const ageInput = document.getElementById("ageInput");
+        const cat1Input = document.getElementById("cat1Input");
+        const cat2Input = document.getElementById("cat2Input");
+        const seasonButtonsDiv = document.getElementById("seasonButtons");
+        const genderButtonsDiv = document.getElementById("genderButtons");
+        const intensityButtonsDiv = document.getElementById("intensityButtons");
+        const priceButtonsDiv = document.getElementById("priceButtons");
+        const ageButtonsDiv = document.getElementById("ageButtons");
+        const cat1ButtonsDiv = document.getElementById("cat1Buttons");
+        const cat2ButtonsDiv = document.getElementById("cat2Buttons");
+        const frandingDiv = document.getElementById("franding");
+        const submitBtn = document.getElementById("submitBtn");
+
+        // 강도 버튼 클릭 이벤트
+        intensityButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                updateProgressBar(1);
+                intensityInput.value = this.value;
+                intensityButtonsDiv.style.display = "none"; // 강도 선택 버튼 숨기기
+                priceButtonsDiv.style.display = "flex"; // 가격 선택 버튼 보이게 하기
+            });
+        });
+
+        // 가격 버튼 클릭 이벤트
+        priceButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                updateProgressBar(2);
+                priceInput.value = this.value;
+                priceButtonsDiv.style.display = "none"; // 가격 선택 버튼 숨기기
+                genderButtonsDiv.style.display = "flex"; // 성별 선택 버튼 보이게 하기
+            });
+        });
+
+        // 성별 버튼 클릭 이벤트
+        genderButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                updateProgressBar(3);
+                genderInput.value = this.value;
+                genderButtonsDiv.style.display = "none"; // 성별 선택 버튼 숨기기
+                ageButtonsDiv.style.display = "flex"; // 나이 선택 버튼 보이게 하기
+            });
+        });
+
+        // 나이 버튼 클릭 이벤트
+        ageButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                updateProgressBar(4);
+                ageInput.value = this.value;
+                ageButtonsDiv.style.display = "none"; // 나이 선택 버튼 숨기기
+                seasonButtonsDiv.style.display = "flex"; // 계절 선택 버튼 보이게 하기
+            });
+        });
+
+        // 계절 버튼 클릭 이벤트
+        seasonButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                updateProgressBar(5);
+                seasonInput.value = this.value;
+                seasonButtonsDiv.style.display = "none";
+                cat1ButtonsDiv.style.display = "flex"; // 카테고리1 버튼 보이게 하기
+            });
+        });
+
+        // 카테고리1 버튼 클릭 이벤트
+        cat1Buttons.forEach(button => {
+            button.addEventListener("click", function() {
+                updateProgressBar(6);
+                cat1Input.value = this.value;
+                cat1ButtonsDiv.style.display = "none";
+                cat2ButtonsDiv.style.display = "flex"; // 카테고리2 버튼 보이게 하기
+            });
+        });
+
+        // 카테고리2 버튼 클릭 이벤트
+        cat2Buttons.forEach(button => {
+            button.addEventListener("click", function() {
+                updateProgressBar(7);
+                cat2Input.value = this.value;
+                cat2ButtonsDiv.style.display = "none"; // 카테고리2 선택 후 폼 제출
+                // franding div 표시
+                frandingDiv.style.display = "flex";
+
+                // 일정 시간(예: 5초) 후에 폼 제출
+                setTimeout(function() {
+                    submitBtn.click(); // 폼 제출
+                }, 5000); // 5초(5000ms) 후에 실행
+            });
+        });
+    });
+</script>
+
+{% endblock %}
