@@ -163,8 +163,8 @@
         </div>
         <form action="{% url 'item:detail' item.id %}" method="post">
             {% csrf_token %}
-            <input type="hidden" id="current-quantity-hidden" value="" name="current-amount">
-            <button class="btn btn-primary mt-3 add-to-cart-btn" type="submit" disabled>장바구니 추가</button>
+            <input type="hidden" id="current-quantity-hidden-float" value="" name="current-amount">
+            <button class="btn btn-primary mt-3 add-to-cart-btn-float" type="submit">장바구니 추가</button>
         </form>
     </div>
 </div>
@@ -191,6 +191,7 @@
             currentQuantity--;
             currentQuantityElement.textContent = currentQuantity;
             document.getElementById('current-quantity-hidden').value = currentQuantity;
+            document.getElementById('current-quantity-hidden-float').value = currentQuantity;
             document.getElementById('current-quantity-float').textContent = currentQuantity;
 
         }
@@ -210,6 +211,7 @@
         currentQuantity++;
         currentQuantityElement.textContent = currentQuantity;
         document.getElementById('current-quantity-hidden').value = currentQuantity;
+        document.getElementById('current-quantity-hidden-float').value = currentQuantity;
         document.getElementById('current-quantity-float').textContent = currentQuantity;
 
     }
@@ -230,6 +232,28 @@
             floatingBanner.classList.remove('show');
         }
     });
+    // 장바구니 담기 버튼 클릭 시 이벤트 처리
+document.querySelector('.add-to-cart-btn').addEventListener('click', function() {
+    // 장바구니에 담긴 상품 수량 가져오기
+    var currentQuantity = document.getElementById('current-quantity').innerText;
 
+    // 팝업창에 표시할 내용 설정
+    var popupContent = '장바구니에 {{ item.name }}이'+ currentQuantity + '개 담겼습니다.';
+
+    // 팝업창 띄우기
+    alert(popupContent);
+});
+
+    // 장바구니 담기 버튼 클릭 시 이벤트 처리
+    document.querySelector('.add-to-cart-btn-float').addEventListener('click', function() {
+    // 장바구니에 담긴 상품 수량 가져오기
+    var currentQuantity = document.getElementById('current-quantity').innerText;
+
+    // 팝업창에 표시할 내용 설정
+    var popupContent = '장바구니에 {{ item.name }}이'+ currentQuantity + '개 담겼습니다.';
+
+    // 팝업창 띄우기
+    alert(popupContent);
+});
 </script>
 {% endblock %}
