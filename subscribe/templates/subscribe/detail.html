@@ -1,0 +1,75 @@
+{% extends 'base.html'%}
+{% load static %}
+
+{% block extra-style %}
+<style>
+    .keyword-button.selected {
+        background-color: #6c757d; /* 활성화됐을 때의 배경색 */
+        color: white; /* 활성화됐을 때의 글자색 */
+    }
+    .grid-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* 내부 컨텐츠를 상하로 균등 분포 */
+        border: 2px solid #f0f0f0;
+        border-radius: 1rem;
+        width: 100%;
+        height: 10rem;
+        margin: 20px;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        transition: 0.3s;
+      }
+    .grid-out-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .my-divider {
+        margin-top: 50px; /* 공간 넓히기 */
+        margin-bottom: 50px; /* 공간 넓히기 */
+        border-top: 1px solid #ccc; /* 구분선 추가 */
+    }
+    .item-card {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .item-card p {
+        width: 100%; /* p 태그가 item-card의 전체 너비를 차지하도록 함 */
+        text-align: left; /* 기본적으로 텍스트를 왼쪽 정렬 */
+    }
+    
+    .item-card .keyword {
+        padding-left:70px; /* keyword 클래스를 가진 p 태그의 텍스트를 가로 중앙에 정렬 */
+    }
+
+    .list-inline-item{
+        padding: 15px;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div>
+    <h3> Franding 향수 구독 서비스 상세 내역 </h3>
+</div>
+
+<div class="my-divider"></div>
+
+<div>
+    <ul class="list-inline text-center" style="margin-top:10px;">
+        <li class="item-card" >
+            <p>{{subscribes.subscribe.datetime}} </p>
+            <p class="keyword">{{subscribes.keyword.word}}</p>
+        </li>
+    </ul>
+    {% comment %} <h5>{{date.year}}년 {{date.month}}월 이달의 키워드</h5> {% endcomment %}
+</div>
+
+
+{% endblock %}
