@@ -2,6 +2,7 @@ from django.shortcuts import render
 from .models import Keyword, Subscribe, SubscribeKeyword
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
+from collections import defaultdict
 # Create your views here.
 
 @login_required
@@ -23,21 +24,30 @@ def index(request):
     subscribe_objects = SubscribeKeyword.objects.filter(subscribe__user = request.user)
     is_subscribed = request.user.subscribe_set.filter(datetime__year = now.year, datetime__month = now.month).exists()
     
+    # subscribe ID를 키로, keyword 리스트를 값으로 가지는 딕셔너리
+    subscriptions = defaultdict(list)
+
+    for sub_keyword in subscribe_objects:
+        # subscribe ID를 키로 사용하여 keyword 추가
+        subscriptions[sub_keyword.subscribe].append(sub_keyword.keyword.word)
+        
+    subscriptions = dict(subscriptions)
     context = {
         'keywords': keyword_objects,
         'date': now,
-        'subscribes' : subscribe_objects,
+        'subscribes' : subscriptions,
         'is_subscribed': is_subscribed
     }
     return render(request, 'subscribe/index.html', context)
 
 @login_required
 def detail(request, pk):
-    now = timezone.now()
     
-    subscribe_objects = SubscribeKeyword.objects.get(pk=pk)
+    subscribe = Subscribe.objects.get(pk=pk)
+    sub_keyword = SubscribeKeyword.objects.filter(subscribe=subscribe)
     
     context = {
-        'subscribes' : subscribe_objects,
+        'subcribe_object':subscribe,
+        'subscriptions' : sub_keyword,
     }
     return render(request, 'subscribe/detail.html', context)

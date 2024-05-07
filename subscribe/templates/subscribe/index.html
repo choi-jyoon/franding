@@ -44,7 +44,8 @@
     }
     
     .item-card .keyword {
-        padding-left:70px; /* keyword 클래스를 가진 p 태그의 텍스트를 가로 중앙에 정렬 */
+        text-align: left; /* 기본적으로 텍스트를 왼쪽 정렬 */
+        
     }
 
     .list-inline-item{
@@ -86,12 +87,12 @@
 <div>
     <div style="margin-bottom:3rem;">
     <h5> 이전 구독 내역 </h5>
-    </div>
-    <ul class="list-inline text-center" style="margin-top:10px;">
-        {% for subscribe in subscribes %}
+</div>
+    <ul class="list-inline text-center" >
+        {% for subscribe, keyword_list in subscribes.items %}
         <li class="item-card"  onclick="location.href='{% url 'subscribe:subscribe_detail' subscribe.id %}';">
-            <p>{{subscribe.subscribe.datetime}} </p>
-            <p class="keyword">{{subscribe.keyword.word}}</p>
+            <p>{{subscribe.datetime}} </p>
+            <p class="keyword">{{keyword_list|join:", "}}</p>
         </li>
         {% endfor%}
     </ul>
