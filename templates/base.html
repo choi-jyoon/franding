@@ -19,16 +19,21 @@
         .content {
             flex: 1 0 auto; /* 콘텐츠가 차지할 수 있는 최대 공간을 차지하도록 설정 */
             margin-top: 70px; /* 네비바 높이만큼 컨텐츠 위에 마진 추가 */
-            {% comment %} margin-bottom: 50/px; /* 푸터 높이만큼 컨텐츠 아래에 마진 추가 */ {% endcomment %}
+            margin-bottom: 150/px; /* 푸터 높이만큼 컨텐츠 아래에 마진 추가 */
         }
         .footer {
             background-color: #f8f9fa; /* 밝은 회색 */
             flex-shrink: 0; /* 푸터가 축소되지 않도록 설정 */
+            height:150px;
+            margin-top:150px;
+            padding:30px;
         }
         .navbar {
             background-color: #5B574F !important;
             height: 70px; /* 네비바 높이 설정 */
+            margin-bottom: 70px;
         }
+               
         .navbar-part, .nav-part {
             display: flex;
             flex: 1; /* 네비게이션의 세 부분이 동일한 공간을 차지하도록 함 */
@@ -96,7 +101,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid justify-content-center">
             <!-- 좌측 항목들 -->
             <div class="navbar-part">
@@ -169,11 +174,11 @@
                 <li class="nav-item dropdown">
                     {% if user.is_active %}
                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <!-- 프로필 이미지 표시 -->
+                        <!-- 프로필 이미지, 이름 표시 -->
                         {% if profile_img and profile_img.strip %}
-                            <img src="{{profile_img}}" alt="profile_img" class="nav-profile-img"></i>&nbsp;{% firstof user.get_short_name user.get_username %}
+                            <img src="{{profile_img}}" alt="profile_img" class="nav-profile-img"></i>&nbsp;{{ user.last_name }}{{ user.first_name }}
                         {% else %}
-                            <i class="fas fa-user-circle"></i>&nbsp;{% firstof user.get_short_name user.get_username %}
+                            <i class="fas fa-user-circle"></i>&nbsp;{{ user.last_name }}{{ user.first_name }}
                         {% endif %}
                     </a>
                     <ul class="dropdown-menu-start dropdown-menu " aria-labelledby="navbarUserDropdown">
@@ -203,7 +208,7 @@
     </div>
 
     {% block footer %}
-    <footer class="footer mt-auto py-3 bg-light">
+    <footer class="footer bg-light">
         <div class="container text-center">
             <p>© 2024 Franding. All rights reserved.</p>
             <p>Follow us: <a href="#">Facebook</a> | <a href="#">Twitter</a> | <a href="#">Instagram</a></p>
