@@ -12,8 +12,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 def list_item(request):
-    items = Item.objects.all()
-    
+
+    items= Item.objects.order_by('name','size').distinct('name')
     # 체크박스 필터링 기능 추가
     category1_ids = request.GET.getlist('cat1')
     category2_ids = request.GET.getlist('cat2')
@@ -111,12 +111,14 @@ def detail_list_item(request,item_id):
             cart_item.save()
             context={
             "item":item
+
             }
         else:
             # 없다면 새로 생성
             Cart.objects.create(user=user, item=item, amount=int(request.POST['current-amount']))
             context={
             "item":item
+
             }
         return redirect(request.path)
     else:
