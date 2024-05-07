@@ -52,12 +52,17 @@ def cart_detail(request, total_price=0):
 
     
     # 상품 추천
-    product_paid_for = Cart.objects.filter(status=True).values('item_id').annotate(total_amount = Sum('amount')).order_by('-total_amount')[:3]
+
+    # 1. 가장 많이 팔린 상품
+    product_paid_for = Cart.objects.filter(status=True).values('item_id').annotate(total_amount = Sum('amount')).order_by('-total_amount')[:1]
     best_items = []
 
     for item_id in product_paid_for:
         best_i = Item.objects.get(id = item_id['item_id']) # id가 item_id인 Item을 가져온다.
-        best_items.append(best_i)    
+        best_items.append(best_i)
+
+
+    #    
     
     
     context = {
