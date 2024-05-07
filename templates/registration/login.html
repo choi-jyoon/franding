@@ -2,14 +2,32 @@
 
 {% load static %}
 
-{% block title %}Post All{% endblock %}
+{% block title %}Login{% endblock %}
 
 {% load widget_tweaks %}
 
-{%block content%}
+{% block extra-style %}
+<style>
+    .login-form {
+        max-width: 500px;
+        margin: auto; /* 가운데 정렬 */
+    }
+    label {
+        display: inline-block; 
+        margin-bottom: 5px;
+        margin-right: 20px; /* 라벨과 다음 요소 사이의 간격을 조정합니다. 필요에 따라 값 조정 */
+        font-weight: bold;
+    }
+    .form-control {
+        width: 300px; 
+        display: inline-block; /* 입력창을 인라인 블록 요소로 만들어 라벨 옆에 배치 */
+    }
+    
+</style>
+{% endblock%}
 
-<h1>Please Login</h1>
-<p>Please enter your id and password</p>
+{% block content %}
+
 
 {% if form.error %}
 <div class="alert alert-danger">
@@ -17,27 +35,23 @@
     {{form.errors}}
 </div>
 {% endif %}
-<form action="." method="post" class="card pt-3">{% csrf_token %}
+<form action="." method="post" class="card pt-3 login-form" style="padding-left: 20px;">
+    {% csrf_token %}
+    <h1 style="margin: auto; margin-bottom:30px;">Login</h1>
+    {{ form.as_p }}
 
-    <div class="form-group row">
-        {{ form.username|add_label_class:"col-form-label col-sm-2 ml-3 font-weight-bold" }}
-        <div class="col-sm-5">
-            {{ form.username|add_class:"form-control"|attr:"autofocus" }}
-        </div>
-    </div>
-    <div class="form-group row">
-        {{ form.password|add_label_class:"col-form-label col-sm-2 ml-3 font-weight-bold" }}
-        <div class="col-sm-5">
-            {{ form.password|add_class:"form-control" }}
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="offset-sm-2 col-sm-5">
-            <input type="submit" value="Log in" class="btn btn-info"/>
+    <div class="form-group" style="margin-top: 16px; padding-top:16px;">
+        <div class="text-center" style="margin-bottom:10px">
+            <input type="submit" value="Log in" class="btn btn-success"/>
             <input type="hidden" name="next" value="{{ next }}" />
         </div>
     </div>
 
 </form>
+
+<div class="login-links text-center mt-3">
+    <a href="#">아이디 찾기</a> |
+    <a href="#">비밀번호 찾기</a> |
+    <a href="{% url 'register' %}">회원가입</a>
+</div>
 {% endblock %}

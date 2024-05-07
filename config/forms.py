@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from mypage.models import UserAddInfo
+from django.utils.translation import gettext_lazy as _
 
 class UserCreateForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
@@ -52,3 +53,16 @@ class UserAddInfoForm(forms.ModelForm):
         self.fields['phone'].widget.attrs.update({
             'placeholder': '010-0000-0000',  
         })
+        
+        
+
+class CustomAuthenticationForm(AuthenticationForm):
+    username = forms.CharField(label="ID", max_length=255, widget=forms.TextInput({
+        'class': 'form-control',
+        'placeholder': 'ID',
+    }))
+    password = forms.CharField(label=_("Password"), strip=False, widget=forms.PasswordInput({
+        'autocomplete': 'current-password',
+        'class': 'form-control',
+        'placeholder': '비밀번호',
+    }))
