@@ -4,27 +4,14 @@
 
 {% block extra-style %}
 <style>
-    .item-card {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-        padding: 15px;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
     .item-image {
-        width: 20vh;
-        height: 100px;
+        width: 70px;
+        height: 70px;
         object-fit: cover;
         margin-right: 20px;
-        border-radius: 5px;
     }
 
-    .item-details {
-        flex: 1;
-    }
+
 
     .item-details div {
         margin-bottom: 10px;
@@ -70,6 +57,7 @@
         /* Flexbox를 사용하여 내부 요소들을 가로로 나열 */
         justify-content: space-around;
         /* 요소 사이에 균등한 간격을 둠 */
+
     }
 
     .form-container form {
@@ -85,6 +73,7 @@
     .bottom-container {
         text-align: center;
         /* 컨테이너 내의 내용을 중앙 정렬합니다. */
+        margin-top: 30px;
     }
 
     .button-container {
@@ -108,12 +97,61 @@
         line-height: 30px;
         /* 글자 수직 중앙 정렬 */
     }
+
+    .best-item-image {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .best-item {
+        align-items: center;
+        margin-bottom: 20px;
+        margin-left: 80px;
+        padding: 15px;
+        background: #fff;
+        border-radius: 8px;
+        width: 280px;
+        position: relative;
+    }
+
+    .best-item-list {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #fff;
+        border-radius: 8px;
+        width: 280px;
+        position: relative;
+    }
+
+    .img-box {
+        display: flex;
+        flex-direction: column;
+
+    }
+
+    .item-details {
+        display: flex;
+        align-items: center;
+        /* 요소들을 세로 중앙에 배치 */
+        border-top: 1px solid #000;
+        /* 위쪽 선 추가 */
+        border-bottom: 1px solid #000;
+        /* 아래쪽 선 추가 */
+        justify-content: space-between;
+        width: 1000px;
+        height: 100px;
+    }
 </style>
 
 {% endblock%}
 
 {% block content %}
-<div class="row justify-content-center mt-4">
+<div class="">
     {% if messages %}
     <ul class="messages">
         {% for message in messages %}
@@ -132,34 +170,57 @@
         </div>
     </div>
 
-    <div class="my-divider"></div>
 
-    <div class="item-card list-group-item">
-        <form id="check-item" method="GET" action="{% url 'payment:payment_list' %}" style="display: inline;">
-            {% for show in cart %}
 
-            <!-- Form fields here -->
-            <input class="form-check-input me-4" type="checkbox" name="checkbox" value="{{ show.item.id }}"
-                id="firstCheckboxStretched">
-            <label class="form-check-label" for="firstCheckboxStretched">
-                <img src="{{ show.item.image }}" alt="{{ show.item.name }}" class="item-image">
-            </label>
+    <div class="form-container">
+        <div class="my-divider">
+            <form id="check-item" method="GET" action="{% url 'payment:payment_list' %}" style="display: inline;">
+                {% for show in cart %}
 
-            <div class="item-details">
-                <div class="item_name">{{ show.item.name }}</div>
-                <div class="amount">
-                    <input type="hidden" id="csrfToken" value="{{csrf_token}}">
-                    <button type="button" onclick="modifyCartAmount('{{show.item.id}}', -1)"
-                        class="btn btn-secondary">-</button>
-                    <span id="{{show.item.id}}">{{show.amount}}</span>
-                    <button type="button" onclick="modifyCartAmount('{{show.item.id}}', 1)"
-                        class="btn btn-secondary">+</button>
+                <!-- Form fields here -->
+                <div class="item-details">
+                    <div class="img-box">
+                        <input class="form-check-input me-4" type="checkbox" name="checkbox" value="{{ show.item.id }}"
+                            id="firstCheckboxStretched">
+                        <label class="form-check-label" for="firstCheckboxStretched">
+                            <img src="{{ show.item.image }}" alt="{{ show.item.name }}" class="item-image">
+                        </label>
+                    </div>
+
+
+                    <div class="name-box">
+                        {{ show.item.name }}
+
+                    </div>
+                    <div class="amount">
+                        <input type="hidden" id="csrfToken" value="{{csrf_token}}">
+                        <button type="button" onclick="modifyCartAmount('{{show.item.id}}', -1)"
+                            class="btn btn-secondary">-</button>
+                        <span id="{{show.item.id}}">{{show.amount}}</span>
+                        <button type="button" onclick="modifyCartAmount('{{show.item.id}}', 1)"
+                            class="btn btn-secondary">+</button>
+                    </div>
+                    <div class="price">{{ show.item.price|intcomma }}원</div>
                 </div>
-                <div>{{ show.item.summary}}</div>
-                <div>{{ show.item.price|intcomma }}원</div>
+                {% endfor%}
+            </form>
+        </div>
+
+
+        <!-- 추천 상품 목록 -->
+        <div class="best-item">
+            <h3>이 달의 추천 상품</h3>
+            {% for product in best_items %}
+            <div class="best-item-list">
+                <a href="">
+                    <img src="{{ product.image }}" alt="{{ product.name }}" class="best-item-image">
+                </a>
+                <ul><a href="">{{ product }}</a></ul>
+                <ul>{{ product.summary }}</ul>
+                <ul>{{ product.price|intcomma }}원</ul>
             </div>
-            {% endfor%}
-        </form>
+            {% endfor %}
+        </div>
     </div>
 
     <div class="bottom-container">

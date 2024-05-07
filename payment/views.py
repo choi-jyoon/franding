@@ -60,7 +60,10 @@ def payment_list(request, total_price=0):
         # 배송정보를 session에 저장
         request.session['delivery_info'] = {
             'receiver': request.POST.get('receiver'),
+            'receiver_postcode': request.POST.get('receiver_postcode'),
             'receiver_address': request.POST.get('receiver_address'),
+            'receiver_detailAddress': request.POST.get('receiver_detailAddress'),
+            'receiver_extraAddress': request.POST.get('receiver_extraAddress'),
             'receiver_phone': request.POST.get('receiver_phone'),
             'receiver_email': request.POST.get('receiver_email')
         }
@@ -123,7 +126,10 @@ def paysuccess(request):
     # 배송 정보 생성
     delivery_info = Delivery.objects.create(
         receiver=deliveryinfo_session['receiver'],
+        receiver_postcode=deliveryinfo_session['receiver_postcode'],
         receiver_address=deliveryinfo_session['receiver_address'],
+        receiver_detailAddress=deliveryinfo_session['receiver_detailAddress'],
+        receiver_extraAddress=deliveryinfo_session['receiver_extraAddress'],
         receiver_phone=deliveryinfo_session['receiver_phone'],
         receiver_email=deliveryinfo_session['receiver_email']
     )
