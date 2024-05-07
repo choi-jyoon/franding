@@ -73,6 +73,7 @@
     .bottom-container {
         text-align: center;
         /* 컨테이너 내의 내용을 중앙 정렬합니다. */
+        margin-top: 30px;
     }
 
     .button-container {
@@ -169,39 +170,41 @@
         </div>
     </div>
 
-    <div class="my-divider"></div>
+
 
     <div class="form-container">
-        <form id="check-item" method="GET" action="{% url 'payment:payment_list' %}" style="display: inline;">
-            {% for show in cart %}
+        <div class="my-divider">
+            <form id="check-item" method="GET" action="{% url 'payment:payment_list' %}" style="display: inline;">
+                {% for show in cart %}
 
-            <!-- Form fields here -->
-            <div class="item-details">
-                <div class="img-box">
-                    <input class="form-check-input me-4" type="checkbox" name="checkbox" value="{{ show.item.id }}"
-                        id="firstCheckboxStretched">
-                    <label class="form-check-label" for="firstCheckboxStretched">
-                        <img src="{{ show.item.image }}" alt="{{ show.item.name }}" class="item-image">
-                    </label>
+                <!-- Form fields here -->
+                <div class="item-details">
+                    <div class="img-box">
+                        <input class="form-check-input me-4" type="checkbox" name="checkbox" value="{{ show.item.id }}"
+                            id="firstCheckboxStretched">
+                        <label class="form-check-label" for="firstCheckboxStretched">
+                            <img src="{{ show.item.image }}" alt="{{ show.item.name }}" class="item-image">
+                        </label>
+                    </div>
+
+
+                    <div class="name-box">
+                        {{ show.item.name }}
+
+                    </div>
+                    <div class="amount">
+                        <input type="hidden" id="csrfToken" value="{{csrf_token}}">
+                        <button type="button" onclick="modifyCartAmount('{{show.item.id}}', -1)"
+                            class="btn btn-secondary">-</button>
+                        <span id="{{show.item.id}}">{{show.amount}}</span>
+                        <button type="button" onclick="modifyCartAmount('{{show.item.id}}', 1)"
+                            class="btn btn-secondary">+</button>
+                    </div>
+                    <div class="price">{{ show.item.price|intcomma }}원</div>
                 </div>
-
-
-                <div class="name-box">
-                    {{ show.item.name }}
-
-                </div>
-                <div class="amount">
-                    <input type="hidden" id="csrfToken" value="{{csrf_token}}">
-                    <button type="button" onclick="modifyCartAmount('{{show.item.id}}', -1)"
-                        class="btn btn-secondary">-</button>
-                    <span id="{{show.item.id}}">{{show.amount}}</span>
-                    <button type="button" onclick="modifyCartAmount('{{show.item.id}}', 1)"
-                        class="btn btn-secondary">+</button>
-                </div>
-                <div class="price">{{ show.item.price|intcomma }}원</div>
-            </div>
-            {% endfor%}
-        </form>
+                {% endfor%}
+            </form>
+        </div>
 
 
         <!-- 추천 상품 목록 -->
@@ -218,8 +221,6 @@
             </div>
             {% endfor %}
         </div>
-
-
     </div>
 
     <div class="bottom-container">
