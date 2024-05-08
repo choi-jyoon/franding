@@ -4,7 +4,7 @@
 {% block extra-style %}
 <style>
     body {
-        background-image: url('../../../static/img/logo.jpg');
+        background-image:url("{{item.back_image}}");
     }
 
     .h-100 {
@@ -107,16 +107,18 @@
         align-items: center;
         justify-content: center;
     }
+
 </style>
 {% endblock %}
 {% load static%}
 {% block content %}
-
+<div hidden><img src="{{item.back_image}}" alt="" ></div>
 <div class="cont">
     <div class="top-box">
         <div class="image-cont">
             <!-- 이미지를 여기에 추가하세요 -->
             <img src="{{item.image}}" alt="{{ item.name }}" class="img-fluid">
+            
         </div>
         <div class="right-box">
             <div class="right-box-item center">
@@ -149,7 +151,6 @@
     <div>
         <!-- 리뷰 칸 입니다.-->
     </div>
-</div>
 <!-- 플로팅배너-->
 <div id="floating-banner" class="floating-banner">
     <div class="banner-content">
@@ -168,7 +169,7 @@
         </form>
     </div>
 </div>
-
+</div>
 
 
 {% endblock %}
@@ -215,7 +216,6 @@
         document.getElementById('current-quantity-float').textContent = currentQuantity;
 
     }
-s
     document.querySelector('.increase-btn').addEventListener('click', increaseQuantity);
     document.querySelector('.increase-btn-float').addEventListener('click', increaseQuantity);
 
@@ -233,6 +233,7 @@ s
         }
     });
     // 장바구니 담기 버튼 클릭 시 이벤트 처리
+
 document.querySelector('.add-to-cart-btn').addEventListener('click', function() {
     // 장바구니에 담긴 상품 수량 가져오기
     var currentQuantity = document.getElementById('current-quantity').innerText;
@@ -243,7 +244,7 @@ document.querySelector('.add-to-cart-btn').addEventListener('click', function() 
     // 팝업창 띄우기
     alert(popupContent);
 });
-
+    
     // 장바구니 담기 버튼 클릭 시 이벤트 처리
     document.querySelector('.add-to-cart-btn-float').addEventListener('click', function() {
     // 장바구니에 담긴 상품 수량 가져오기
