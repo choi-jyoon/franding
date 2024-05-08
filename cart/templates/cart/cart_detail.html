@@ -183,7 +183,9 @@
                         <input class="form-check-input me-4" type="checkbox" name="checkbox" value="{{ show.item.id }}"
                             id="firstCheckboxStretched">
                         <label class="form-check-label" for="firstCheckboxStretched">
-                            <img src="{{ show.item.image }}" alt="{{ show.item.name }}" class="item-image">
+                            <a href="{% url 'item:detail' show.item.id %}">
+                                <img src="{{ show.item.image }}" alt="{{ show.item.name }}" class="item-image">
+                            </a>
                         </label>
                     </div>
 
@@ -212,10 +214,10 @@
             <h3>이 달의 추천 상품</h3>
             {% for product in best_items %}
             <div class="best-item-list">
-                <a href="">
+                <a href="{% url 'item:detail' product.id %}">
                     <img src="{{ product.image }}" alt="{{ product.name }}" class="best-item-image">
                 </a>
-                <ul><a href="">{{ product }}</a></ul>
+                <ul><a href="{% url 'item:detail' product.id %}">{{ product }}</a></ul>
                 <ul>{{ product.summary }}</ul>
                 <ul>{{ product.price|intcomma }}원</ul>
             </div>
