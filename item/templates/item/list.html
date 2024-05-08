@@ -162,16 +162,16 @@
             <!-- 가격 필터링-->
             <form method="get" action="{% url 'item:item_list' %}">
                 <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn " name="price" value="1">0 ~ 70,000</button>
+                    <button type="submit" class="btn priceFilter1" name="price" value="1">0 ~ 70,000</button>
                 </div>
                 <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn " name="price" value="2">70,000 ~ 150,000</button>
+                    <button type="submit" class="btn priceFilter2" name="price" value="2">70,000 ~ 150,000</button>
                 </div>
                 <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn " name="price" value="3">150,000 ~ 220,000</button>
+                    <button type="submit" class="btn priceFilter3" name="price" value="3">150,000 ~ 220,000</button>
                 </div>
                 <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn " name="price" value="4">220,000 ~ 290,000</button>
+                    <button type="submit" class="btn priceFilter4" name="price" value="4">220,000 ~ 290,000</button>
                 </div>
                 
             </form>
@@ -275,7 +275,6 @@
 
         
     });
-
 
 
 //가격 카테고리 설정 버튼 이벤트 스크립트 들어갈예정

@@ -102,9 +102,9 @@ def detail_list_item(request,item_id):
     if request.method == 'POST':
         item = Item.objects.get(id=item_id)
         user = request.user
-
+        
         # 장바구니에 동일한 상품이 있는지 확인
-        cart_item = Cart.objects.filter(user=user, item=item).first()
+        cart_item = Cart.objects.filter(user=user, item=item,status=False).first()
         if cart_item and cart_item.status is False:
             # 있다면 수량 증가
             cart_item.amount = cart_item.amount +int(request.POST['current-amount'])
