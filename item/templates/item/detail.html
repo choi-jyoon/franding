@@ -5,6 +5,7 @@
 <style>
     body {
         background-image:url("{{item.back_image}}");
+
     }
 
     .h-100 {
@@ -136,7 +137,7 @@
                 </div>
                 <form action="{% url 'item:add' item.id %}" method="post">
                     {% csrf_token %}
-                    <input type="hidden" id="current-quantity-hidden" value="" name="current-amount">
+                    <input type="hidden" id="current-quantity-hidden" value="1" name="current-amount">
                     <button class="btn btn-primary mt-3 add-to-cart-btn" type="submit" >장바구니에 담기</button>
                 </form>
             </div>
@@ -164,7 +165,7 @@
         </div>
         <form action="{% url 'item:add' item.id %}" method="post">
             {% csrf_token %}
-            <input type="hidden" id="current-quantity-hidden-float" value="" name="current-amount">
+            <input type="hidden" id="current-quantity-hidden-float" value="1" name="current-amount">
             <button class="btn btn-primary mt-3 add-to-cart-btn-float" type="submit" >장바구니 추가</button>
         </form>
     </div>
