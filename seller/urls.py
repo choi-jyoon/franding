@@ -5,9 +5,7 @@ from .views import ItemListView
 
 app_name='seller'
 
-
 urlpatterns = [
-    # 판매자 기능을 위한 URL 패턴
     path('', views.seller_page, name='seller_index'),  # 판매자 페이지
     path('item-create/', views.item_create, name='item_create'),  # 상품 추가 페이지
     path('item-list/', ItemListView.as_view(), name='item_list'),  # 상품 조회 페이지
