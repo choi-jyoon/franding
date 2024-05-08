@@ -55,7 +55,7 @@
                 <h3 class="order-title">"{{user}}"의 주문내역</h3>
                 <hr class="mt-4 border-t-2 border-gray-500 md:mt-6">
                 
-                {% if orders.has_other_pages %}
+                {% if orders %}
                 <div class="row">
                     {% for order in orders %}
                     <div class="card mb-4">
