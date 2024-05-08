@@ -3,18 +3,27 @@
 
 {% block extra-style %}
 <style>
+    .keyword-button.selected {
+        background-color: #6c757d; /* 활성화됐을 때의 배경색 */
+        color: white; /* 활성화됐을 때의 글자색 */
+    }
     .grid-container {
         display: flex;
         flex-direction: column;
         justify-content: space-between; /* 내부 컨텐츠를 상하로 균등 분포 */
         border: 2px solid #f0f0f0;
         border-radius: 1rem;
-        width: 80vh;
+        width: 100%;
         height: 10rem;
-        margin: 10px;
+        margin: 20px;
         box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
         transition: 0.3s;
       }
+    .grid-out-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
     .my-divider {
         margin-top: 50px; /* 공간 넓히기 */
         margin-bottom: 50px; /* 공간 넓히기 */
@@ -29,55 +38,100 @@
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
+    .item-card p {
+        width: 100%; /* p 태그가 item-card의 전체 너비를 차지하도록 함 */
+        text-align: left; /* 기본적으로 텍스트를 왼쪽 정렬 */
+    }
+    
+    .item-card .keyword {
+        text-align: left; /* 기본적으로 텍스트를 왼쪽 정렬 */
+        
+    }
+
+    .list-inline-item{
+        padding: 15px;
+    }
+
 </style>
 {% endblock %}
 
 {% block content %}
 <div>
-    <h3> 구독 페이지 </h3>
+    <h3> Franding 향수 구독 서비스 </h3>
+    <p style="margin-top: 20px;">여러분을 표현할 수 있는 2-3개의 키워드를 선택해 주세요. franding은 여러분의 선택을 토대로 여러분이 매혹될 수 있는 맞춤형 향수를 엄선하여 제공합니다. <br>Franding과 함께 향기로운 여정을 시작하세요.</p>
 </div>
 
 <div class="my-divider"></div>
 
 <div>
-    <h5> 이달의 키워드 </h5>
+    <h5>{{date.year}}년 {{date.month}}월 이달의 키워드</h5>
 </div>
-
-<div class="grid-container">
-    <ul class="list-inline text-center">
-        <li class="list-inline-item">
-            <a href="item/?cat1=1" class="btn btn-secondary rounded-pill">Citrus</a>
-        </li>
-        <li class="list-inline-item">
-            <a href="item/?cat1=2" class="btn btn-secondary rounded-pill">Floral</a>
-        </li>
-        <li class="list-inline-item">
-            <a href="item/?cat1=3" class="btn btn-secondary rounded-pill">Sweet</a>
-        </li>
-        <li class="list-inline-item">
-            <a href="item/?cat1=4" class="btn btn-secondary rounded-pill">Woody</a>
-        </li>
-        <li class="list-inline-item">
-            <a href="item/?cat1=5" class="btn btn-secondary rounded-pill">Musk</a>
-        </li>
-    </ul>
-</div>
-
+<form id="keyword-form" method="post" action="{% url 'subscribe:index' %}">
+    {% csrf_token %}
+    <div class="grid-out-container">
+        <div class="grid-container">
+            <ul class="list-inline text-center">
+                {% for keyword in keywords %}
+                <li class="list-inline-item">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill keyword-button" data-id="{{ keyword.id }}">{{ keyword.word }}</button>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <input type="hidden" name="selected_keywords" id="selected-keywords" value="">
+        <button type="submit" class="btn btn-primary" style="margin-top:30px;"{% if is_subscribed %} disabled {% endif %}>구독 신청</button>
+    </div>
+</form>
 <div class="my-divider"></div>
 
 <div>
+    <div style="margin-bottom:3rem;">
     <h5> 이전 구독 내역 </h5>
-    <ul class="list-inline text-center">
-        <div class="item-card">
-            <li>1월</li>
-        </div>
-        <div class="item-card">
-            <li>1월</li>
-        </div>
-        <div class="item-card">
-            <li>1월</li>
-        </div>
+</div>
+    <ul class="list-inline text-center" >
+        {% for subscribe, keyword_list in subscribes.items %}
+        <li class="item-card"  onclick="location.href='{% url 'subscribe:subscribe_detail' subscribe.id %}';">
+            <p>{{subscribe.datetime}} </p>
+            <p class="keyword">{{keyword_list|join:", "}}</p>
+        </li>
+        {% endfor%}
     </ul>
 </div>
 
+{% endblock%}
+
+{% block extra-script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const keywordButtons = document.querySelectorAll('.keyword-button');
+        const selectedKeywordsInput = document.getElementById('selected-keywords');
+    
+        keywordButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const selectedKeywords = selectedKeywordsInput.value ? selectedKeywordsInput.value.split(',') : [];
+    
+                if (button.classList.contains('selected')) {
+                    // 이미 선택된 경우, 선택 해제
+                    button.classList.remove('selected');
+                    const index = selectedKeywords.indexOf(button.getAttribute('data-id'));
+                    if (index > -1) {
+                        selectedKeywords.splice(index, 1); // 선택 해제된 키워드 ID 제거
+                    }
+                } else {
+                    if (selectedKeywords.length < 3) {
+                        // 선택된 키워드가 3개 미만인 경우, 선택
+                        button.classList.add('selected');
+                        selectedKeywords.push(button.getAttribute('data-id'));
+                    } else {
+                        // 이미 3개 선택된 상태에서는 추가 선택 불가
+                        alert('최대 3개까지만 선택 가능합니다.');
+                    }
+                }
+    
+                // 선택된 키워드 ID를 숨겨진 input 필드에 업데이트
+                selectedKeywordsInput.value = selectedKeywords.join(',');
+            });
+        });
+    });
+</script>
 {% endblock%}

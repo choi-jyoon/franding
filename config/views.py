@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import login
 from django.views.generic import CreateView, TemplateView
 from django.urls import reverse_lazy
 from item.models import Item
 from django.db.models import Q
 from django.core.paginator import Paginator
-from .forms import UserAddInfoForm, UserCreateForm
+from .forms import UserAddInfoForm, UserCreateForm, CustomAuthenticationForm
 # Create your views here.
 
 def index(request):
@@ -57,6 +58,20 @@ def register(request):
 class UserCreateDoneTV(TemplateView):
     template_name = 'registration/register_done.html'
     
+def custom_login(request):
+    if request.method == 'POST':
+        form = CustomAuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            # 성공적으로 로그인 후 리다이렉트할 페이지
+            return redirect('home')
+    else:
+        context = {
+            'form' : CustomAuthenticationForm()
+        }
+    return render(request, 'registration/login.html', context)
+    
 def searchItem(request):
     search_word = request.POST.get('search_word', '')
     select_option = request.POST.get('select_option', '')
@@ -79,10 +94,10 @@ def searchItem(request):
     elif select_option == 'desc':
         objects = Item.objects.filter(Q(summary__icontains=search_word)|Q(description__icontains=search_word))
         
-    paginator = Paginator(objects, 16) # 한 페이지 당 20개의 아이템이 표시되도록 설정합니다.
+    paginator = Paginator(objects, 16) 
 
-    page_number = request.GET.get('page', 1) # URL에서 page 넘버를 가져옵니다.
-    page_obj = paginator.get_page(page_number) # 해당 페이지의 아이템들만 page_obj에 저장합니다.
+    page_number = request.GET.get('page', 1) 
+    page_obj = paginator.get_page(page_number) 
 
     context = {
         'select_option':select_option,

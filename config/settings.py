@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'review',
     'seller',
     'cart',
-    'bootstrap4',
+    # 'bootstrap4',
     'payment',
     'event',
     'subscribe',
@@ -172,7 +172,7 @@ ACCOUNT_LOGOUT_ON_GET = True
 MEDIA_URL='/media/'
 MEDIA_ROOT=BASE_DIR/'media'
 
-
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 
 

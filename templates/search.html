@@ -6,35 +6,45 @@
     .grid-container {
         display: flex;
         flex-direction: column;
-        justify-content: space-between; /* 내부 컨텐츠를 상하로 균등 분포 */
+        {% comment %} justify-content: space-between; /* 내부 컨텐츠를 상하로 균등 분포 */ {% endcomment %}
         border: 2px solid #f0f0f0;
         border-radius: 1rem;
         width: 18rem;
-        height: 25rem;
+        height: 30rem;
         margin: 10px;
         box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
         transition: 0.3s;
-      }
-      
-      .card-body {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between; /* 내부 텍스트를 하단으로 정렬 */
-        padding: 2px 16px;
-      }  
+    }
     
-      .grid-container:hover {
-          box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); /* 마우스를 올렸을 때 그림자 효과 변경 */
-      }
-    
-      .grid-item img {
-          width: 100%; /* 이미지를 grid-container의 너비에 맞춤 */
-          height: auto; /* 이미지의 비율을 유지하면서 높이 조정 */
-      }
-      .my-divider {
-        margin-top: 50px; /* 공간 넓히기 */
-        margin-bottom: 50px; /* 공간 넓히기 */
-        border-top: 1px solid #ccc; /* 구분선 추가 */
+    .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* 내부 텍스트를 하단으로 정렬 */
+    padding-left: 16px;
+    }  
+
+    .grid-container:hover {
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); /* 마우스를 올렸을 때 그림자 효과 변경 */
+    }
+
+    .grid-item img {
+        display: block; 
+        width:100%; 
+        height:18rem;
+    }
+
+    .my-divider {
+    margin-top: 50px; /* 공간 넓히기 */
+    margin-bottom: 50px; /* 공간 넓히기 */
+    border-top: 1px solid #ccc; /* 구분선 추가 */
+    }
+
+    .summary{
+        width: 200px; /* 고정된 너비 필요 */
+        white-space: nowrap; /* 텍스트를 한 줄로 표시 */
+        overflow: hidden; /* 넘치는 텍스트 숨기기 */
+        text-overflow: ellipsis; /* 넘치는 텍스트를 ... 으로 표시 */
+        padding-right: 5px;
     }
     
 </style>
@@ -76,15 +86,15 @@
         <ul class="list-inline">
             {% for item in page_obj %}
                 <li class="list-inline-item">
-                    <div class="grid-container" style="width: 18rem;">
+                    <div class="grid-container">
                     <a  href="{% url 'item:detail' item.id %}" role="button"><div class="grid-item">
                         <img src="{{item.image}}"  alt="...">
                         <div class="card-body">
                         <p class="card-text">
-                            <h3>{{item.name}}</h3>
+                            <h5>{{item.name}}</h5>
                             <p>가격: {{ item.price }}원</p>
-                            <p>유형: {{ item.item_type.name }}</p>
-                            <p>{{ item.summary }}</p>
+                            <p>{{ item.item_type.name }}</p>
+                            <p class = "summary">{{ item.summary }}</p>
                         </p>
                         </div>
                     </a>
@@ -101,9 +111,9 @@
                 <a href="?page={{ page_obj.previous_page_number }}">이전</a>
             {% endif %}
             
-            {% comment %} <span class="current">
-                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-            </span> {% endcomment %}
+            <span class="current">
+                {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
             
             {% if page_obj.has_next %}
                 <a href="?page={{ page_obj.next_page_number }}">다음</a>

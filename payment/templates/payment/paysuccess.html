@@ -38,9 +38,9 @@
             <a href="{% url 'mypage:order_index' %}" class="btn btn-outline-secondary mb-4">주문 내역</a>
             <a href="{% url 'review:review_index' %}" class="btn btn-outline-secondary mb-4">작성 리뷰</a>
             <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary mb-4">회원정보</a>
-            <a href="#" class="btn btn-outline-secondary mb-4">구독</a>
+            <a href="{% url 'subscribe:index' %}" class="btn btn-outline-secondary mb-4">구독</a>
             {% if user.is_staff %}
-                <a href="#" class="btn btn-outline-secondary mb-4">판매자페이지</a>
+                <a href="{% url 'seller:seller_index' %}" class="btn btn-outline-secondary mb-4">판매자페이지</a>
             {% endif %}
         </div>
     
@@ -90,7 +90,7 @@
             </div>
             <div class="row mb-3">
                 <div class="col-3 fw-bold">배송지 주소</div>
-                <div class="col-9">{{order.delivery_info.receiver_address}}</div>
+                <div class="col-9">{{order.delivery_info.receiver_address}} {{order.delivery_info.receiver_detailaddress}} ({{order.delivery_info.receiver_postcode}}) {{order.delivery_info.receiver_extraAddress}}</div>
             </div>
             <div class="row mb-3">
                 <div class="col-3 fw-bold">전화번호</div>

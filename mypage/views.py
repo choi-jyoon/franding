@@ -42,6 +42,7 @@ def user_info(request):
 
 @login_required
 def add_user_info(request):
+    user=request.user
     # get
     if request.method=='GET':
         return render(request, 'mypage/add_user_info.html')
@@ -68,6 +69,7 @@ def add_user_info(request):
     
 @login_required
 def update_user_info(request):
+    user=request.user
     # get
     if request.method == 'GET':
         user_info = UserAddInfo.objects.get(user=request.user)
@@ -79,8 +81,15 @@ def update_user_info(request):
     elif request.method == 'POST':
         # 폼에서 전달되는 각 값을 뽑아와서 DB에 저장
         user_info = UserAddInfo.objects.get(user=request.user)
-        user_info.address = request.POST['address']
         user_info.phone = request.POST['phone']
+        user_info.address = request.POST['address']
+        user_info.postcode = request.POST['postcode']
+        user_info.detailAddress = request.POST['detailAddress']
+        user_info.extraAddress = request.POST['extraAddress']
+        
+        user.last_name = request.POST['last_name']
+        user.first_name = request.POST['first_name']
+        user.email = request.POST['email']
         
         # 이미지 업데이트 처리
         if 'file' in request.FILES:
@@ -91,6 +100,7 @@ def update_user_info(request):
             user_info.profile_img = url
             
         user_info.save()
+        user.save()
 
         return redirect('mypage:user_info')
     

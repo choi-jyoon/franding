@@ -1,4 +1,8 @@
 .env
+# cart env
+cart/README.md
+payment/README.md
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
