@@ -34,12 +34,6 @@ def item_list(request):
     items = Item.objects.all()
     return render(request, 'seller/item_list.html', {'items': items})
 
-
-# @login_required
-# def item_detail(request, pk):
-#     item = get_object_or_404(Item, pk=pk)
-#     return render(request, 'seller/item_detail.html', {'item': item})
-
 @login_required
 def item_detail(request, product_name, size):
     # DB에서 제품명과 사이즈에 해당하는 제품을 가져옵니다.
@@ -51,8 +45,6 @@ def item_detail(request, product_name, size):
 
     # 제품 상세 페이지를 렌더링합니다.
     return render(request, 'seller/item_detail.html', {'item': item})
-
-
 
 
 @login_required
@@ -75,7 +67,6 @@ def item_delete(request, pk):
         item.delete()
         return redirect('item_list')
     return render(request, 'seller/item_confirm_delete.html', {'item': item})
-
 
 
 class ItemListView(ListView):

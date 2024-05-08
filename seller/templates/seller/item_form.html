@@ -5,7 +5,7 @@
     form {
         text-align: left; /* 텍스트를 왼쪽으로 정렬 */
         margin: 0 auto; /* 폼을 가운데로 정렬 */
-        width: 50%; /* 폼의 너비 지정 */
+        width: 40%; /* 폼의 너비 지정 */
     }
 
     form input[type="text"],
@@ -45,7 +45,7 @@
 
 </style>
 
-<h1 style="text-align: center;">상품 입력</h1>
+<h1 style="text-align: center;">상품 등록</h1>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}

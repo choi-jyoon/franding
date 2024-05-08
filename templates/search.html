@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% load humanize %}
 {% block extra-style %}
 <style>
     .grid-container {
@@ -45,6 +45,25 @@
         overflow: hidden; /* 넘치는 텍스트 숨기기 */
         text-overflow: ellipsis; /* 넘치는 텍스트를 ... 으로 표시 */
         padding-right: 5px;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #5B574F; /* 활성 페이지 버튼의 배경색 */
+        border-color: #5B574F; /* 활성 페이지 버튼의 테두리 색상 */
+        color: white;
+    }
+
+    .pagination .page-link {
+        color: #5B574F; /* 페이지 버튼의 텍스트 색상 */
+    }
+
+    .pagination .page-link:hover {
+        color: #5B574F; /* 마우스 오버 시 페이지 버튼의 텍스트 색상 */
     }
     
 </style>
@@ -92,7 +111,7 @@
                         <div class="card-body">
                         <p class="card-text">
                             <h5>{{item.name}}</h5>
-                            <p>가격: {{ item.price }}원</p>
+                            <p>{{ item.price|intcomma}} ₩</p>
                             <p>{{ item.item_type.name }}</p>
                             <p class = "summary">{{ item.summary }}</p>
                         </p>
@@ -103,23 +122,22 @@
             {% endfor %}
         </ul>
 
-        <!-- 페이지네이션 컨트롤 -->
         <div class="pagination">
-        <span class="step-links">
             {% if page_obj.has_previous %}
-                <a href="?page=1">&laquo; </a>
-                <a href="?page={{ page_obj.previous_page_number }}">이전</a>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">이전</a></li>
             {% endif %}
-            
-            <span class="current">
-                {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-            </span>
-            
+    
+            {% for page_num in page_obj.paginator.page_range %}
+            {% if page_obj.number == page_num %}
+            <li class="page-item active"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+            {% endif %}
+            {% endfor %}
+    
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">다음</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}"> &raquo;</a>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">다음</a></li>
             {% endif %}
-        </span>
         </div>
     </div>
 </div>
