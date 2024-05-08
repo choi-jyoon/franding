@@ -8,7 +8,7 @@ from cart.models import Cart
 
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from django.contrib.auth.decorators import login_required
 
 
 def list_item(request):
@@ -99,30 +99,22 @@ def detail_list_item(request,item_id):
     context={
         "item":item
     }
-    if request.method == 'POST':
+
+    return render(request,'item/detail.html',context)    
+@login_required    
+def add_cart(request,item_id):
         item = Item.objects.get(id=item_id)
         user = request.user
-
+        
         # 장바구니에 동일한 상품이 있는지 확인
-        cart_item = Cart.objects.filter(user=user, item=item).first()
+        cart_item = Cart.objects.filter(user=user, item=item,status=False).first()
         if cart_item and cart_item.status is False:
             # 있다면 수량 증가
             cart_item.amount = cart_item.amount +int(request.POST['current-amount'])
             cart_item.save()
-            context={
-            "item":item
-
-            }
         else:
             # 없다면 새로 생성
             Cart.objects.create(user=user, item=item, amount=int(request.POST['current-amount']))
-            context={
-            "item":item
-
-            }
         return redirect(request.path)
-    else:
-        return render(request,'item/detail.html',context)    
-    
 
     

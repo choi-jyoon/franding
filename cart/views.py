@@ -1,47 +1,18 @@
 from typing import Any
-from django.db.models.query import QuerySet
 from django.shortcuts import render, redirect
-from django.views.generic import ListView, TemplateView,DetailView
-from cart.models import Cart, Order
+from cart.models import Cart
 from item.models import Item
-from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
-from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.db.models import Sum
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.    
-    
-# 장바구니 페이지
-# def cart_id(request):
-#     cart = Item.objects.get(pk=3)
-#     cart_id = cart.user.pk
-#     return cart_id
 
-
-# 장바구니에 상품 추가
-def add_cart(request,) -> Any:    
-    if request.method == 'POST':
-
-        # 유저정보: request.user, 담을 상품 : item, 수량 : click 했을 시 생김, 상태 : click을 했는데 결제를 안했을 시 False
-        # item = Item.objects.all() # 상품을 가져왔다.
-        user = request.user # 누가 가져왔는지 유저 정보가 필요해서 가져왔다.
-        item_id = request.POST['item_id'] # 유저가 담은 상품을 가져왔다.
-        item = get_object_or_404(Item, id=item_id) # Item모델에 해당 상품이 없다면 에러 발생.
-        # 카트 아이템에 담았지만 아직 결제를 하지 않은 상태이다.
-        status = False     
-            
-        
-        cart = Cart.objects.create(user=user, item=item, status=status, amount=0)
-        cart.amount += 1
-        cart.save()
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/')) # 현재 페이지 그래로 유지
-
-      
 
 # 장바구니 페이지
+@login_required
 def cart_detail(request, total_price=0):
 
     # 총 가격 계산
@@ -59,12 +30,10 @@ def cart_detail(request, total_price=0):
 
     for item_id in product_paid_for:
         best_i = Item.objects.get(id = item_id['item_id']) # id가 item_id인 Item을 가져온다.
-        best_items.append(best_i)
-
-
-    #    
+        best_items.append(best_i)   
     
     
+    # context에 담아 보내기
     context = {
         'cart': cart,
         'total_price': total_price,
@@ -75,6 +44,7 @@ def cart_detail(request, total_price=0):
 
 
 # 장바구니 수량 변경
+@login_required
 def accept_ajax(request, total_price=0):
     if request.method == 'POST':
         item_id = request.POST['item_id'] # 새로운 카트 수량을 1개 업데이트

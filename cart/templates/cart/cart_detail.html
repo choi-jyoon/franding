@@ -98,6 +98,13 @@
         /* 글자 수직 중앙 정렬 */
     }
 
+    .amount span {
+        margin: 0 10px;
+        width: 20px;
+        display: inline-block;
+        text-align: center;
+    }
+
     .best-item-image {
         width: 200px;
         height: 200px;
@@ -130,12 +137,13 @@
 
     .img-box {
         display: flex;
-        flex-direction: column;
-
+        align-items: center;
     }
 
     .item-details {
         display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
         align-items: center;
         /* 요소들을 세로 중앙에 배치 */
         border-top: 1px solid #000;
@@ -145,6 +153,10 @@
         justify-content: space-between;
         width: 1000px;
         height: 100px;
+    }
+
+    .name-box {
+        width: 230px;
     }
 </style>
 
@@ -183,15 +195,17 @@
                         <input class="form-check-input me-4" type="checkbox" name="checkbox" value="{{ show.item.id }}"
                             id="firstCheckboxStretched">
                         <label class="form-check-label" for="firstCheckboxStretched">
-                            <img src="{{ show.item.image }}" alt="{{ show.item.name }}" class="item-image">
+                            <a href="{% url 'item:detail' show.item.id %}">
+                                <img src="{{ show.item.image }}" alt="{{ show.item.name }}" class="item-image">
+                            </a>
                         </label>
                     </div>
 
 
                     <div class="name-box">
                         {{ show.item.name }}
-
                     </div>
+
                     <div class="amount">
                         <input type="hidden" id="csrfToken" value="{{csrf_token}}">
                         <button type="button" onclick="modifyCartAmount('{{show.item.id}}', -1)"
@@ -212,10 +226,10 @@
             <h3>이 달의 추천 상품</h3>
             {% for product in best_items %}
             <div class="best-item-list">
-                <a href="">
+                <a href="{% url 'item:detail' product.id %}">
                     <img src="{{ product.image }}" alt="{{ product.name }}" class="best-item-image">
                 </a>
-                <ul><a href="">{{ product }}</a></ul>
+                <ul><a href="{% url 'item:detail' product.id %}">{{ product }}</a></ul>
                 <ul>{{ product.summary }}</ul>
                 <ul>{{ product.price|intcomma }}원</ul>
             </div>

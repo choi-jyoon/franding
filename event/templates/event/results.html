@@ -28,41 +28,62 @@
         margin-top: 1rem; /* 상단 여백 */
         border-top: 2px solid #5B574F; /* 상단 테두리 설정 */
         color: #5B574F; /* 테두리 색상 */
-    }   
+    }
+    
+    .franding-btn {
+      background-color: white;
+      color: #5B574F; /* 버튼 글자색 */
+      border: 2px solid #5B574F; /* 테두리 색 설정 */
+      padding: 10px 24px; /* 안쪽 여백 설정 */
+      margin: 5px 0; /* 버튼 사이의 여백 */
+      border-radius: 5px; /* 버튼 모서리 둥글게 */
+      cursor: pointer; /* 마우스 오버 시 커서 변경 */
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 그림자 효과 */
+      transition: background-color 0.3s, transform 0.3s; /* 애니메이션 효과 */
+  }
+  
+  .franding-btn:hover {
+      background-color: #5B574F; /* 마우스 오버 시 버튼 배경색 변경 */
+      color: white;
+      transform: scale(1.05); /* 마우스 오버 시 버튼 확대 */
+  }
 </style>
 
 {% endblock %}
 
 {% block content %}
 <div id="franding">
-<h2>{{user.first_name}}님의 franding 결과</h2>
-<h4><strong>{{franding.cat1}}, {{franding.cat2}}</strong>한 향을 선호시네요!</h4>
-<hr>
-{% if recommend %}
-  <!-- recommend가 존재하는 경우, recommend 보여주기 -->
-    <h5>당신의 향수는</h5>
-    <h2>{{recommend.name}}</h2>
-    <img src="{{ recommend.image }}" alt="{{ recommend.name }}">
-    <br>
-    {{ recommend.summary }}
-    <a href="{% url 'item:detail' recommend.id %}" class="btn btn-outline-secondary mt-4 mb-4">추천향수 주문하러가기</a>
-{% else %}
-  {% if recommendations %}
-    <div>
-      <p>{{ recommendations.first.name }}</p>
-      <p>{{ recommendations.first.description }}</p>
-      <!-- 기타 recommendations.first의 속성들을 여기에 추가 -->
-    </div>
-    <h5>당신의 향수는</h5>
-    <h2>{{recommendations.first.name}}</h2>
-    <img src="{{ recommendations.first.image }}" alt="{{ recommendations.first.name }}">
-    <br>
-    {{ recommendations.first.description }}
-    <a href="{% url 'item:detail' recommendations.first.id %}" class="btn btn-outline-secondary mt-4 mb-4">추천향수 주문하러가기</a>
+{% if franding %}
+  <h2>{{user.first_name}}님의 franding 결과</h2>
+  <h4><strong>{{franding.cat1}}, {{franding.cat2}}</strong>한 향을 선호하시네요!</h4>
+  <hr>
+  {% if recommend %}
+    <!-- recommend가 존재하는 경우, recommend 보여주기 -->
+      <h5>당신의 향수는</h5>
+      <h2>{{recommend.name}}</h2>
+      <img src="{{ recommend.image }}" alt="{{ recommend.name }}">
+      <br>
+      {{ recommend.summary }}
+      <a href="{% url 'item:detail' recommend.id %}" class="btn franding-btn mt-3 mb-3">추천향수 주문하러가기</a>
   {% else %}
-    <!-- recommendations도 비어있는 경우, 메시지 표시 -->
-    <p>추천할 향수가 없습니다.</p>
+    {% if recommendations %}
+      <h5>당신의 향수는</h5>
+      <h2>{{recommendations.first.name}}</h2>
+      <img src="{{ recommendations.first.image }}" alt="{{ recommendations.first.name }}">
+      <br>
+      {{ recommendations.first.description }}
+      <a href="{% url 'item:detail' recommendations.first.id %}" class="btn franding-btn mt-3 mb-3">추천향수 주문하러가기</a>
+    {% else %}
+      <!-- recommendations도 비어있는 경우, 메시지 표시 -->
+      <p>아직 저희 franding엔 {{user.first_name}}님에겐 딱 맞는 향수가 없네요.</p>
+    {% endif %}
   {% endif %}
+  <a href="{% url 'event:recommend-perfume' %}" class="btn franding-btn mt-3 mb-3">다시 franding하기</a>
+{% else %}
+  <hr>
+  <h2>나만의 향수를 franding 하러가기</h2>
+  <img src="https://imgur.com/uxnsfDP.gif" alt="향수 프랜딩 이미지" style="width: 60%; height: auto;">
+  <a href="{% url 'event:recommend-perfume' %}" class="btn franding-btn mt-3 mb-3">franding</a>
 {% endif %}
 </div>
 {% endblock %}
