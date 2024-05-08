@@ -19,7 +19,7 @@ from django.urls import path, include
 from cart import views
 app_name = 'cart'
 
-urlpatterns = [               
+urlpatterns = [           
     path('detail/', views.cart_detail, name='cart_detail'),    
     path('accept_ajax/', views.accept_ajax, name='ajax'),    
 ]

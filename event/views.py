@@ -2,12 +2,37 @@ from django.shortcuts import render
 from .forms import PerfumeForm
 from .models import Franding
 from item.models import Item
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
-
+@login_required
 def index(request):
-    return render(request, 'event/index.html')
+    franding= Franding.objects.filter(user=request.user).first()
+    if franding:
+        recommendations = Item.objects.filter(cat1__name=franding.cat1, cat2__name=franding.cat2)
+        if '1' in franding.price_range:
+            recommend = recommendations.filter(price__gte=0, price__lte=70000).first()
+        if '2' in franding.price_range:
+            recommend = recommendations.filter(price__gte=70000, price__lte=150000).first()
+        if '3' in franding.price_range:
+            recommend = recommendations.filter(price__gte=150000, price__lte=220000).first()
+        if '4' in franding.price_range:
+            recommend = recommendations.filter(price__gte=220000).first()
+        if '5' in franding.price_range:
+            recommend = recommendations.first()
+            
+        context = {
+            'franding':franding,
+            'recommend':recommend,
+            'recommendations':recommendations,
+        }
+    else:
+        context = {
+            'message':'아직 franding전 입니다.',
+        }
+    return render(request, 'event/results.html', context)
 
+@login_required
 def recommend_perfume(request):
     if request.method == 'POST':
         form = PerfumeForm(request.POST)
