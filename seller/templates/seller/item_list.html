@@ -16,6 +16,8 @@
         flex-direction: column;
         align-items: center;
         justify-content: space-between; /* 상하 간격 균등 */
+        border: 1px solid #ccc; /* 상품 테두리 추가 */
+        padding: 10px;
     }
 
     .grid-item img {
@@ -36,6 +38,8 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        border: 1px solid #ccc; /* 상품 테두리 추가 */
+        padding: 10px;
     }
 
     .flex-item img {
@@ -46,10 +50,10 @@
     .button-group {
         display: flex;
         gap: 10px; /* 버튼 간 간격 */
+        margin-top: 20px;
     }
 
     .button, .delete-button {
-        margin-top: 20px;
         padding: 10px 20px;
         font-size: 17px;
         border-radius: 10px;
@@ -87,23 +91,27 @@
     color: #333; /* 버튼의 글자색 */
     border: 2px solid #333; /* 버튼의 테두리 */
     margin-right: 10px; /* 오른쪽 마진 추가 */
-}
+    }
 
-.pagination-button:hover {
+    .pagination-button:hover {
     background-color: #333; /* 마우스 오버 시 배경색 */
     color: #ffffff; /* 마우스 오버 시 글자색 */
-}
+    }
 
-.pagination {
+    /* 현재 페이지 버튼 스타일 */
+    .current-page {
+    background-color: #333;
+    color: #ffffff;
+    }
+
+    .pagination {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%; /* 전체 너비 사용 */
     text-align: center; /* 텍스트 중앙 정렬 */
     gap: 10px; /* 요소 간 간격 */
-}
-
-
+    }
 </style>
 {% endblock %}
 
@@ -114,7 +122,7 @@
         {% for item in item_list %}
         <div class="grid-item flex-item">
             <img src="{{ item.image }}" alt="{{ item.name }}" onError="this.onerror=null;this.src='default-image.jpg';">
-            <h5>{{ item.name }}</h5>
+            <span style="font-size: 15px;">{{ item.name }}</span>
             <p>{{ item.brand }}</p>
             <p>{{ item.price|intcomma }}  ₩</p>
             <p>{{ item.size }} ml</p>
@@ -132,7 +140,6 @@
         {% if is_paginated %}
             {% if page_obj.has_previous %}
                 <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="pagination-button">처음</a>
-                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="pagination-button">이전</a>
             {% endif %}
             {% for num in paginator.page_range %}
                 {% if num == page_obj.number %}
@@ -142,11 +149,9 @@
                 {% endif %}
             {% endfor %}
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="pagination-button">다음</a>
                 <a href="?page={{ paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="pagination-button">마지막</a>
             {% endif %}
         {% endif %}
     </div>
-    
 </div>
 {% endblock %}
