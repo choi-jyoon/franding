@@ -134,7 +134,7 @@
                     <span class="mx-2" id="current-quantity">1</span>
                     <button class="btn btn-secondary btn-sm increase-btn">+</button>
                 </div>
-                <form action="{% url 'item:detail' item.id %}" method="post">
+                <form action="{% url 'item:add' item.id %}" method="post">
                     {% csrf_token %}
                     <input type="hidden" id="current-quantity-hidden" value="" name="current-amount">
                     <button class="btn btn-primary mt-3 add-to-cart-btn" type="submit" >장바구니에 담기</button>
@@ -162,7 +162,7 @@
             <span class="mx-2" id="current-quantity-float">1</span>
             <button class="btn btn-secondary btn-sm increase-btn-float">+</button>
         </div>
-        <form action="{% url 'item:detail' item.id %}" method="post">
+        <form action="{% url 'item:add' item.id %}" method="post">
             {% csrf_token %}
             <input type="hidden" id="current-quantity-hidden-float" value="" name="current-amount">
             <button class="btn btn-primary mt-3 add-to-cart-btn-float" type="submit" >장바구니 추가</button>
