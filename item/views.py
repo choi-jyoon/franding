@@ -48,6 +48,7 @@ def list_item(request):
     if '4' in price_filters:
         items = items.filter(price__gte=220000)
 
+
     show_note = bool(request.path != '/item/brand/')
     show_type = bool(request.path != '/item/perfume/')
 

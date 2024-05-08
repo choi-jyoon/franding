@@ -4,13 +4,23 @@ from .models import UserAddInfo
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
 from django.core.files.storage import FileSystemStorage
+from django.core.paginator import Paginator
+
 
 @login_required
 def order_index(request):
     orders = Order.objects.filter(ordercart__cart__user=request.user).order_by('-datetime').distinct()
-    if orders.exists():
+    # Paginator 객체 생성, 한 페이지당 4개의 주문을 보여주도록 설정
+    paginator = Paginator(orders, 4)  # 한 페이지당 4개의 주문을 보여줍니다.
+    
+    # URL의 'page' GET 파라미터로부터 페이지 번호를 가져옵니다. 기본값은 1입니다.
+    page_number = request.GET.get('page', 1)
+    # 해당 페이지의 주문 객체를 가져옵니다.
+    page_obj = paginator.get_page(page_number)
+    
+    if page_obj:
         context = {
-            'orders':orders
+            'orders': page_obj
         }
     else:
         context = {

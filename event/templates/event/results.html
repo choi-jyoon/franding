@@ -61,7 +61,7 @@
     <!-- recommend가 존재하는 경우, recommend 보여주기 -->
       <h5>당신의 향수는</h5>
       <h2>{{recommend.name}}</h2>
-      <img src="{{ recommend.image }}" alt="{{ recommend.name }}">
+      <img src="{{ recommend.image }}" alt="{{ recommend.name }}" style="width: 60%; height: auto;">
       <br>
       {{ recommend.summary }}
       <a href="{% url 'item:detail' recommend.id %}" class="btn franding-btn mt-3 mb-3">추천향수 주문하러가기</a>
@@ -69,7 +69,7 @@
     {% if recommendations %}
       <h5>당신의 향수는</h5>
       <h2>{{recommendations.first.name}}</h2>
-      <img src="{{ recommendations.first.image }}" alt="{{ recommendations.first.name }}">
+      <img src="{{ recommendations.first.image }}" alt="{{ recommendations.first.name }}" style="width: 60%; height: auto;">
       <br>
       {{ recommendations.first.description }}
       <a href="{% url 'item:detail' recommendations.first.id %}" class="btn franding-btn mt-3 mb-3">추천향수 주문하러가기</a>

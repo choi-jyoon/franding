@@ -5,8 +5,9 @@
 <style>
     * {
         padding: 0;
-        margin:0px;
+        margin: 0px;
     }
+
     a {
         text-decoration: none;
         color: black;
@@ -22,11 +23,13 @@
         border-right: 1px solid #ccc;
         /* 사이드바와 그리드 사이에 구분선 추가 */
     }
+
     .mb-5 {
         width: 80%;
         display: flex;
 
     }
+
     /* 상품 목록 스타일 */
     .item-list {
         width: 70%;
@@ -34,11 +37,11 @@
         padding: 20px;
         margin-top: 50px;
         text-align: center;
-        
+
     }
 
     .grid-container {
-    
+
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: repeat(1, 1fr);
@@ -49,27 +52,35 @@
         width: 200px;
         height: 220px;
         text-align: center;
-      
-    
+
+
 
     }
-    .grid-item:hover{
+
+    .grid-item:hover {
         border: 2px solid #b2b2b2;
     }
+
     .item {
         padding: 0%;
         margin: 0;
     }
+
     .grid-item img {
         max-width: 100%;
         height: 100px;
     }
-    .summary{
-        width: 200px; /* 고정된 너비 필요 */
-  white-space: nowrap; /* 텍스트를 한 줄로 표시 */
-  overflow: hidden; /* 넘치는 텍스트 숨기기 */
-  text-overflow: ellipsis; /* 넘치는 텍스트를 ... 으로 표시 */
-  padding-right: 5px;
+
+    .summary {
+        width: 200px;
+        /* 고정된 너비 필요 */
+        white-space: nowrap;
+        /* 텍스트를 한 줄로 표시 */
+        overflow: hidden;
+        /* 넘치는 텍스트 숨기기 */
+        text-overflow: ellipsis;
+        /* 넘치는 텍스트를 ... 으로 표시 */
+        padding-right: 5px;
     }
 
     /* 페이징 스타일 */
@@ -85,15 +96,32 @@
         text-align: center;
         margin-bottom: 30px;
     }
+    .pagination .page-item.active .page-link {
+        background-color: #5B574F; /* 활성 페이지 버튼의 배경색 */
+        border-color: #5B574F; /* 활성 페이지 버튼의 테두리 색상 */
+        color: white;
+    }
+
+    .pagination .page-link {
+        color: #5B574F; /* 페이지 버튼의 텍스트 색상 */
+    }
+
+    .pagination .page-link:hover {
+        color: #5B574F; /* 마우스 오버 시 페이지 버튼의 텍스트 색상 */
+    }
+
     /* 토글 버튼 스타일추후 변경 예정*/
     .toggle-btn {
-        display: inline-block; width: 200px; background-color: #ffffff;
+        display: inline-block;
+        width: 200px;
+        background-color: #ffffff;
         cursor: pointer;
         border-radius: 15px 0px 0px 0px;
     }
-    .title{
+
+    .title {
         padding-bottom: 10px;
- 
+
     }
 
     .category1-container,
@@ -102,6 +130,24 @@
     .type-container {
         display: none;
     }
+
+    .priceFilter5 {
+        background: none;
+        border: none;
+        outline: none;
+        box-shadow: none;
+        padding: 0;
+        cursor: pointer;
+    }
+
+
+
+.priceFilter.active {
+    outline: none;
+    border: 2px solid #5B574F;
+}
+
+
 </style>
 {% endblock %}
 {% block content %}
@@ -116,43 +162,45 @@
             </h4>
             <div class="category1-container">
                 {% for category1 in cat1 %}
-                    <input type="checkbox" id="category1:{{ category1.id }}" {% if category1.id in selected_cat1 %}checked{%endif %} name="cat1" value="{{ category1.id }}" onchange="this.form.submit()">
-                    <label for="category1:{{ category1.id }}">{{ category1.name }}</label><br>
+                <input type="checkbox" id="category1:{{ category1.id }}" {% if category1.id in selected_cat1%}checked{%endif %} name="cat1" value="{{ category1.id }}" onchange="this.form.submit()">
+                <label for="category1:{{ category1.id }}">{{ category1.name }}</label><br>
                 {% endfor %}
             </div>
-            
-        
+
+
             <h4>
-               
+
                 <span class="toggle-btn"> Note</span>
             </h4>
             <div class="category2-container">
                 {% for category2 in cat2 %}
-                <input type="checkbox" id="category2:{{ category2.id }}" {% if category2.id in selected_cat2 %}checked{%endif %} name="cat2" value="{{ category2.id }}" onchange="this.form.submit()">
+                <input type="checkbox" id="category2:{{ category2.id }}" {% if category2.id in selected_cat2%}checked{%endif %} name="cat2" value="{{ category2.id }}" onchange="this.form.submit()">
                 <label for="category2:{{ category2.id }}">{{ category2.name }}</label><br>
                 {% endfor %}
             </div>
         </div>
-        
-            <h4>
-                
-                <span class="toggle-btn">Brand</span>
-            </h4>
-            <div class="brand-container">
-                {% for brand in brand %}
-                <input type="checkbox" id="brand:{{ brand.id }}" {% if brand.id in selected_brand %}checked{% endif %} name="brand" value="{{ brand.id }}" onchange="this.form.submit()">
-                <label for="brand:{{ brand.id }}">{{ brand.name }}</label><br>
-                {% endfor %}
-            </div>
-        
+
+        <h4>
+
+            <span class="toggle-btn">Brand</span>
+        </h4>
+        <div class="brand-container">
+            {% for brand in brand %}
+            <input type="checkbox" id="brand:{{ brand.id }}" {% if brand.id in selected_brand %}checked{% endif %}
+                name="brand" value="{{ brand.id }}" onchange="this.form.submit()">
+            <label for="brand:{{ brand.id }}">{{ brand.name }}</label><br>
+            {% endfor %}
+        </div>
+
         <div {% if show_type is False%} hidden {% endif %}>
             <h4>
-                
-                <span class="toggle-btn" >Type</span>
+
+                <span class="toggle-btn">Type</span>
             </h4>
             <div class="type-container">
                 {% for type in item_type %}
-                <input type="checkbox" id="type:{{ type.id }}" {% if type.id in selected_type %}checked{% endif %} name="item_type" value="{{ type.id }}" onchange="this.form.submit()">
+                <input type="checkbox" id="type:{{ type.id }}" {% if type.id in selected_type %}checked{% endif %}
+                    name="item_type" value="{{ type.id }}" onchange="this.form.submit()">
                 <label for="type:{{ type.id }}">{{ type.name }}</label><br>
                 {% endfor %}
             </div>
@@ -162,18 +210,17 @@
             <!-- 가격 필터링-->
             <form method="get" action="{% url 'item:item_list' %}">
                 <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn priceFilter1" name="price" value="1">0 ~ 70,000</button>
+                    <button type="submit" class="btn priceFilter {% if request.GET.price == '1' %}active{% endif %}" name="price" value="1">0 ~ 70,000</button>
                 </div>
                 <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn priceFilter2" name="price" value="2">70,000 ~ 150,000</button>
+                    <button type="submit" class="btn priceFilter {% if request.GET.price == '2' %}active{% endif %}" name="price" value="2">70,000 ~ 150,000</button>
                 </div>
                 <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn priceFilter3" name="price" value="3">150,000 ~ 220,000</button>
+                    <button type="submit" class="btn priceFilter {% if request.GET.price == '3' %}active{% endif %}" name="price" value="3">150,000 ~ 220,000</button>
                 </div>
                 <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn priceFilter4" name="price" value="4">220,000 ~ 290,000</button>
+                    <button type="submit" class="btn priceFilter {% if request.GET.price == '4' %}active{% endif %}" name="price" value="4">220,000 ~ 290,000</button>
                 </div>
-                
             </form>
         </div>
 
@@ -181,7 +228,11 @@
 </div>
 <div class="item-list">
     <div class="section-title">
-        <h2>LIST</h2>
+        <form method="get" action="{% url 'item:item_list' %}">
+            <button type="submit" class="btn priceFilter5" name="price" value="0">
+                <h1>List</h1>
+            </button>
+        </form>
     </div>
     <div class="grid-container">
         {% for item in items %}
@@ -198,29 +249,29 @@
 
     <div class="pagination">
         {% if items.has_previous %}
-        <a href="?page={{ items.previous_page_number }}">이전</a>
+        <li class="page-item"><a class="page-link" href="?page={{ items.previous_page_number }}">이전</a></li>
         {% endif %}
 
         {% for page_num in items.paginator.page_range %}
         {% if items.number == page_num %}
-        <span>{{ page_num }}</span>
+        <li class="page-item active"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
         {% else %}
-        <a href="?page={{ page_num }}">{{ page_num }}</a>
+        <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
         {% endif %}
         {% endfor %}
 
         {% if items.has_next %}
-        <a href="?page={{ items.next_page_number }}">다음</a>
+        <li class="page-item"><a class="page-link" href="?page={{ items.next_page_number }}">다음</a></li>
         {% endif %}
     </div>
 </div>
 <div>
-    <input type="checkbox"> 
+    <input type="checkbox">
 </div>
 {% endblock %}
 {% block extra-script %}
 <script>
-    
+    const filterBtns = document.querySelectorAll('.priceFilter')
     const toggleBtns = document.querySelectorAll('.toggle-btn');
     let toggleStates = {
         'Main Note': false, // 특정 토글 버튼을 초기에 열려있게 설정
@@ -229,18 +280,18 @@
         'Type': false
     };
     {% if selected_cat1 %}
-        toggleStates['Main Note'] = true;
+    toggleStates['Main Note'] = true;
     {% endif %}
     {% if selected_cat2 %}
-        toggleStates['Note'] = true;
+    toggleStates['Note'] = true;
     {% endif %}
     {% if selected_brand %}
-        toggleStates['Brand'] = true;
+    toggleStates['Brand'] = true;
     {% endif %}
     {% if selected_type %}
-        toggleStates['Type'] = true;
+    toggleStates['Type'] = true;
     {% endif %}
-    
+
     toggleBtns.forEach(btn => {
         const title = btn.textContent.trim(); // 공백 제거
         const container = btn.parentElement.nextElementSibling;
@@ -261,22 +312,22 @@
             btn.style.fontWeight = toggleStates[title] ? 'bold' : 'bold';
         });
         btn.addEventListener('mouseover', () => {
-  
-        btn.style.backgroundColor = '#5B574F';
-        btn.style.color = '#FFFFFF';
-        btn.style.fontWeight = 'normal';
+
+            btn.style.backgroundColor = '#5B574F';
+            btn.style.color = '#FFFFFF';
+            btn.style.fontWeight = 'normal';
         });
 
         btn.addEventListener('mouseout', () => {
-        btn.style.backgroundColor = '#FFFFFF';
-        btn.style.color = '#5B574F';
-        btn.style.fontWeight = toggleStates[title] ? 'bold' : 'normal';
-});
+            btn.style.backgroundColor = '#FFFFFF';
+            btn.style.color = '#5B574F';
+            btn.style.fontWeight = toggleStates[title] ? 'bold' : 'normal';
+        });
 
-        
+
     });
+    
 
-
-//가격 카테고리 설정 버튼 이벤트 스크립트 들어갈예정
+    //가격 카테고리 설정 버튼 이벤트 스크립트 들어갈예정
 </script>
 {% endblock %}
