@@ -310,7 +310,7 @@
         var floatingBanner = document.getElementById('floating-banner');
         var scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
 
-        if (scrollPosition > 10) { // 300px 이상 스크롤하면 배너 표시
+        if (scrollPosition > 500) { // 300px 이상 스크롤하면 배너 표시
             floatingBanner.classList.add('show');
         } else {
             floatingBanner.classList.remove('show');
