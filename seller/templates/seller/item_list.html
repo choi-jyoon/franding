@@ -1,121 +1,152 @@
 {% extends 'base.html' %}
 
-{% load humanize %}  <!-- humanize 앱 로드 -->
+{% load humanize %}
 
 {% block extra-style %}
 <style>
-    .image-container {
-        position: relative;
-    }
-
-    .product-grid {
+    .grid-container {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* 자동으로 항목 채우기 */
         gap: 20px;
-        list-style: none;
+        padding: 20px;
     }
 
-    .product-item {
-        border: 1px solid #ccc;
-        padding: 10px;
+    .grid-item {
         display: flex;
         flex-direction: column;
         align-items: center;
-        width: 420px; /* 각 항목의 폭을 설정 */
-        height: 200px; /* 각 항목의 높이를 설정 */
+        justify-content: space-between; /* 상하 간격 균등 */
     }
 
-    .product-item img {
-        width: 100%; /* 이미지의 너비를 상품 항목에 맞춤 */
-        height: auto; /* 이미지의 높이를 자동 조절 */
-        margin-bottom: 10px; /* 이미지와 텍스트 사이의 간격 */
-    }
-
-    .product-item .button-container {
-        display: flex;
-        justify-content: space-between;
+    .grid-item img {
         width: 100%;
+        height: auto;
     }
 
-    .button {
+    .flex-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around; /* 항목 간 균등 간격 */
+        padding: 20px;
+    }
+
+    .flex-item {
+        flex: 0 1 200px; /* 항목 최소 크기 유지 */
+        margin: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .flex-item img {
+        width: 100%;
+        height: auto;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 10px; /* 버튼 간 간격 */
+    }
+
+    .button, .delete-button {
         margin-top: 20px;
         padding: 10px 20px;
         font-size: 17px;
-        border-radius: 10px; /* 버튼 모서리를 둥글게 만듭니다. */
+        border-radius: 10px;
         cursor: pointer;
         text-decoration: none;
         display: inline-block;
-        transition: background-color 0.3s, color 0.3s; /* 배경색과 폰트 색상에 대한 전환 효과 */
-        background-color: #ffffff; /* 기본 배경색 */
-        color: #333; /* 기본 폰트 색상 */
-        border: 2px solid #333; /* 테두리 스타일과 색상 지정 */
+        transition: background-color 0.3s, color 0.3s;
+        background-color: #ffffff;
+        color: #333;
+        border: 2px solid #333;
     }
 
-    .button:hover {
-        background-color: #333; /* 마우스를 올렸을 때 배경색 변경 */
-        color: #ffffff; /* 마우스를 올렸을 때 폰트 색상 변경 */
+    .button:hover, .delete-button:hover {
+        background-color: #333;
+        color: #ffffff;
     }
 
     .delete-button {
-        margin-top: 20px;
-        padding: 10px 20px;
-        font-size: 17px;
-        border-radius: 10px; /* 버튼 모서리를 둥글게 만듭니다. */
-        cursor: pointer;
-        text-decoration: none;
-        display: inline-block;
-        transition: background-color 0.3s, color 0.3s; /* 배경색과 폰트 색상에 대한 전환 효과 */
-        background-color: #ffffff; /* 기본 배경색 */
-        color: #333; /* 기본 폰트 색상 */
-        border: 2px solid #FF5733; /* 테두리 스타일과 색상 지정 */
+        border-color: #FF5733;
     }
 
     .delete-button:hover {
-        background-color: #FF5733; /* 마우스를 올렸을 때 배경색 변경 */
-        color: #ffffff; /* 마우스를 올렸을 때 폰트 색상 변경 */
+        background-color: #FF5733;
     }
 
-    .button-container {
-    padding: 0px 10px;
+    .pagination-button {
+    padding: 10px 20px;
+    font-size: 17px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s, color 0.3s;
+    background-color: #ffffff; /* 버튼의 배경색 */
+    color: #333; /* 버튼의 글자색 */
+    border: 2px solid #333; /* 버튼의 테두리 */
+    margin-right: 10px; /* 오른쪽 마진 추가 */
+}
+
+.pagination-button:hover {
+    background-color: #333; /* 마우스 오버 시 배경색 */
+    color: #ffffff; /* 마우스 오버 시 글자색 */
+}
+
+.pagination {
     display: flex;
-    justify-content: space-between;
-    width: 50%;
-    }
-    
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* 전체 너비 사용 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+    gap: 10px; /* 요소 간 간격 */
+}
+
+
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="center-content">
     <h1 style="text-align: center;">상품 목록</h1>
-    <ul class="product-grid">
+    <div class="grid-container flex-container">
         {% for item in item_list %}
-        <li class="product-item">
-            <img src="{{ item.image.url }}" alt="{{ item.name }}" onError="this.onerror=null;this.src='default-image.jpg';">
+        <div class="grid-item flex-item">
+            <img src="{{ item.image }}" alt="{{ item.name }}" onError="this.onerror=null;this.src='default-image.jpg';">
             <h5>{{ item.name }}</h5>
-            <p>{{ item.price|intcomma }} </p>
-            <div class="button-container">
-                <!-- 수정 버튼 -->
+            <p>{{ item.brand }}</p>
+            <p>{{ item.price|intcomma }}  ₩</p>
+            <p>{{ item.size }} ml</p>
+            <div class="button-group">
                 <a href="{% url 'seller:item_update' pk=item.pk %}" class="button">수정</a>
-                <!-- 삭제 버튼 -->
                 <a href="{% url 'seller:item_delete' pk=item.pk %}" class="delete-button">삭제</a>
             </div>
-        </li>
+        </div>
         {% empty %}
-        <li>상품이 없습니다.</li>
+        <p>상품이 없습니다.</p>
         {% endfor %}
-    </ul>
+    </div>
 
-    <div class="pagination" style="display: flex; justify-content: center;">
+    <div class="pagination">
         {% if is_paginated %}
             {% if page_obj.has_previous %}
-                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="button">이전</a>
+                <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="pagination-button">처음</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="pagination-button">이전</a>
             {% endif %}
-            <span style="font-size: x-large;">{{ page_obj.number }} / {{ paginator.num_pages }}</span>
+            {% for num in paginator.page_range %}
+                {% if num == page_obj.number %}
+                    <span class="pagination-button current-page">{{ num }}</span>
+                {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+                    <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="pagination-button">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="button">다음</a>
+                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="pagination-button">다음</a>
+                <a href="?page={{ paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="pagination-button">마지막</a>
             {% endif %}
         {% endif %}
     </div>
+    
 </div>
 {% endblock %}

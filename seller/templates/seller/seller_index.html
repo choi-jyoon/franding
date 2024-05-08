@@ -17,12 +17,9 @@
     .full-height {
         height: 100%;
     }
-    #content-display {
-        height: 100%;
-        overflow-y: auto; /* 내용이 많을 경우 스크롤 가능 */
-    }
-    .order-title {
-        margin-bottom: 20px; /* 하단 마진을 20px로 설정 */
+    /* 왼쪽 사이드바와 중앙 콘텐츠 간의 간격 설정 */
+    .centered-content {
+        padding-left: 20px; /* 왼쪽으로부터 20px 간격 */
     }
 </style>
 {% endblock %}
@@ -31,22 +28,20 @@
 <div class="container-fluid">
     <div class="row full-height">
         <div class="col-2 d-flex flex-column p-3 bg-light full-height">
-            <!-- 버튼들 -->
+            <!-- 기본 네비게이션 버튼들 -->
             <a href="{% url 'mypage:order_index' %}" class="btn btn-outline-secondary mb-4">주문 내역</a>
             <a href="{% url 'review:review_index' %}" class="btn btn-outline-secondary mb-4">작성 리뷰</a>
             <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary mb-4">회원정보</a>
-            <a href="{% url 'seller:seller_index' %}" class="btn btn-outline-secondary mb-4">판매자 페이지</a>
             <a href="#" class="btn btn-outline-secondary mb-4">구독</a>
         </div>
-    
-    <div class="col-10" id="content-display">
+        <div class="col-10" id="content-display">
+            <!-- 판매자 페이지의 중앙 콘텐츠는 약간의 간격을 두고 왼쪽 정렬 -->
+            <div class="centered-content">
+                <h1 class="order-title">판매자 페이지</h1>
+                <a href="{% url 'seller:item_create' %}" class="btn btn-outline-secondary mb-2">상품등록</a>
+                <a href="{% url 'seller:item_list' %}" class="btn btn-outline-secondary mb-2">상품 조회 및 관리</a>
+            </div>
+        </div>
     </div>
-
-</div>
-<div>
-    <h1>판매자 페이지</h1>
-    <a href="{% url 'seller:item_create' %}" class="btn btn-outline-secondary mb-4">상품 등록</a>
-    <a href="{% url 'seller:item_list' %}" class="btn btn-outline-secondary mb-4">상품 조회 및 관리</a>
-</div>
 </div>
 {% endblock %}

@@ -15,10 +15,6 @@ def seller_page(request):
     return render(request, 'seller/seller_index.html')
 
 
-# 애드 테스트용
-
-
-
 @login_required
 def item_create(request):
     if request.method == 'POST':
@@ -85,5 +81,37 @@ def item_delete(request, pk):
 class ItemListView(ListView):
     model = Item
     template_name = 'seller/item_list.html'  # 'seller' 앱 내의 템플릿 경로로 수정
-    paginate_by = 9
+    paginate_by = 10
 
+
+
+# 5페이지 이동 및 검색 보류 뷰
+# class ItemListView(ListView):
+#     model = Item
+#     template_name = 'app/item_list.html'
+#     context_object_name = 'item_list'
+#     paginate_by = 4
+
+#     def get_queryset(self):
+#         query = self.request.GET.get('q', '')  # 검색어 받기
+#         object_list = Item.objects.filter(name__icontains=query)  # 이름에 검색어 포함된 상품만 검색
+#         return object_list
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         query = self.request.GET.get('q', '')  # 검색어 받기
+#         paginator = context['paginator']
+#         page_numbers_range = 5  # 페이지 번호 범위 설정
+#         max_index = len(paginator.page_range)
+#         page = self.request.GET.get('page')
+#         current_page = int(page) if page else 1
+
+#         start_index = int((current_page - 1) / page_numbers_range) * page_numbers_range
+#         end_index = start_index + page_numbers_range
+#         if end_index >= max_index:
+#             end_index = max_index
+
+#         page_range = paginator.page_range[start_index:end_index]
+#         context['page_range'] = page_range
+#         context['query'] = query  # 검색어 유지
+#         return context
