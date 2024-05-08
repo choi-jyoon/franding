@@ -66,12 +66,14 @@
         /* Flexbox를 사용하여 내부 요소들을 가로로 나열 */
         justify-content: space-around;
         /* 요소 사이에 균등한 간격을 둠 */
+        width: 100%;
     }
 
     .form-container form {
         margin-right: 10px;
         /* 오른쪽 마진을 추가하여 폼 사이에 간격을 줌 */
     }
+
 
     .form-container form:last-child {
         margin-right: 0;
@@ -188,7 +190,7 @@
 <div class='col'>
     <div class="row mb-4">
         <div class="col-md-auto">
-            <h3 class="mb-0">{{ cart.first.user }}님의 장바구니</h3>
+            <h3 class="mb-0">{{ user }}님의 장바구니</h3>
         </div>
     </div>
 </div>
@@ -196,6 +198,7 @@
 
 <div class="form-container">
     <div class="my-divider">
+        {% if cart %}
         <form id="check-item" method="GET" action="{% url 'payment:payment_list' %}" style="display: inline;">
 
             <table class="table">
@@ -246,7 +249,9 @@
         </form>
 
         <div class="bottom-container">
+
             <h3>총 합계 : <span id='total_price'>{{ total_price|intcomma }}원</span></h3>
+
 
             <div class="button-container">
                 <form method="GET" action="{% url 'item:item_list' %}" style="display: inline;">
@@ -259,7 +264,18 @@
                 <button class="bottom-button" onclick="delete_form()">선택 상품 삭제</button>
             </div>
         </div>
+        {% else %}
+        <div class="empty-cart">
+            <h4>장바구니가 비어있습니다.</h4>
+            <form method="GET" action="{% url 'item:item_list' %}" style="display: inline; align-items: center;">
+                <input class="bottom-button" type="submit" value="쇼핑 계속하기">
+            </form>
+        </div>
+        <img src="https://imgur.com/aW9sXHF.gif" alt="향수 프랜딩 이미지" style="width: 60%; height: auto;">
+
+        {% endif %}
     </div>
+
 
 
     <!-- 추천 상품 목록 -->

@@ -35,10 +35,10 @@ def cart_detail(request, total_price=0):
     
     # context에 담아 보내기
     context = {
+        'user': request.user,
         'cart': cart,
         'total_price': total_price,
-        'best_items': best_items,
-        
+        'best_items': best_items,        
     }
     return render(request, 'cart/cart_detail.html', context)
 
