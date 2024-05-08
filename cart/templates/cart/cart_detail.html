@@ -298,13 +298,18 @@
                 // console.log('ajax가 새로운 값을 쓰려고 하는 곳');
                 // console.log(response.total_price);
                 document.getElementById(item_id).textContent = response.new_amount;
-                document.getElementById('total_price').textContent = response.total_price;
+                // document.getElementById('total_price').textContent = response.total_price;
+                document.getElementById('total_price').innerText = numberWithCommas(response.total_price) + '원';
                 console.log('Update successful:', response.message);
             } else {
                 console.error('Error updating:', this.statusText);
             }
         };
         xhr.send(`item_id=${item_id}&amountChange=${change}`);
+    }
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
     function delete_form() {
