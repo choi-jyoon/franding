@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load humanize %}
 {% block title %} Category_List {% endblock %}
 {% block extra-style %}
 <style>
@@ -247,7 +247,7 @@
             <div class="grid-item">
                 <img src="{{ item.image }}" alt="{{ item.name }}">
                 <h5 class="item item-title" bold>{{ item.name }}</h5>
-                <p class="item">가격: {{ item.price }}원</p>
+                <p class="item">가격: {{ item.price|intcomma }}&#8361;</p>
                 <p class="item summary">{{ item.summary }}</p>
             </div>
         </a>
