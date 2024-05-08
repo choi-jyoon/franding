@@ -98,6 +98,13 @@
         /* 글자 수직 중앙 정렬 */
     }
 
+    .amount span {
+        margin: 0 10px;
+        width: 20px;
+        display: inline-block;
+        text-align: center;
+    }
+
     .best-item-image {
         width: 200px;
         height: 200px;
@@ -130,12 +137,13 @@
 
     .img-box {
         display: flex;
-        flex-direction: column;
-
+        align-items: center;
     }
 
     .item-details {
         display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
         align-items: center;
         /* 요소들을 세로 중앙에 배치 */
         border-top: 1px solid #000;
@@ -145,6 +153,10 @@
         justify-content: space-between;
         width: 1000px;
         height: 100px;
+    }
+
+    .name-box {
+        width: 230px;
     }
 </style>
 
@@ -192,8 +204,8 @@
 
                     <div class="name-box">
                         {{ show.item.name }}
-
                     </div>
+
                     <div class="amount">
                         <input type="hidden" id="csrfToken" value="{{csrf_token}}">
                         <button type="button" onclick="modifyCartAmount('{{show.item.id}}', -1)"

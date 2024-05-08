@@ -12,8 +12,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 def list_item(request):
-    items = Item.objects.all()
-    
+
+    items= Item.objects.order_by('name','size').distinct('name')
     # 체크박스 필터링 기능 추가
     category1_ids = request.GET.getlist('cat1')
     category2_ids = request.GET.getlist('cat2')
@@ -102,21 +102,23 @@ def detail_list_item(request,item_id):
     if request.method == 'POST':
         item = Item.objects.get(id=item_id)
         user = request.user
-
+        
         # 장바구니에 동일한 상품이 있는지 확인
-        cart_item = Cart.objects.filter(user=user, item=item).first()
+        cart_item = Cart.objects.filter(user=user, item=item,status=False).first()
         if cart_item and cart_item.status is False:
             # 있다면 수량 증가
             cart_item.amount = cart_item.amount +int(request.POST['current-amount'])
             cart_item.save()
             context={
             "item":item
+
             }
         else:
             # 없다면 새로 생성
             Cart.objects.create(user=user, item=item, amount=int(request.POST['current-amount']))
             context={
             "item":item
+
             }
         return redirect(request.path)
     else:

@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 
-{% load static %}
-
-{% block title %} MyPage {% endblock %}
+{% block title %} sellerPage {% endblock %}
 
 {% block extra-style %}
 <style>
@@ -37,7 +35,7 @@
             <a href="{% url 'mypage:order_index' %}" class="btn btn-outline-secondary mb-4">주문 내역</a>
             <a href="{% url 'review:review_index' %}" class="btn btn-outline-secondary mb-4">작성 리뷰</a>
             <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary mb-4">회원정보</a>
-            <a href="{% url 'seller:seller_index' %}" class="btn btn-outline-secondary mb-4">판매자페이지</a>
+            <a href="{% url 'seller:seller_index' %}" class="btn btn-outline-secondary mb-4">판매자 페이지</a>
             <a href="#" class="btn btn-outline-secondary mb-4">구독</a>
         </div>
     
@@ -45,67 +43,10 @@
     </div>
 
 </div>
-
+<div>
+    <h1>판매자 페이지</h1>
+    <a href="{% url 'seller:item_create' %}" class="btn btn-outline-secondary mb-4">상품 등록</a>
+    <a href="{% url 'seller:item_list' %}" class="btn btn-outline-secondary mb-4">상품 조회 및 관리</a>
+</div>
+</div>
 {% endblock %}
-
-{% block extra-script %}
-<h1>판매자 페이지 입니다.</h1>
-        <div>
-            <a href="{% url 'seller:item_create' %}" class="btn btn-outline-secondary">상품 등록</a>
-            <a href="{% url 'seller:item_update' pk=object.pk %}" class="btn btn-outline-secondary">상품 업데이트</a>
-            <a href="{% url 'seller:item_delete' pk=object.pk %}" class="btn btn-outline-secondary">상품 삭제</a>
-        </div>
-{% endblock %}
-
-
-
-<!-- 참고용 코드
-
-<div class="col-3 fw-bold">프로필 사진</div>
-                <div class="col-9">
-                    {% if object.profile_img and object.profile_img.strip %}
-                        <img src="{{ object.profile_img }}" alt="{{ user }}" class="img-fluid rounded-circle" style="max-width: 100px; max-height: 100px;">
-                    {% else %}
-                        <img src="{% static 'img/logo.jpg' %}" alt="Default Profile Picture" class="img-fluid rounded-circle" style="max-width: 100px; max-height: 100px;">
-                    {% endif %}
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-3 fw-bold">이름</div>
-                <div class="col-9">{{object.user.username}}</div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-3 fw-bold">주소</div>
-                <div class="col-9">{{object.address}}</div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-3 fw-bold">전화번호</div>
-                <div class="col-9">{{object.phone}}</div>
-            </div>
-            <div class="text-center">
-                <a href="{% url 'mypage:update_user_info' %}" class="btn btn-outline-secondary">회원정보수정</a>
-                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                    회원탈퇴
-                </button>
-                    Modal 
-                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="staticBackdropLabel">회원 탈퇴</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                        정말로 탈퇴하시겠습니까? <br>
-                        탈퇴하시면 되돌릴 수 없습니다.
-                        </div>
-                        <div class="modal-footer">
-                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">취소</button>
-                        <form action="{% url 'mypage:user_delete'  %}" method="post">
-                            {% csrf_token %}
-                            <input type="submit" value="탈퇴하기" class="btn btn-outline-secondary">
-                        </form>
-                        </div>
-                    </div>
-                    </div>
-                </div> -->
