@@ -22,22 +22,22 @@ from django.db.models import Sum
 
 
 # 장바구니에 상품 추가
-def add_cart(request,) -> Any:    
-    if request.method == 'POST':
-
-        # 유저정보: request.user, 담을 상품 : item, 수량 : click 했을 시 생김, 상태 : click을 했는데 결제를 안했을 시 False
-        # item = Item.objects.all() # 상품을 가져왔다.
-        user = request.user # 누가 가져왔는지 유저 정보가 필요해서 가져왔다.
-        item_id = request.POST['item_id'] # 유저가 담은 상품을 가져왔다.
-        item = get_object_or_404(Item, id=item_id) # Item모델에 해당 상품이 없다면 에러 발생.
-        # 카트 아이템에 담았지만 아직 결제를 하지 않은 상태이다.
-        status = False     
-            
-        
-        cart = Cart.objects.create(user=user, item=item, status=status, amount=0)
-        cart.amount += 1
-        cart.save()
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/')) # 현재 페이지 그래로 유지
+#def add_cart(request,) -> Any:    
+#    if request.method == 'POST':
+#
+#        # 유저정보: request.user, 담을 상품 : item, 수량 : click 했을 시 생김, 상태 : click을 했는데 결제를 안했을 시 False
+#        # item = Item.objects.all() # 상품을 가져왔다.
+#        user = request.user # 누가 가져왔는지 유저 정보가 필요해서 가져왔다.
+#        item_id = request.POST['item_id'] # 유저가 담은 상품을 가져왔다.
+#        item = get_object_or_404(Item, id=item_id) # Item모델에 해당 상품이 없다면 에러 발생.
+#        # 카트 아이템에 담았지만 아직 결제를 하지 않은 상태이다.
+#        status = False     
+#            
+#        
+#        cart = Cart.objects.create(user=user, item=item, status=status, amount=0)
+#        cart.amount += 1
+#        cart.save()
+#    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/')) # 현재 페이지 그래로 유지
 
       
 
