@@ -129,13 +129,13 @@
                 <!-- 오른쪽 상자의 하위 항목 -->
                 <div class="d-flex justify-content-center">
                     <button class="btn btn-secondary btn-sm decrease-btn">-</button>
-                    <span class="mx-2" id="current-quantity">0</span>
+                    <span class="mx-2" id="current-quantity">1</span>
                     <button class="btn btn-secondary btn-sm increase-btn">+</button>
                 </div>
                 <form action="{% url 'item:detail' item.id %}" method="post">
                     {% csrf_token %}
                     <input type="hidden" id="current-quantity-hidden" value="" name="current-amount">
-                    <button class="btn btn-primary mt-3 add-to-cart-btn" type="submit">장바구니에 담기</button>
+                    <button class="btn btn-primary mt-3 add-to-cart-btn" type="submit" >장바구니에 담기</button>
                 </form>
             </div>
 
@@ -158,13 +158,13 @@
         <p>Size: {{ item.size.ml }}ml</p>
         <div class="d-flex justify-content-center">
             <button class="btn btn-secondary btn-sm decrease-btn-float">-</button>
-            <span class="mx-2" id="current-quantity-float">0</span>
+            <span class="mx-2" id="current-quantity-float">1</span>
             <button class="btn btn-secondary btn-sm increase-btn-float">+</button>
         </div>
         <form action="{% url 'item:detail' item.id %}" method="post">
             {% csrf_token %}
             <input type="hidden" id="current-quantity-hidden-float" value="" name="current-amount">
-            <button class="btn btn-primary mt-3 add-to-cart-btn-float" type="submit">장바구니 추가</button>
+            <button class="btn btn-primary mt-3 add-to-cart-btn-float" type="submit" >장바구니 추가</button>
         </form>
     </div>
 </div>
@@ -174,7 +174,7 @@
 {% endblock %}
 {% block extra-script %}
 <script>
-    let currentQuantity = 0;
+    let currentQuantity = 1;
 
     //수량 조절
 
@@ -187,7 +187,7 @@
         let currentQuantity = parseInt(currentQuantityElement.textContent);
 
         // 현재 수량이 0보다 큰 경우에만 감소
-        if (currentQuantity > 0) {
+        if (currentQuantity > 1) {
             currentQuantity--;
             currentQuantityElement.textContent = currentQuantity;
             document.getElementById('current-quantity-hidden').value = currentQuantity;
@@ -215,7 +215,7 @@
         document.getElementById('current-quantity-float').textContent = currentQuantity;
 
     }
-
+s
     document.querySelector('.increase-btn').addEventListener('click', increaseQuantity);
     document.querySelector('.increase-btn-float').addEventListener('click', increaseQuantity);
 
@@ -255,5 +255,6 @@ document.querySelector('.add-to-cart-btn').addEventListener('click', function() 
     // 팝업창 띄우기
     alert(popupContent);
 });
+
 </script>
 {% endblock %}
