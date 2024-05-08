@@ -2,14 +2,22 @@ from django.shortcuts import render, redirect
 from .models import Review
 from cart.models import OrderCart
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 # Create your views here.
 
 @login_required
 def my_review(request):
     review_list = Review.objects.filter(user = request.user).order_by('-datetime')
-    if review_list.exists():
-        context ={
-            'object_list':review_list
+    paginator = Paginator(review_list, 4)  # 한 페이지당 4개의 주문을 보여줍니다.
+    
+    # URL의 'page' GET 파라미터로부터 페이지 번호를 가져옵니다. 기본값은 1입니다.
+    page_number = request.GET.get('page', 1)
+    # 해당 페이지의 주문 객체를 가져옵니다.
+    page_obj = paginator.get_page(page_number)
+    
+    if page_obj:
+        context = {
+            'object_list': page_obj
         }
     else:
         context = {

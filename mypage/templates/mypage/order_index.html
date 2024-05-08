@@ -17,12 +17,21 @@
     .full-height {
         height: 100%;
     }
-    #content-display {
-        height: 100%;
-        overflow-y: auto; /* 내용이 많을 경우 스크롤 가능 */
-    }
     .order-title {
         margin-bottom: 20px; /* 하단 마진을 20px로 설정 */
+    }
+    .pagination .page-item.active .page-link {
+        background-color: #5B574F; /* 활성 페이지 버튼의 배경색 */
+        border-color: #5B574F; /* 활성 페이지 버튼의 테두리 색상 */
+        color: white;
+    }
+
+    .pagination .page-link {
+        color: #5B574F; /* 페이지 버튼의 텍스트 색상 */
+    }
+
+    .pagination .page-link:hover {
+        color: #5B574F; /* 마우스 오버 시 페이지 버튼의 텍스트 색상 */
     }
 </style>
 {% endblock %}
@@ -46,7 +55,7 @@
                 <h3 class="order-title">"{{user}}"의 주문내역</h3>
                 <hr class="mt-4 border-t-2 border-gray-500 md:mt-6">
                 
-                {% if orders %}
+                {% if orders.has_other_pages %}
                 <div class="row">
                     {% for order in orders %}
                     <div class="card mb-4">
@@ -73,6 +82,23 @@
                     </div>                    
                     {% endfor %}
                 </div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if orders.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page={{ orders.previous_page_number }}">이전</a></li>
+                        {% endif %}
+                        {% for num in orders.paginator.page_range %}
+                        {% if orders.number == num %}
+                        <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                        {% if orders.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ orders.next_page_number }}">다음</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>                
                 {% else %}
                 <div class="row">
                     <p>{{ message }}</p>
