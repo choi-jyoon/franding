@@ -70,13 +70,13 @@
             <span class="input-group-text" id="basic-addon1">e-mail</span>
             <input type="email" class="form-control" name="receiver_email" aria-label="Text input with dropdown button"
                 placeholder="이메일을 입력해주세요" value='{{user.email}}'>
-            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+            {% comment %} <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
                 aria-expanded="false">e-mail</button>
             <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="#">네이버</a></li>
                 <li><a class="dropdown-item" href="#">다음</a></li>
                 <li><a class="dropdown-item" href="#">구글</a></li>
-            </ul>
+            </ul> {% endcomment %}
         </div>
 
         <table class="table">
@@ -104,7 +104,7 @@
         </table>
 
 
-        <div class="input-group" style='width: 30%;'>
+        {% comment %} <div class="input-group" style='width: 30%;'>
             <select class="form-select" id="inputGroupSelect04" aria-label="Example select with button addon">
                 <option selected>쿠폰을 선택해주세요</option>
                 <option value="1">10% 할인권</option>
@@ -112,7 +112,7 @@
                 <option value="3">30% 할인권</option>
             </select>
             <button class="btn btn-outline-secondary" type="button">적용</button>
-        </div>
+        </div> {% endcomment %}
 
 
         <h3>총 합계 : {{total_price|intcomma}}</h3>
