@@ -52,7 +52,7 @@
   }  
 
   .grid-container:hover {
-      box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); /* 마우스를 올렸을 때 그림자 효과 변경 */
+      box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.62); /* 마우스를 올렸을 때 그림자 효과 변경 */
   }
 
   .grid-item img {
@@ -89,6 +89,60 @@
         text-decoration: none;
         color: black;
     }
+    .category-button ul li {
+  opacity: 0;
+  animation: fadeInDown 0.5s ease forwards;
+}
+    @keyframes fadeInDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.category-button ul li:nth-child(1) { animation-delay: 0.1s; }
+.category-button ul li:nth-child(2) { animation-delay: 0.2s; }
+.category-button ul li:nth-child(3) { animation-delay: 0.3s; }
+.category-button ul li:nth-child(4) { animation-delay: 0.4s; }
+.category-button ul li:nth-child(5) { animation-delay: 0.5s; }
+
+/* CSS 애니메이션 효과 */
+
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.grid-item {
+  opacity: 0;
+  transform: translateX(100px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.grid-item.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.section-title {
+  opacity: 0;
+  transform: translateX(-100px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.section-title.show {
+  opacity: 1;
+  transform: translateX(0);
+}
 
 </style>
 {% endblock %}
@@ -148,7 +202,7 @@
 <!-- 대표 향수 아이템 -->
 <div class="row justify-content-center mt-4">
     <div class='col'>
-        <div class="row mb-4">
+        <div class="row mb-4  section-title">
             <div class="col-md-auto">
                 <h3 class="mb-0">Signature Perfume</h3>
             </div>
@@ -199,4 +253,26 @@
     </div>
 </div>
   {% endblock%}
+  {% block extra-script %}
+  <script>
+const gridItems = document.querySelectorAll('.grid-item');
+const sectionTitle = document.querySelector('.section-title');
+window.addEventListener('scroll', () => {
+  const scrollPosition = window.pageYOffset;
 
+  gridItems.forEach((item, index) => {
+    const itemPosition = item.offsetTop - window.innerHeight / 1.2;
+
+    if (scrollPosition > itemPosition) {
+      item.classList.add('show');
+      item.style.transitionDelay = `${index * 0.2}s`;
+      sectionTitle.classList.add('show')
+    } else {
+      item.classList.remove('show');
+      sectionTitle.classList.remove('show')
+    }
+  });
+});
+
+  </script>
+  {% endblock %}
