@@ -21,8 +21,20 @@
     }
 
     .grid-item img {
-        width: 100%;
+        width: auto; /* 이미지 크기에 따라 자동 조절 */
+        max-width: 100%; /* 부모 요소에 맞추기 */
         height: auto;
+        margin-bottom: 10px; /* 이미지와 텍스트 사이 간격 조절 */
+    }
+
+    .separator-wrapper {
+        text-align: center; /* 텍스트 중앙 정렬 */
+    }
+
+    .separator {
+        width: 100%; /* 구분선 전체 너비 */
+        border-top: 1px solid #ccc; /* 구분선 스타일 */
+        margin: 10px 0; /* 위아래 간격 */
     }
 
     .flex-container {
@@ -43,8 +55,10 @@
     }
 
     .flex-item img {
-        width: 100%;
+        width: auto; /* 이미지 크기에 따라 자동 조절 */
+        max-width: 100%; /* 부모 요소에 맞추기 */
         height: auto;
+        margin-bottom: 10px; /* 이미지와 텍스트 사이 간격 조절 */
     }
 
     .button-group {
@@ -80,37 +94,37 @@
     }
 
     .pagination-button {
-    padding: 10px 20px;
-    font-size: 17px;
-    border-radius: 10px;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    transition: background-color 0.3s, color 0.3s;
-    background-color: #ffffff; /* 버튼의 배경색 */
-    color: #333; /* 버튼의 글자색 */
-    border: 2px solid #333; /* 버튼의 테두리 */
-    margin-right: 10px; /* 오른쪽 마진 추가 */
+        padding: 10px 20px;
+        font-size: 17px;
+        border-radius: 10px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: background-color 0.3s, color 0.3s;
+        background-color: #ffffff; /* 버튼의 배경색 */
+        color: #333; /* 버튼의 글자색 */
+        border: 2px solid #333; /* 버튼의 테두리 */
+        margin-right: 10px; /* 오른쪽 마진 추가 */
     }
 
     .pagination-button:hover {
-    background-color: #333; /* 마우스 오버 시 배경색 */
-    color: #ffffff; /* 마우스 오버 시 글자색 */
+        background-color: #333; /* 마우스 오버 시 배경색 */
+        color: #ffffff; /* 마우스 오버 시 글자색 */
     }
 
     /* 현재 페이지 버튼 스타일 */
     .current-page {
-    background-color: #333;
-    color: #ffffff;
+        background-color: #333;
+        color: #ffffff;
     }
 
     .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%; /* 전체 너비 사용 */
-    text-align: center; /* 텍스트 중앙 정렬 */
-    gap: 10px; /* 요소 간 간격 */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%; /* 전체 너비 사용 */
+        text-align: center; /* 텍스트 중앙 정렬 */
+        gap: 10px; /* 요소 간 간격 */
     }
 </style>
 {% endblock %}
@@ -121,11 +135,14 @@
     <div class="grid-container flex-container">
         {% for item in item_list %}
         <div class="grid-item flex-item">
-            <img src="{{ item.image }}" alt="{{ item.name }}" onError="this.onerror=null;this.src='default-image.jpg';">
+            <div class="separator-wrapper">
+                <img src="{{ item.image }}" alt="{{ item.name }}" onError="this.onerror=null;this.src='default-image.jpg';">
+                <hr class="separator"> <!-- 이미지와 텍스트 사이 구분선 -->
+            </div>
             <span style="font-size: 15px;">{{ item.name }}</span>
             <p>{{ item.brand }}</p>
             <p>{{ item.price|intcomma }}  ₩</p>
-            <p>{{ item.size }} ml</p>
+            <p>{{ item.size }}</p>
             <div class="button-group">
                 <a href="{% url 'seller:item_update' pk=item.pk %}" class="button">수정</a>
                 <a href="{% url 'seller:item_delete' pk=item.pk %}" class="delete-button">삭제</a>
