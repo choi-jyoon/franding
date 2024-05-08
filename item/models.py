@@ -4,18 +4,34 @@ from django.contrib.auth.models import User
 
 class Category1(models.Model):
     name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
     
 class Category2(models.Model):
     name = models.CharField(max_length=50, null=True)
+
+    def __str__(self):
+        return self.name
     
 class Brand(models.Model):
     name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
     
 class Size(models.Model):
     ml = models.IntegerField(default=50)
+
+    def __str__(self):
+        return str(self.ml) + 'ml'
+        
     
 class ItemType(models.Model):
     name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
     
 class Item(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -34,4 +50,6 @@ class Item(models.Model):
 
     def __str__(self):
         return self.name
+    
+    
     
