@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.sites',
-    'widget_tweaks',  
+    'widget_tweaks', 
+    
     'item',
     'mypage',
     'review',
@@ -166,13 +167,13 @@ SITE_ID = 1
 
 LOGIN_REDIRECT_URL='/'
 LOGOUT_REDIRECT_URL='/'
-ACCOUNT_LOGOUT_REDIRECT_URL = reverse_lazy('accountapp:login')
-ACCOUNT_LOGOUT_ON_GET = True
+# ACCOUNT_LOGOUT_REDIRECT_URL = reverse_lazy('accountapp:login')
+# ACCOUNT_LOGOUT_ON_GET = True
 
 MEDIA_URL='/media/'
 MEDIA_ROOT=BASE_DIR/'media'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
-
+ALLOWED_HOSTS = ['testserver', 'localhost', '127.0.0.1', '[::1]']
 
 
