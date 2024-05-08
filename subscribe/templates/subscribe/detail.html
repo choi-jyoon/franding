@@ -62,6 +62,7 @@
     
     .item-card .keyword {
         padding-left:70px; /* keyword 클래스를 가진 p 태그의 텍스트를 가로 중앙에 정렬 */
+        text-align: center;
     }
 
     .list-inline-item{
@@ -78,7 +79,13 @@
         {{subscribe_object}}
         <p>신청 날짜 : {{subcribe_object.datetime}} </p><br>
         <p style="margin-left:2rem;"> 진행 상황 : {{subcribe_object.get_state_display}} </p>
-        <img src="https://imgur.com/uxnsfDP.gif" alt="향수 프랜딩 이미지" style="width: 10%; height: auto;">
+        {% if subcribe_object.state == 0 %}
+        <img src="https://imgur.com/NpJ5maX.gif" alt="향수 프랜딩 이미지" style="width: 10%; height: auto;">
+        {% elif subcribe_object.state == 1%}
+        <img src="https://imgur.com/6Uy7Ec6.gif" alt="향수 프랜딩 이미지" style="width: 10%; height: auto;">
+        {% else %}
+        <img src="https://imgur.com/FxFDTKW.gif" alt="향수 프랜딩 이미지" style="width: 10%; height: auto;">
+        {% endif%}
     </div>
 </div>
 
