@@ -12,6 +12,7 @@ load_dotenv()
 admin_key = os.getenv('admin_key')
 
 def payment_list(request, total_price=0):
+    current_domain = request.get_host()
     template_name = 'payment/payment_info.html'
     user=request.user
     cnt = 0
@@ -82,9 +83,9 @@ def payment_list(request, total_price=0):
             "quantity": "{}".format(total_amount),                # 구매 물품 수량
             "total_amount": "{}".format(total_price),        # 구매 물품 가격
             "tax_free_amount": "0",         # 구매 물품 비과세
-            'approval_url':'http://127.0.0.1:8000/payment/paysuccess', 
-            'fail_url':'http://127.0.0.1:8000/payment/payfail',
-            'cancel_url':'http://127.0.0.1:8000/payment/paycancel'
+            'approval_url':f'http://{current_domain}/payment/paysuccess', 
+            'fail_url':f'http://{current_domain}/payment/payfail',
+            'cancel_url':f'http://{current_domain}/payment/paycancel'
         }
 
         res = requests.post(URL, data=data, headers=headers)
