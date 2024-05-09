@@ -54,7 +54,7 @@
             </div>
             <div class="col-10" id="content-display">
                 <!-- 주문내역 -->
-                <h3 class="order-title">"{{user}}"의 주문내역</h3>
+                <h3 class="order-title">"{{user.first_name}}"님의 주문내역</h3>
                 <hr class="mt-4 border-t-2 border-gray-500 md:mt-6">
                 
                 {% if orders %}
@@ -73,7 +73,7 @@
                                 <!-- 상품 정보 열 -->
                                 <div class="col-8">
                                     <h5 class="card-title">주문상품 : {{ order.ordercart_set.first.cart.item.name }} 등</h5>
-                                    <p class="card-text"><strong>{{ order.total_price|intcomma }}원</strong></p>
+                                    <p class="card-text"><strong>{{ order.total_price|intcomma }}  ₩</strong></p>
                                 </div>
                                 <!-- 버튼 열 -->
                                 <div class="col-3 d-flex justify-content-end align-items-center">

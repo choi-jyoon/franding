@@ -144,13 +144,37 @@
 {% block extra-script %}
 
 <script>
-    // 각 단계별로 진행 상황을 업데이트하는 함수
-    function updateProgressBar(step) {
-        var bar = document.getElementById("myBar");
-        // 7개의 질문에 대한 진행 상태를 계산합니다.
-        var width = step * (100 / 7);
-        bar.style.width = width + '%';
+ // easing 함수
+function easeOutQuad(t, b, c, d) {
+  t /= d;
+  return -c * t * (t - 2) + b;
+}
+
+// 프로그레스 바 애니메이션 함수
+function animateProgressBar(targetWidth, duration) {
+  var bar = document.getElementById("myBar");
+  var startWidth = parseFloat(bar.style.width) || 0;
+  var change = targetWidth - startWidth;
+  var startTime = performance.now();
+
+  function animate(currentTime) {
+    var elapsedTime = currentTime - startTime;
+    var progress = easeOutQuad(elapsedTime, startWidth, change, duration);
+    bar.style.width = progress + "%";
+
+    if (elapsedTime < duration) {
+      requestAnimationFrame(animate);
     }
+  }
+
+  requestAnimationFrame(animate);
+}
+
+// 각 단계별로 진행 상황을 업데이트하는 함수
+function updateProgressBar(step) {
+  var targetWidth = step * (100 / 7);
+  animateProgressBar(targetWidth, 500); // 0.5초 동안 애니메이션
+}
 
     document.addEventListener("DOMContentLoaded", function() {
         const intensityButtons = document.querySelectorAll(".intensity-btn");

@@ -5,7 +5,7 @@ from django.views.generic import FormView
 from django.db.models import Q
 from .models import *
 from cart.models import Cart
-
+from review.models import Review
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -99,9 +99,24 @@ def list_item(request):
 
 def detail_list_item(request,item_id):
     item=Item.objects.get(id=item_id)
-    context={
-        "item":item
-    }
+    review = Review.objects.filter(item = item_id).order_by('-datetime')
+    paginator = Paginator(review, 3)  
+
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    
+    if page_obj:
+        context = {
+        "item":item,
+        "review":page_obj,
+        }
+    else:
+        context = {
+            "item":item,
+            'message': '리뷰가 없습니다.'
+        }    
     return render(request,'item/detail.html',context) 
 @login_required
 def    add_cart(request,item_id):

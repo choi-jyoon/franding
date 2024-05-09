@@ -6,6 +6,7 @@ from item.models import Item
 from django.db.models import Q
 from django.core.paginator import Paginator
 from .forms import UserAddInfoForm, UserCreateForm, CustomAuthenticationForm
+from django.contrib import messages  
 # Create your views here.
 
 def index(request):
@@ -58,6 +59,7 @@ def register(request):
 class UserCreateDoneTV(TemplateView):
     template_name = 'registration/register_done.html'
     
+
 def custom_login(request):
     if request.method == 'POST':
         form = CustomAuthenticationForm(request, data=request.POST)
@@ -66,34 +68,41 @@ def custom_login(request):
             login(request, user)
             # 성공적으로 로그인 후 리다이렉트할 페이지
             return redirect('home')
+        else:
+            # 폼 유효성 검사에 실패한 경우, 즉 아이디나 비밀번호 오류 등의 이유
+            messages.error(request, '로그인 실패. 아이디나 비밀번호를 확인해주세요.')  # 오류 메시지 추가
     else:
-        context = {
-            'form' : CustomAuthenticationForm()
-        }
+        form = CustomAuthenticationForm()
+
+    context = {
+        'form': form
+    }
     return render(request, 'registration/login.html', context)
+
     
 def searchItem(request):
     search_word = request.POST.get('search_word', '')
     select_option = request.POST.get('select_option', '')
-    objects = None
+    objects = Item.objects.all()
     
-    if select_option == '':
-        objects = Item.objects.filter(Q(name__icontains=search_word)| Q(summary__icontains=search_word)|Q(description__icontains=search_word)
-                                  |Q(cat1__name__icontains=search_word)|Q(cat2__name__icontains=search_word)|Q(item_type__name__icontains=search_word)
-                                  |Q(brand__name__icontains=search_word))
-    elif select_option == 'cat1':
-        objects = Item.objects.filter(Q(cat1__name__icontains=search_word))
-    elif select_option == 'cat2':
-        objects = Item.objects.filter(Q(cat2__name__icontains=search_word))
-    elif select_option == 'name':
-        objects = Item.objects.filter(Q(name__icontains=search_word))
-    elif select_option == 'item_type':
-        objects = Item.objects.filter(Q(item_type__name__icontains=search_word))
-    elif select_option == 'brand':
-        objects = Item.objects.filter(Q(brand__name__icontains=search_word))
-    elif select_option == 'desc':
-        objects = Item.objects.filter(Q(summary__icontains=search_word)|Q(description__icontains=search_word))
-        
+    if request.method == 'POST':
+        if select_option == '' or select_option == '분류':
+            objects = Item.objects.filter(Q(name__icontains=search_word)| Q(summary__icontains=search_word)|Q(description__icontains=search_word)
+                                    |Q(cat1__name__icontains=search_word)|Q(cat2__name__icontains=search_word)|Q(item_type__name__icontains=search_word)
+                                    |Q(brand__name__icontains=search_word))
+        elif select_option == 'cat1':
+            objects = Item.objects.filter(Q(cat1__name__icontains=search_word))
+        elif select_option == 'cat2':
+            objects = Item.objects.filter(Q(cat2__name__icontains=search_word))
+        elif select_option == 'name':
+            objects = Item.objects.filter(Q(name__icontains=search_word))
+        elif select_option == 'item_type':
+            objects = Item.objects.filter(Q(item_type__name__icontains=search_word))
+        elif select_option == 'brand':
+            objects = Item.objects.filter(Q(brand__name__icontains=search_word))
+        elif select_option == 'desc':
+            objects = Item.objects.filter(Q(summary__icontains=search_word)|Q(description__icontains=search_word))
+            
     paginator = Paginator(objects, 16) 
 
     page_number = request.GET.get('page', 1) 

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load humanize %}
 {% block title %} Category_List {% endblock %}
 {% block extra-style %}
 <style>
@@ -23,7 +23,9 @@
         border-right: 1px solid #ccc;
         /* 사이드바와 그리드 사이에 구분선 추가 */
     }
-
+    .list-title{
+        text-align: center;
+    }
     .mb-5 {
         width: 80%;
         display: flex;
@@ -31,35 +33,47 @@
     }
 
     /* 상품 목록 스타일 */
+    .grid-item-contain{
+        display: flex;
+        justify-content:center;
+        padding: 0;
+    }
     .item-list {
-        width: 70%;
+        width: 100%;
         float: left;
         padding: 20px;
-        margin-top: 50px;
+        margin-top: 5px;
         text-align: center;
 
     }
-
+    .grid-img{
+        object-fit: cover;
+        
+    }
     .grid-container {
-
+        width: 100%;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: repeat(1, 1fr);
         grid-gap: 10px;
+       
     }
+
 
     .grid-item {
-        width: 200px;
-        height: 220px;
+        align-items: center;
+        width: 100%;
+        height: 300px;
         text-align: center;
-
-
-
+        border: 1px solid #ccc;
+        border-radius: 10px 10px 10px 10px;
+        padding: 5px;
     }
+
 
     .grid-item:hover {
-        border: 2px solid #b2b2b2;
-    }
+        border: 2px solid #a8a7a7;
+  }
 
     .item {
         padding: 0%;
@@ -68,20 +82,19 @@
 
     .grid-item img {
         max-width: 100%;
-        height: 100px;
+        height: 200px;
     }
 
     .summary {
-        width: 200px;
-        /* 고정된 너비 필요 */
-        white-space: nowrap;
-        /* 텍스트를 한 줄로 표시 */
-        overflow: hidden;
-        /* 넘치는 텍스트 숨기기 */
-        text-overflow: ellipsis;
-        /* 넘치는 텍스트를 ... 으로 표시 */
-        padding-right: 5px;
-    }
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* 표시하고 싶은 줄의 수 */
+    -webkit-box-orient: vertical;
+    text-align: center;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 5px;
+}
 
     /* 페이징 스타일 */
     .pagination {
@@ -100,6 +113,7 @@
         background-color: #5B574F; /* 활성 페이지 버튼의 배경색 */
         border-color: #5B574F; /* 활성 페이지 버튼의 테두리 색상 */
         color: white;
+
     }
 
     .pagination .page-link {
@@ -146,6 +160,32 @@
     outline: none;
     border: 2px solid #5B574F;
 }
+.mb-5{
+    border-top:2px solid #b2b2b2;
+    border-bottom:2px solid #b2b2b2;
+}
+/*애니메이션*/
+.grid-item {
+  overflow: hidden;
+}
+
+.grid-item{
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fade-in-up 0.5s ease-out forwards;
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 
 </style>
@@ -162,8 +202,10 @@
             </h4>
             <div class="category1-container">
                 {% for category1 in cat1 %}
-                <input type="checkbox" id="category1:{{ category1.id }}" {% if category1.id in selected_cat1%}checked{%endif %} name="cat1" value="{{ category1.id }}" onchange="this.form.submit()">
+                <div class="sidebar-tag">
+                <input type="checkbox" id="category1:{{ category1.id }}" {% if category1.id in selected_cat1%}checked{%endif %} name="cat1" value="{{ category1.id }}" onchange="this.form.submit()" >
                 <label for="category1:{{ category1.id }}">{{ category1.name }}</label><br>
+                </div>
                 {% endfor %}
             </div>
 
@@ -174,8 +216,10 @@
             </h4>
             <div class="category2-container">
                 {% for category2 in cat2 %}
+                <div class="sidebar-tag">
                 <input type="checkbox" id="category2:{{ category2.id }}" {% if category2.id in selected_cat2%}checked{%endif %} name="cat2" value="{{ category2.id }}" onchange="this.form.submit()">
                 <label for="category2:{{ category2.id }}">{{ category2.name }}</label><br>
+                 </div>
                 {% endfor %}
             </div>
         </div>
@@ -186,9 +230,11 @@
         </h4>
         <div class="brand-container">
             {% for brand in brand %}
+            <div class="sidebar-tag">
             <input type="checkbox" id="brand:{{ brand.id }}" {% if brand.id in selected_brand %}checked{% endif %}
                 name="brand" value="{{ brand.id }}" onchange="this.form.submit()">
             <label for="brand:{{ brand.id }}">{{ brand.name }}</label><br>
+            </div>
             {% endfor %}
         </div>
 
@@ -199,9 +245,11 @@
             </h4>
             <div class="type-container">
                 {% for type in item_type %}
+                <div class="sidebar-tag">
                 <input type="checkbox" id="type:{{ type.id }}" {% if type.id in selected_type %}checked{% endif %}
                     name="item_type" value="{{ type.id }}" onchange="this.form.submit()">
                 <label for="type:{{ type.id }}">{{ type.name }}</label><br>
+                </div>
                 {% endfor %}
             </div>
         </div>
@@ -230,17 +278,17 @@
     <div class="section-title">
         <form method="get" action="{% url 'item:item_list' %}">
             <button type="submit" class="btn priceFilter5" name="price" value="0">
-                <h1>List</h1>
+                <h1 class="list-title">List</h1>
             </button>
         </form>
     </div>
     <div class="grid-container">
         {% for item in items %}
-        <a href="{% url 'item:detail' item.id %}" role="button">
+        <a class="grid-item-contain" href="{% url 'item:detail' item.id %}" role="button">
             <div class="grid-item">
-                <img src="{{ item.image }}" alt="{{ item.name }}">
+                <img src="{{ item.image }}" alt="{{ item.name }}" class="grid-img">
                 <h5 class="item item-title" bold>{{ item.name }}</h5>
-                <p class="item">가격: {{ item.price }}원</p>
+                <p class="item">가격: {{ item.price|intcomma }}&#8361;</p>
                 <p class="item summary">{{ item.summary }}</p>
             </div>
         </a>
@@ -265,9 +313,7 @@
         {% endif %}
     </div>
 </div>
-<div>
-    <input type="checkbox">
-</div>
+
 {% endblock %}
 {% block extra-script %}
 <script>
@@ -302,6 +348,7 @@
         // 초기 상태에 따라 토글 버튼의 배경색 설정
         btn.style.backgroundColor = toggleStates[title] ? '#FFFFFF' : '#FFFFFF';
         btn.style.color = toggleStates[title] ? '#5B574F' : '#5B574F';
+        btn.style.textDecoration = toggleStates[title] ?'underline':'none';
         btn.style.fontWeight = toggleStates[title] ? 'bold' : 'normal';
         btn.addEventListener('click', () => {
             // 클릭 이벤트 핸들러 내용은 그대로 유지
@@ -309,6 +356,7 @@
             container.style.display = toggleStates[title] ? 'block' : 'none';
             btn.style.backgroundColor = toggleStates[title] ? '#FFFFFF' : '#FFFFFF';
             btn.style.color = toggleStates[title] ? '#5B574F' : '#5B574F';
+            btn.style.textDecoration = 'underline';
             btn.style.fontWeight = toggleStates[title] ? 'bold' : 'bold';
         });
         btn.addEventListener('mouseover', () => {
@@ -321,13 +369,20 @@
         btn.addEventListener('mouseout', () => {
             btn.style.backgroundColor = '#FFFFFF';
             btn.style.color = '#5B574F';
+            btn.style.textDecoration =toggleStates[title] ? 'underline':'none';
             btn.style.fontWeight = toggleStates[title] ? 'bold' : 'normal';
         });
 
 
     });
     
+    document.addEventListener('DOMContentLoaded', function() {
+  var containers = document.querySelectorAll('.grid-item');
 
-    //가격 카테고리 설정 버튼 이벤트 스크립트 들어갈예정
+  containers.forEach(function(container, index) {
+    container.style.animationDelay = (index * 0.1) + 's';
+  });
+});
+
 </script>
 {% endblock %}

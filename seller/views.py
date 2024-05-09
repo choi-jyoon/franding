@@ -23,7 +23,7 @@ def item_create(request):
             item = form.save(commit=False)
             item.user = request.user  # 현재 로그인한 사용자를 상품의 소유자로 지정합니다.
             item.save()
-            return redirect('item_list')  # 상품 목록 페이지로 리디렉션합니다.
+            return redirect('seller:item_list')  # 상품 목록 페이지로 리디렉션합니다. -> item_list 오류 : item:item_list 로 url 네임 명시
     else:
         form = ItemForm()
     return render(request, 'seller/item_form.html', {'form': form})
@@ -33,12 +33,6 @@ def item_create(request):
 def item_list(request):
     items = Item.objects.all()
     return render(request, 'seller/item_list.html', {'items': items})
-
-
-# @login_required
-# def item_detail(request, pk):
-#     item = get_object_or_404(Item, pk=pk)
-#     return render(request, 'seller/item_detail.html', {'item': item})
 
 @login_required
 def item_detail(request, product_name, size):
@@ -53,8 +47,6 @@ def item_detail(request, product_name, size):
     return render(request, 'seller/item_detail.html', {'item': item})
 
 
-
-
 @login_required
 def item_update(request, pk):
     item = get_object_or_404(Item, pk=pk)
@@ -62,7 +54,7 @@ def item_update(request, pk):
         form = ItemForm(request.POST, instance=item)
         if form.is_valid():
             form.save()
-            return redirect('item_list')
+            return redirect('seller:item_list')
     else:
         form = ItemForm(instance=item)
     return render(request, 'seller/item_form.html', {'form': form})
@@ -73,9 +65,8 @@ def item_delete(request, pk):
     item = get_object_or_404(Item, pk=pk)
     if request.method == 'POST':
         item.delete()
-        return redirect('item_list')
+        return redirect('seller:item_list')
     return render(request, 'seller/item_confirm_delete.html', {'item': item})
-
 
 
 class ItemListView(ListView):

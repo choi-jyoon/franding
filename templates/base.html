@@ -14,18 +14,21 @@
         }
         body {
             display: flex;
-            flex-direction: column;
+             flex-direction: column;
+             min-height: 100vh;
         }
         .content {
             flex: 1 0 auto; /* 콘텐츠가 차지할 수 있는 최대 공간을 차지하도록 설정 */
             margin-top: 70px; /* 네비바 높이만큼 컨텐츠 위에 마진 추가 */
-            margin-bottom: 150/px; /* 푸터 높이만큼 컨텐츠 아래에 마진 추가 */
+            margin-bottom: 150px; /* 푸터 높이만큼 컨텐츠 아래에 마진 추가 */
+        
         }
         .footer {
             background-color: #f8f9fa; /* 밝은 회색 */
             flex-shrink: 0; /* 푸터가 축소되지 않도록 설정 */
             height:150px;
-            margin-top:150px;
+            margin-top: auto;
+            margin-bottom:0px;
             padding:30px;
         }
         .navbar {
@@ -93,7 +96,11 @@
             border-radius: 50%; /* 원형 모양 만들기 */
             object-fit: cover; /* 이미지 비율을 유지하면서 요소에 맞춤 */
         }
-        
+        a {
+      text-align: center;
+        text-decoration: none;
+        color: black;
+    }
     </style>
     {% block extra-style %}
 
@@ -122,13 +129,15 @@
                         <li><a class="dropdown-item" href="{% url 'item:other_list' %}?item_type=2">Diffuser</a></li>
                         <li><a class="dropdown-item" href="{% url 'item:other_list' %}?item_type=3">Fabric Perfume</a></li>
                         <li><a class="dropdown-item" href="{% url 'item:other_list' %}?item_type=4">Candle</a></li>
+                        <li><a class="dropdown-item" href="{% url 'item:other_list' %}?item_type=5">시향지</a></li>
+
                     </ul>
                 </li>
                 <li class="nav-item" style="margin-right: 20px;">
                     <a class="nav-link" href="{% url 'item:brand_list' %}">Brand</a> 
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="{% url 'item:brand_list' %}?brand=1">franding</a></li>
-                        <li><a class="dropdown-item" href="{% url 'item:brand_list' %}?brand=2">aGUCCIm</a></li>
+                        <li><a class="dropdown-item" href="{% url 'item:brand_list' %}?brand=2">GUCCI</a></li>
                         <li><a class="dropdown-item" href="{% url 'item:brand_list' %}?brand=3">DIPTYQUE</a></li>
                         <li><a class="dropdown-item" href="{% url 'item:brand_list' %}?brand=4">Jo Malone</a></li>
                         <li><a class="dropdown-item" href="{% url 'item:brand_list' %}?brand=5">LE PERSONA</a></li>
@@ -211,7 +220,7 @@
     <footer class="footer bg-light">
         <div class="container text-center">
             <p>© 2024 Franding. All rights reserved.</p>
-            <p>Follow us: <a href="#">Facebook</a> | <a href="#">Twitter</a> | <a href="#">Instagram</a></p>
+            <p>Follow us: <a href="#">Facebook</a> | <a href="#">Twitter</a> | <a href="https://www.instagram.com/frand_ing/">Instagram</a></p>
             <p>개인정보처리방침 | 이용약관</p>
         </div>
     </footer>

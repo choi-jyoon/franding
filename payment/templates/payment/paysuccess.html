@@ -38,6 +38,7 @@
             <a href="{% url 'mypage:order_index' %}" class="btn btn-outline-secondary mb-4">주문 내역</a>
             <a href="{% url 'review:review_index' %}" class="btn btn-outline-secondary mb-4">작성 리뷰</a>
             <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary mb-4">회원정보</a>
+            <a href="{% url 'event:index' %}" class="btn btn-outline-secondary mb-4">나의 Franding</a>
             <a href="{% url 'subscribe:index' %}" class="btn btn-outline-secondary mb-4">구독</a>
             {% if user.is_staff %}
                 <a href="{% url 'seller:seller_index' %}" class="btn btn-outline-secondary mb-4">판매자페이지</a>
@@ -45,7 +46,7 @@
         </div>
     
     <div class="col-10" id="content-display">
-        <h3>{{user}}님의 주문정보</h3>
+        <h3>{{user.first_name}}님의 주문정보</h3>
         <hr class="mt-4 border-t-2 border-gray-500 md:mt-6">
         <!-- 주문 정보 -->
         <div class="p-4 border rounded">
@@ -122,7 +123,7 @@
                         <td>{{ items }}</td>
                         <td>{{ items.item.size.ml }}ml</td>
                         <td>{{ items.amount }}</td>
-                        <td>{{ items.sub_total|intcomma }}원</td>
+                        <td>{{ items.sub_total|intcomma }}  ₩</td>
                     </tr>
                     {% endfor %}
                 </tbody>

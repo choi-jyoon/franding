@@ -124,7 +124,7 @@
                         <td>{{ ordercart.cart }}</td>
                         <td>{{ ordercart.cart.item.size.ml }}ml</td>
                         <td>{{ ordercart.cart.amount }}</td>
-                        <td>{{ ordercart.cart.sub_total|intcomma }}원</td>
+                        <td>{{ ordercart.cart.sub_total|intcomma }}  ₩</td>
                         <td>
                             {% if order.delivery_info.status == 2 %}
                                 {% if ordercart.is_review %}
