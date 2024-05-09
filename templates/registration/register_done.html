@@ -2,13 +2,13 @@
 
 {% block title %}register_done.html{% endblock %}
 
+
 {% block content %}
 
-    <h1>Registration Completed Successfully</h1> 
+    <h1>회원가입 완료</h1> 
+    <hr>
+    <h5>franding에 오신 걸 환영합니다. 당신의 향기로운 여정을 응원합니다.</h5> 
     <br>
-
-    <p>Thank you for registering.</p> 
-
-    <p class="font-italic"><a href="{% url 'login' %}">Log in</a> </p>  
+    <button class="btn btn-outline-secondary" ><a href="{% url 'login' %}">Log in</a> </button>
 
 {% endblock %}
