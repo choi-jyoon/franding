@@ -53,6 +53,7 @@
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: repeat(1, 1fr);
         grid-gap: 5px;
+       
     }
 
     .grid-item {
@@ -81,7 +82,7 @@
     -webkit-line-clamp: 2; /* 표시하고 싶은 줄의 수 */
     -webkit-box-orient: vertical;
     text-align: center;
-    width: 300px;
+    width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     padding-right: 5px;
@@ -104,6 +105,7 @@
         background-color: #5B574F; /* 활성 페이지 버튼의 배경색 */
         border-color: #5B574F; /* 활성 페이지 버튼의 테두리 색상 */
         color: white;
+
     }
 
     .pagination .page-link {
@@ -154,6 +156,29 @@
     border-top:2px solid #b2b2b2;
     border-bottom:2px solid #b2b2b2;
 }
+/*애니메이션*/
+.grid-item {
+  overflow: hidden;
+}
+
+.grid-item{
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fade-in-up 0.5s ease-out forwards;
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
 
 </style>
 {% endblock %}
@@ -169,8 +194,10 @@
             </h4>
             <div class="category1-container">
                 {% for category1 in cat1 %}
-                <input type="checkbox" id="category1:{{ category1.id }}" {% if category1.id in selected_cat1%}checked{%endif %} name="cat1" value="{{ category1.id }}" onchange="this.form.submit()">
+                <div class="sidebar-tag">
+                <input type="checkbox" id="category1:{{ category1.id }}" {% if category1.id in selected_cat1%}checked{%endif %} name="cat1" value="{{ category1.id }}" onchange="this.form.submit()" >
                 <label for="category1:{{ category1.id }}">{{ category1.name }}</label><br>
+                </div>
                 {% endfor %}
             </div>
 
@@ -181,8 +208,10 @@
             </h4>
             <div class="category2-container">
                 {% for category2 in cat2 %}
+                <div class="sidebar-tag">
                 <input type="checkbox" id="category2:{{ category2.id }}" {% if category2.id in selected_cat2%}checked{%endif %} name="cat2" value="{{ category2.id }}" onchange="this.form.submit()">
                 <label for="category2:{{ category2.id }}">{{ category2.name }}</label><br>
+                 </div>
                 {% endfor %}
             </div>
         </div>
@@ -193,9 +222,11 @@
         </h4>
         <div class="brand-container">
             {% for brand in brand %}
+            <div class="sidebar-tag">
             <input type="checkbox" id="brand:{{ brand.id }}" {% if brand.id in selected_brand %}checked{% endif %}
                 name="brand" value="{{ brand.id }}" onchange="this.form.submit()">
             <label for="brand:{{ brand.id }}">{{ brand.name }}</label><br>
+            </div>
             {% endfor %}
         </div>
 
@@ -206,9 +237,11 @@
             </h4>
             <div class="type-container">
                 {% for type in item_type %}
+                <div class="sidebar-tag">
                 <input type="checkbox" id="type:{{ type.id }}" {% if type.id in selected_type %}checked{% endif %}
                     name="item_type" value="{{ type.id }}" onchange="this.form.submit()">
                 <label for="type:{{ type.id }}">{{ type.name }}</label><br>
+                </div>
                 {% endfor %}
             </div>
         </div>
@@ -307,6 +340,7 @@
         // 초기 상태에 따라 토글 버튼의 배경색 설정
         btn.style.backgroundColor = toggleStates[title] ? '#FFFFFF' : '#FFFFFF';
         btn.style.color = toggleStates[title] ? '#5B574F' : '#5B574F';
+        btn.style.textDecoration = toggleStates[title] ?'underline':'none';
         btn.style.fontWeight = toggleStates[title] ? 'bold' : 'normal';
         btn.addEventListener('click', () => {
             // 클릭 이벤트 핸들러 내용은 그대로 유지
@@ -314,6 +348,7 @@
             container.style.display = toggleStates[title] ? 'block' : 'none';
             btn.style.backgroundColor = toggleStates[title] ? '#FFFFFF' : '#FFFFFF';
             btn.style.color = toggleStates[title] ? '#5B574F' : '#5B574F';
+            btn.style.textDecoration = 'underline';
             btn.style.fontWeight = toggleStates[title] ? 'bold' : 'bold';
         });
         btn.addEventListener('mouseover', () => {
@@ -326,13 +361,20 @@
         btn.addEventListener('mouseout', () => {
             btn.style.backgroundColor = '#FFFFFF';
             btn.style.color = '#5B574F';
+            btn.style.textDecoration =toggleStates[title] ? 'underline':'none';
             btn.style.fontWeight = toggleStates[title] ? 'bold' : 'normal';
         });
 
 
     });
     
+    document.addEventListener('DOMContentLoaded', function() {
+  var containers = document.querySelectorAll('.grid-item');
 
-    //가격 카테고리 설정 버튼 이벤트 스크립트 들어갈예정
+  containers.forEach(function(container, index) {
+    container.style.animationDelay = (index * 0.1) + 's';
+  });
+});
+
 </script>
 {% endblock %}
