@@ -124,7 +124,10 @@
     }
 
     .best-item {
+        display: flex;
+        flex-direction: column;
         align-items: center;
+        justify-content: center;
         margin-bottom: 20px;
         margin-left: 70px;
         padding: 15px;
@@ -134,10 +137,15 @@
         width: 300px;
     }
 
-    .best-item-list {
+    .best-item-name {
+        font: bold 20px 'Arial', sans-serif;
+        /* Replace with your desired font */
+    }
+
+    /* .best-item-list {
         display: flex;
         flex-direction: column;
-    }
+    } */
 
     .img-box {
         display: flex;
@@ -170,6 +178,25 @@
     th[scope="header-product"] {
         padding-left: 160px;
         /* Adjust as needed */
+    }
+
+    .empty-cart {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 50px;
+    }
+
+    .empty-button {
+        padding: 10px 30px;
+        border: none;
+        background-color: #28a745;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 10px;
+        margin-top: 30px;
     }
 </style>
 
@@ -262,16 +289,18 @@
                     상품 결제</button>
 
                 <button class="bottom-button" onclick="delete_form()">선택 상품 삭제</button>
+                <!-- <button class="bottom-button" onclick="delete_form()">선택 상품 삭제</button> -->
             </div>
         </div>
         {% else %}
         <div class="empty-cart">
             <h4>장바구니가 비어있습니다.</h4>
             <form method="GET" action="{% url 'item:item_list' %}" style="display: inline; align-items: center;">
-                <input class="bottom-button" type="submit" value="쇼핑 계속하기">
+                <input class="empty-button" type="submit" value="쇼핑 계속하기">
             </form>
+            <img src="https://imgur.com/aW9sXHF.gif" alt="향수 프랜딩 이미지"
+                style="width: 60%; height: auto; margin-right: 60px;">
         </div>
-        <img src="https://imgur.com/aW9sXHF.gif" alt="향수 프랜딩 이미지" style="width: 60%; height: auto;">
 
         {% endif %}
     </div>
@@ -282,14 +311,12 @@
     <div class="best-item">
         <h3>이 달의 추천 상품</h3>
         {% for product in best_items %}
-        <div class="best-item-list">
-            <a href="{% url 'item:detail' product.id %}">
-                <img src="{{ product.image }}" alt="{{ product.name }}" class="best-item-image">
-            </a>
-            <ul><a href="{% url 'item:detail' product.id %}">{{ product }}</a></ul>
-            <ul>{{ product.summary }}</ul>
-            <ul>{{ product.price|intcomma }}원</ul>
-        </div>
+        <a href="{% url 'item:detail' product.id %}">
+            <img src="{{ product.image }}" alt="{{ product.name }}" class="best-item-image">
+        </a>
+        <ul><a class="best-item-name" href="{% url 'item:detail' product.id %}">{{ product }}</a></ul>
+        <ul>{{ product.summary }}</ul>
+        <ul>{{ product.price|intcomma }}원</ul>
         {% endfor %}
     </div>
 </div>
@@ -333,6 +360,31 @@
         form.action = '{% url "payment:cart_delete" %}';
         form.submit();
     }
+
+    // function delete_form() {
+    //     var form = document.getElementById('check-item');
+    //     var checkboxes = form.querySelectorAll('input[type="checkbox"]:checked');
+    //     var checkboxValues = Array.from(checkboxes).map(c => c.value);
+
+    //     var xhr = new XMLHttpRequest();
+    //     xhr.open('POST', '{% url "payment:cart_delete" %}', true);  // Assuming the URL for delete operation is 'cart:delete'
+    //     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    //     xhr.setRequestHeader('X-CSRFToken', getCsrfToken());
+
+    //     xhr.onload = function () {
+    //         if (this.status === 200) {
+    //             var response = JSON.parse(this.responseText);
+    //             console.log('Delete successful:', response.message);
+    //             // Here you can update the UI accordingly
+    //             location.reload();
+    //         } else {
+    //             console.error('Error deleting:', this.statusText);
+    //         }
+    //     };
+
+    //     xhr.send(`checkbox=${checkboxValues.join(',')}`);
+    // }
+
 
     document.getElementById('checkAll').addEventListener('change', function () {
         var checkboxes = document.querySelectorAll('input[type="checkbox"]');

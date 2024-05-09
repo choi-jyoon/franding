@@ -188,6 +188,10 @@ def cart_delete(request):
     if request.method == 'GET':
         checkbox_item = request.GET.getlist('checkbox')
 
+        # checkbox_item = request.POST.get('checkbox', '').split(',')
+        # checkbox_item = [check for check in checkbox_item if check]
+                
+
         for check in checkbox_item:   
             try:
                 # 만약 check가 숫자가 아니라면 ValueError가 발생
