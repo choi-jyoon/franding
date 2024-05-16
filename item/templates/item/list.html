@@ -23,9 +23,11 @@
         border-right: 1px solid #ccc;
         /* 사이드바와 그리드 사이에 구분선 추가 */
     }
-    .list-title{
+
+    .list-title {
         text-align: center;
     }
+
     .mb-5 {
         width: 80%;
         display: flex;
@@ -33,11 +35,12 @@
     }
 
     /* 상품 목록 스타일 */
-    .grid-item-contain{
+    .grid-item-contain {
         display: flex;
-        justify-content:center;
+        justify-content: center;
         padding: 0;
     }
+
     .item-list {
         width: 100%;
         float: left;
@@ -46,17 +49,19 @@
         text-align: center;
 
     }
-    .grid-img{
+
+    .grid-img {
         object-fit: cover;
-        
+
     }
+
     .grid-container {
         width: 100%;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: repeat(1, 1fr);
         grid-gap: 10px;
-       
+
     }
 
 
@@ -73,7 +78,7 @@
 
     .grid-item:hover {
         border: 2px solid #a8a7a7;
-  }
+    }
 
     .item {
         padding: 0%;
@@ -86,15 +91,16 @@
     }
 
     .summary {
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* 표시하고 싶은 줄의 수 */
-    -webkit-box-orient: vertical;
-    text-align: center;
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-right: 5px;
-}
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        /* 표시하고 싶은 줄의 수 */
+        -webkit-box-orient: vertical;
+        text-align: center;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-right: 5px;
+    }
 
     /* 페이징 스타일 */
     .pagination {
@@ -109,19 +115,24 @@
         text-align: center;
         margin-bottom: 30px;
     }
+
     .pagination .page-item.active .page-link {
-        background-color: #5B574F; /* 활성 페이지 버튼의 배경색 */
-        border-color: #5B574F; /* 활성 페이지 버튼의 테두리 색상 */
+        background-color: #5B574F;
+        /* 활성 페이지 버튼의 배경색 */
+        border-color: #5B574F;
+        /* 활성 페이지 버튼의 테두리 색상 */
         color: white;
 
     }
 
     .pagination .page-link {
-        color: #5B574F; /* 페이지 버튼의 텍스트 색상 */
+        color: #5B574F;
+        /* 페이지 버튼의 텍스트 색상 */
     }
 
     .pagination .page-link:hover {
-        color: #5B574F; /* 마우스 오버 시 페이지 버튼의 텍스트 색상 */
+        color: #5B574F;
+        /* 마우스 오버 시 페이지 버튼의 텍스트 색상 */
     }
 
     /* 토글 버튼 스타일추후 변경 예정*/
@@ -156,38 +167,38 @@
 
 
 
-.priceFilter.active {
-    outline: none;
-    border: 2px solid #5B574F;
-}
-.mb-5{
-    border-top:2px solid #b2b2b2;
-    border-bottom:2px solid #b2b2b2;
-}
-/*애니메이션*/
-.grid-item {
-  overflow: hidden;
-}
+    .priceFilter.active {
+        outline: none;
+        border: 2px solid #5B574F;
+    }
 
-.grid-item{
-  opacity: 0;
-  transform: translateY(-20px);
-  animation: fade-in-up 0.5s ease-out forwards;
-}
+    .mb-5 {
+        border-top: 2px solid #b2b2b2;
+        border-bottom: 2px solid #b2b2b2;
+    }
 
-@keyframes fade-in-up {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+    /*애니메이션*/
+    .grid-item {
+        overflow: hidden;
+    }
 
+    .grid-item {
+        opacity: 0;
+        transform: translateY(-20px);
+        animation: fade-in-up 0.5s ease-out forwards;
+    }
 
+    @keyframes fade-in-up {
+        0% {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
 
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 </style>
 {% endblock %}
 {% block content %}
@@ -203,8 +214,10 @@
             <div class="category1-container">
                 {% for category1 in cat1 %}
                 <div class="sidebar-tag">
-                <input type="checkbox" id="category1:{{ category1.id }}" {% if category1.id in selected_cat1%}checked{%endif %} name="cat1" value="{{ category1.id }}" onchange="this.form.submit()" >
-                <label for="category1:{{ category1.id }}">{{ category1.name }}</label><br>
+                    <input type="checkbox" id="category1:{{ category1.id }}" {% if category1.id in
+                        selected_cat1%}checked{%endif %} name="cat1" value="{{ category1.id }}"
+                        onchange="this.form.submit()">
+                    <label for="category1:{{ category1.id }}">{{ category1.name }}</label><br>
                 </div>
                 {% endfor %}
             </div>
@@ -217,9 +230,11 @@
             <div class="category2-container">
                 {% for category2 in cat2 %}
                 <div class="sidebar-tag">
-                <input type="checkbox" id="category2:{{ category2.id }}" {% if category2.id in selected_cat2%}checked{%endif %} name="cat2" value="{{ category2.id }}" onchange="this.form.submit()">
-                <label for="category2:{{ category2.id }}">{{ category2.name }}</label><br>
-                 </div>
+                    <input type="checkbox" id="category2:{{ category2.id }}" {% if category2.id in
+                        selected_cat2%}checked{%endif %} name="cat2" value="{{ category2.id }}"
+                        onchange="this.form.submit()">
+                    <label for="category2:{{ category2.id }}">{{ category2.name }}</label><br>
+                </div>
                 {% endfor %}
             </div>
         </div>
@@ -231,9 +246,9 @@
         <div class="brand-container">
             {% for brand in brand %}
             <div class="sidebar-tag">
-            <input type="checkbox" id="brand:{{ brand.id }}" {% if brand.id in selected_brand %}checked{% endif %}
-                name="brand" value="{{ brand.id }}" onchange="this.form.submit()">
-            <label for="brand:{{ brand.id }}">{{ brand.name }}</label><br>
+                <input type="checkbox" id="brand:{{ brand.id }}" {% if brand.id in selected_brand %}checked{% endif %}
+                    name="brand" value="{{ brand.id }}" onchange="this.form.submit()">
+                <label for="brand:{{ brand.id }}">{{ brand.name }}</label><br>
             </div>
             {% endfor %}
         </div>
@@ -246,9 +261,9 @@
             <div class="type-container">
                 {% for type in item_type %}
                 <div class="sidebar-tag">
-                <input type="checkbox" id="type:{{ type.id }}" {% if type.id in selected_type %}checked{% endif %}
-                    name="item_type" value="{{ type.id }}" onchange="this.form.submit()">
-                <label for="type:{{ type.id }}">{{ type.name }}</label><br>
+                    <input type="checkbox" id="type:{{ type.id }}" {% if type.id in selected_type %}checked{% endif %}
+                        name="item_type" value="{{ type.id }}" onchange="this.form.submit()">
+                    <label for="type:{{ type.id }}">{{ type.name }}</label><br>
                 </div>
                 {% endfor %}
             </div>
@@ -258,16 +273,20 @@
             <!-- 가격 필터링-->
             <form method="get" action="{% url 'item:item_list' %}">
                 <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn priceFilter {% if request.GET.price == '1' %}active{% endif %}" name="price" value="1">0 ~ 70,000</button>
+                    <button type="submit" class="btn priceFilter {% if request.GET.price == '1' %}active{% endif %}"
+                        name="price" value="1">0 ~ 70,000</button>
                 </div>
                 <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn priceFilter {% if request.GET.price == '2' %}active{% endif %}" name="price" value="2">70,000 ~ 150,000</button>
+                    <button type="submit" class="btn priceFilter {% if request.GET.price == '2' %}active{% endif %}"
+                        name="price" value="2">70,000 ~ 150,000</button>
                 </div>
                 <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn priceFilter {% if request.GET.price == '3' %}active{% endif %}" name="price" value="3">150,000 ~ 220,000</button>
+                    <button type="submit" class="btn priceFilter {% if request.GET.price == '3' %}active{% endif %}"
+                        name="price" value="3">150,000 ~ 220,000</button>
                 </div>
                 <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn priceFilter {% if request.GET.price == '4' %}active{% endif %}" name="price" value="4">220,000 ~ 290,000</button>
+                    <button type="submit" class="btn priceFilter {% if request.GET.price == '4' %}active{% endif %}"
+                        name="price" value="4">220,000 ~ 290,000</button>
                 </div>
             </form>
         </div>
@@ -348,7 +367,7 @@
         // 초기 상태에 따라 토글 버튼의 배경색 설정
         btn.style.backgroundColor = toggleStates[title] ? '#FFFFFF' : '#FFFFFF';
         btn.style.color = toggleStates[title] ? '#5B574F' : '#5B574F';
-        btn.style.textDecoration = toggleStates[title] ?'underline':'none';
+        btn.style.textDecoration = toggleStates[title] ? 'underline' : 'none';
         btn.style.fontWeight = toggleStates[title] ? 'bold' : 'normal';
         btn.addEventListener('click', () => {
             // 클릭 이벤트 핸들러 내용은 그대로 유지
@@ -369,20 +388,20 @@
         btn.addEventListener('mouseout', () => {
             btn.style.backgroundColor = '#FFFFFF';
             btn.style.color = '#5B574F';
-            btn.style.textDecoration =toggleStates[title] ? 'underline':'none';
+            btn.style.textDecoration = toggleStates[title] ? 'underline' : 'none';
             btn.style.fontWeight = toggleStates[title] ? 'bold' : 'normal';
         });
 
 
     });
-    
-    document.addEventListener('DOMContentLoaded', function() {
-  var containers = document.querySelectorAll('.grid-item');
 
-  containers.forEach(function(container, index) {
-    container.style.animationDelay = (index * 0.1) + 's';
-  });
-});
+    document.addEventListener('DOMContentLoaded', function () {
+        var containers = document.querySelectorAll('.grid-item');
+
+        containers.forEach(function (container, index) {
+            container.style.animationDelay = (index * 0.1) + 's';
+        });
+    });
 
 </script>
 {% endblock %}

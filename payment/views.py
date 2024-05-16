@@ -21,11 +21,11 @@ def payment_list(request, total_price=0):
     
 
     if request.method == 'GET': # True
-        if 'checkbox' not in request.GET:
+        if 'check-item' not in request.GET:
             messages.warning(request, '상품을 1개 이상 주문하셔야 합니다.')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
         else:
-            checkbox_item = request.GET.getlist('checkbox') 
+            checkbox_item = request.GET.getlist('check-item') 
             request.session['checkbox_item'] = checkbox_item
     
         
@@ -184,22 +184,3 @@ def payfail(request):
 def paycancel(request):
     return render(request, 'payment/paycancel.html')
 
-def cart_delete(request):
-    if request.method == 'GET':
-        checkbox_item = request.GET.getlist('checkbox')
-
-        # checkbox_item = request.POST.get('checkbox', '').split(',')
-        # checkbox_item = [check for check in checkbox_item if check]
-                
-
-        for check in checkbox_item:   
-            try:
-                # 만약 check가 숫자가 아니라면 ValueError가 발생
-                check = int(check)   
-            except ValueError: 
-                print('선택된 상품이 없습니다.')
-
-            check_item = Cart.objects.get(user=request.user, item=check, status=False) 
-            check_item.delete()
-
-    return redirect('cart:cart_detail')

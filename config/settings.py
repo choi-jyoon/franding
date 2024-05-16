@@ -63,7 +63,7 @@ INSTALLED_APPS = [
     #provider
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.kakao',
-    
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
