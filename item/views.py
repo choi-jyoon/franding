@@ -67,6 +67,7 @@ def list_item(request):
     if request.path == '/item/other/':
         context = {
         'item':Item.objects.all(),
+        'show_cat':False,
         'items': page_obj,
         'cat1': Category1.objects.all(),
         'cat2': Category2.objects.all(),
@@ -78,7 +79,7 @@ def list_item(request):
         'selected_type':[int(cat_id) for cat_id in category4_ids],
         'show_note':show_note,
         'show_type':show_type,
-        'show_cat':False
+
         }
     else:    
         context = {
