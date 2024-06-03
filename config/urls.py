@@ -39,5 +39,5 @@ urlpatterns = [
     path('accounts/register/done/', views.UserCreateDoneTV.as_view(), name='register_done'),
     path('seller/', include('seller.urls')),
     path('payment/', include('payment.urls')),
-    
+    path('QnA/', include('QnA.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

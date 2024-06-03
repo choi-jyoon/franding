@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.kakao',
     'rest_framework',
+    'QnA',
 ]
 
 MIDDLEWARE = [
@@ -104,13 +105,17 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'franding_db',
+    #     'USER': 'postgres',
+    #     'PASSWORD': DB_PASSWORD,
+    #     'HOST': 'hanslab.org',  # 또는 PostgreSQL 서버의 IP 주소
+    #     'PORT': '25432',       # PostgreSQL의 기본 포트 번호
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'franding_db',
-        'USER': 'postgres',
-        'PASSWORD': DB_PASSWORD,
-        'HOST': 'hanslab.org',  # 또는 PostgreSQL 서버의 IP 주소
-        'PORT': '25432',       # PostgreSQL의 기본 포트 번호
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'franding_db.sqlite3',
     }
 }
 

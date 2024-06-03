@@ -201,7 +201,7 @@
         <table id="item_list" class="table">
             <thead>
                 <tr>
-                    <th scope="col"><input class="form-check-input" type="checkbox" value="" id="checkAll"></th>
+                    <th scope="col"><input class="form-check-input" type="checkbox" value="" id="checkAll" checked></th>
                     <th scope="col">상품명</th>
                     <th scope="col">용량</th>
                     <th scope="col">수량</th>
@@ -215,7 +215,7 @@
 
                     <tr id="{{show.item.id}}">
                         <td><input class="form-check-input item-checkbox" type="checkbox" name="check-item"
-                                value="{{show.item.id}}"></td>
+                                value="{{show.item.id}}" checked></td>
                         <td>{{ show }}</td>
                         <td>{{ show.item.size.ml }}ml</td>
                         <td>
@@ -368,6 +368,22 @@
         }
 
     }
+
+    function updateTotal() {
+        let total = 0;
+        $("input[type=checkbox]:checked").each(function () {
+            let row = $(this).closest("tr");
+            let price = parseFloat(row.find(".price").text());
+            let quantity = parseInt(row.find(".quantity").text());
+            total += price * quantity;
+        });
+        $("#total").text(total.toFixed(2) + "원");
+    }
+
+    $(document).ready(function () {
+        $("input[type=checkbox]").on("change", updateTotal);
+        updateTotal(); // 페이지 로드 시 초기 합계 계산
+    });
 
     function numberWithCommas(x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
