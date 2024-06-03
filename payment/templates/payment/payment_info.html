@@ -29,6 +29,24 @@
         box-sizing: border-box;
     }
 
+    #modalCloseButton {
+        background-color: #5B574F;
+        border-color: #5B574F;
+    }
+
+    #modalCancelButton {
+        border-color: #5B574F;
+    }
+
+    #modalCloseButton:hover, #modalCloseButton:focus, #modalCancelButton:hover {
+        background-color: #453F39; /* 기존보다 더 진한 색상 */
+        border-color: #453F39;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2); /* 그림자를 더 진하게 */
+        transform: scale(1.05); /* 버튼을 약간 확대 */
+        transition: all 0.3s ease; /* 부드러운 전환 효과 */
+    }
+    
+
 </style>
 {% endblock %}
 {% block content %}
@@ -83,7 +101,6 @@
             <h3>주문 상품 내역</h3>
             <thead>
                 <tr>
-
                     <th scope="col">상품명</th>
                     <th scope="col">용량</th>
                     <th scope="col">수량</th>
@@ -94,12 +111,18 @@
             <tbody>
                 {% for items in item_list %}
                 <tr>
-                    <td>{{ items }}</td>
-                    <td>{{ items.item.size.ml }}ml</td>
-                    <td>{{ items.amount }}</td>
-                    <td>{{ items.sub_total|intcomma }}원</td>
+                    <td scope="col">{{ items }}</td>
+                    <td scope="col">{{ items.item.size.ml }}ml</td>
+                    <td scope="col">{{ items.amount }}</td>
+                    <td scope="col">{{ items.sub_total|intcomma }}원</td>
                 </tr>
                 {% endfor %}
+                <tr>
+                    <td scope="col">배송비</td>
+                    <td scope="col"></td>
+                    <td scope="col">1</td>
+                    <td scope="col">{{shipping_fee|intcomma}}원</td>
+                </tr>
             </tbody>
         </table>
 
@@ -122,24 +145,29 @@
             <h3>결제 수단을 선택해주세요.</h3>
             <button type="submit" class="btn btn-warning">kakao pay</button>
         </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="errorModalLabel">입력 오류</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="errorModalBody">
+                필수 정보를 모두 입력해주세요.
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal" id="modalCloseButton" autofocus>확인</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" id="modalCancelButton">취소</button>
+                </div>
+            </div>
+            </div>
+        </div>
     </div>
 </form>
 {% endblock %}
 {% block extra-script %}
-<script>
-    function validateForm() {
-        var receiverValue = document.getElementById("receiver").value.trim();
-        var addressValue = document.getElementById("receiver_address").value.trim();
-        var phoneValue = document.getElementById("receiver_phone").value.trim();
-
-        if (receiverValue === "" || addressValue === "" || phoneValue === "") {
-            alert("필수 정보를 모두 입력해주세요.");
-            return false; // 폼 제출 막기
-        }
-
-        return true; // 폼 제출 허용
-    }
-</script>
 <!--다음 우편번호 API 사용-->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
@@ -190,5 +218,40 @@
             }
         }).open();
     }
+</script>
+<script>
+    function validateForm() {
+        var receiverValue = document.getElementById("receiver").value.trim();
+        var postcodeValue = document.getElementById("postcode").value.trim();
+        var addressValue = document.getElementById("address").value.trim();
+        var detailAddressValue = document.getElementById("detailAddress").value.trim();
+        var phoneValue = document.getElementById("receiver_phone").value.trim();
+
+        var missingFields = [];
+
+        if (receiverValue === "") missingFields.push("받는 사람");
+        if (postcodeValue === "") missingFields.push("우편번호");
+        if (addressValue === "") missingFields.push("주소");
+        if (detailAddressValue === "") missingFields.push("상세주소");
+        if (phoneValue === "") missingFields.push("전화번호");
+
+        if (missingFields.length > 0) {
+            var errorModalBody = document.getElementById("errorModalBody");
+            errorModalBody.innerHTML = "다음 필수 정보를 입력해주세요: " + missingFields.join(", ");
+            var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+            errorModal.show();
+            return false;
+        }
+
+        return true; // 폼 제출 허용
+    }
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // 모달이 완전히 보여진 후 실행될 함수를 정의합니다.
+    $('#errorModal').on('shown.bs.modal', function () {
+      // '확인' 버튼에 포커스를 줍니다.
+      $('#modalCloseButton').trigger('focus');
+    });
 </script>
 {% endblock %}
