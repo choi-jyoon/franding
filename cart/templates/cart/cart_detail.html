@@ -201,7 +201,8 @@
         <table id="item_list" class="table">
             <thead>
                 <tr>
-                    <th scope="col"><input class="form-check-input" type="checkbox" value="" id="checkAll" checked></th>
+                    <th scope="col"><input class="form-check-input" type="checkbox" value="" id="checkAll" checked>
+                    </th>
                     <th scope="col">상품명</th>
                     <th scope="col">용량</th>
                     <th scope="col">수량</th>
@@ -220,11 +221,13 @@
                         <td>{{ show.item.size.ml }}ml</td>
                         <td>
                             <input type="hidden" id="csrfToken" value="{{csrf_token}}">
-                            <button type="button" onclick="setupButtons('{{show.item.id}}', +1)">+</button>
-                            <span id="amount{{show.item.id}}">{{show.amount}}</span>
-                            <button type="button" onclick="setupButtons('{{show.item.id}}', -1)">-</button>
+                            <button type="button" class="plus-button"
+                                onclick="setupButtons('{{show.item.id}}', +1)">+</button>
+                            <span id="amount{{show.item.id}}" class="quantity">{{show.amount}}</span>
+                            <button type="button" class="minus-button"
+                                onclick="setupButtons('{{show.item.id}}', -1)">-</button>
                         </td>
-                        <td id="sub_total{{show.item.id}}">{{ show.item.price|intcomma }}원</td>
+                        <td id="sub_total{{show.item.id}}" class="price">{{ show.item.price }}원</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -233,7 +236,7 @@
 
         <div class="bottom-container">
 
-            <h3>총 합계 : <span id='total_price'>{{ total_price|intcomma }}원</span></h3>
+            <h3>총 합계 : <span id='total_price'>{{ total_price }}원</span></h3>
 
 
             <div class="button-container">
@@ -358,7 +361,8 @@
                 success: function (response) {
                     console.log(response);
                     document.getElementById('amount' + itemId).innerText = response.new_amount;
-                    document.getElementById('total_price').innerText = numberWithCommas(response.total_price) + '원';
+                    // document.getElementById('total_price').innerText = numberWithCommas(response.total_price) + '원';
+                    updateTotal();
                 },
                 error: function (xhr, status, error) {
                     // Code to run if the request fails
@@ -369,20 +373,39 @@
 
     }
 
+
     function updateTotal() {
         let total = 0;
         $("input[type=checkbox]:checked").each(function () {
             let row = $(this).closest("tr");
-            let price = parseFloat(row.find(".price").text());
+            let price = parseInt(row.find(".price").text());
             let quantity = parseInt(row.find(".quantity").text());
+
+            // price 또는 quantity가 NaN인 경우 무시
+            if (isNaN(price) || isNaN(quantity)) {
+                return;
+            }
+
             total += price * quantity;
         });
-        $("#total").text(total.toFixed(2) + "원");
+        $("#total_price").text(total.toLocaleString() + "원");
     }
 
     $(document).ready(function () {
+        // 체크박스 변경 이벤트 감지
         $("input[type=checkbox]").on("change", updateTotal);
-        updateTotal(); // 페이지 로드 시 초기 합계 계산
+
+        // 수량 입력 필드의 값 변경 이벤트 감지
+        $(".quantity").on("input change", function () {
+            // 해당 행의 체크박스가 체크된 상태에서만 합계 업데이트
+            let checkbox = $(this).closest("tr").find("input[type=checkbox]");
+            if (checkbox.is(":checked")) {
+                updateTotal();
+            }
+        });
+
+        // 페이지 로드 시 초기 합계 계산
+        updateTotal();
     });
 
     function numberWithCommas(x) {
