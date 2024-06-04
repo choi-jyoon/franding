@@ -90,16 +90,22 @@
         height: 200px;
     }
 
+    .grid-item {
+        padding: 0 0 15px 0;
+    }
+
     .summary {
+        align-items: center;
         display: -webkit-box;
         -webkit-line-clamp: 2;
-        /* 표시하고 싶은 줄의 수 */
         -webkit-box-orient: vertical;
         text-align: center;
-        width: 100%;
+        width: 80%;
         overflow: hidden;
         text-overflow: ellipsis;
-        padding-right: 5px;
+        word-break: keep-all;
+        margin: 0 5px 30px 5px;
+        margin: 0 auto;
     }
 
     /* 페이징 스타일 */
@@ -142,6 +148,10 @@
         background-color: #ffffff;
         cursor: pointer;
         border-radius: 15px 0px 0px 0px;
+    }
+
+    .item-title {
+        font-size: 23px;
     }
 
     .title {
@@ -301,7 +311,6 @@
             <div class="grid-item">
                 <img src="{{ item.image }}" alt="{{ item.name }}" class="grid-img">
                 <h5 class="item item-title" bold>{{ item.name }}</h5>
-                <p class="item">가격: {{ item.price|intcomma }}&#8361;</p>
                 <p class="item summary">{{ item.summary }}</p>
             </div>
         </a>

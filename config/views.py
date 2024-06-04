@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
+from django.contrib.auth.models import User
 from django.views.generic import CreateView, TemplateView
 from django.urls import reverse_lazy
 from item.models import Item
@@ -7,6 +8,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from .forms import UserAddInfoForm, UserCreateForm, CustomAuthenticationForm
 from django.contrib import messages  
+from mypage.models import UserAddInfo
 # Create your views here.
 
 def index(request):
@@ -23,6 +25,26 @@ def register(request):
         add_info_form = UserAddInfoForm(request.POST)
         
         if user_form.is_valid() and add_info_form.is_valid():
+            # 이메일 중복 검사
+            email = user_form.cleaned_data['email']
+            if User.objects.filter(email =email).exists():
+                user_form.add_error('email', '이미 등록된 이메일입니다.')
+                
+                context = {
+                'user_form': user_form,
+                'add_info_form': add_info_form
+                }
+                return render(request, 'registration/register.html', context)
+            
+            phone = add_info_form.cleaned_data['phone']
+            if UserAddInfo.objects.filter(phone = phone).exists():
+                add_info_form.add_error('phone', '이미 등록된 휴대폰 번호입니다.')
+                context = {
+                'user_form': user_form,
+                'add_info_form': add_info_form
+                }
+                return render(request, 'registration/register.html', context)
+            
             # User 모델 저장
             user = user_form.save()
 
