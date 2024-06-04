@@ -111,7 +111,7 @@
             <tbody>
                 {% for items in item_list %}
                 <tr>
-                    <td scope="col">{{ items }}</td>
+                    <td scope="col">{{ items.item.name }}</td>
                     <td scope="col">{{ items.item.size.ml }}ml</td>
                     <td scope="col">{{ items.amount }}</td>
                     <td scope="col">{{ items.sub_total|intcomma }}원</td>
