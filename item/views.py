@@ -6,6 +6,9 @@ from django.db.models import Q
 from .models import *
 from cart.models import Cart
 from review.models import Review
+from QnA.models import FAQ
+from item.models import Item
+from django.shortcuts import get_object_or_404
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -100,7 +103,8 @@ def list_item(request):
 def detail_list_item(request,item_id):
     item=Item.objects.get(id=item_id)
     review = Review.objects.filter(item = item_id).order_by('-datetime')
-    paginator = Paginator(review, 3)  
+    paginator = Paginator(review, 3)
+    faqs = FAQ.objects.all()  
 
 
     page_number = request.GET.get('page')
@@ -111,11 +115,13 @@ def detail_list_item(request,item_id):
         context = {
         "item":item,
         "review":page_obj,
+        'faqs':faqs,
         }
     else:
         context = {
             "item":item,
-            'message': '리뷰가 없습니다.'
+            'message': '리뷰가 없습니다.',
+            'faqs':faqs,
         }    
     return render(request,'item/detail.html',context) 
 @login_required
@@ -153,4 +159,8 @@ def    add_cart(request,item_id):
         return render(request,'item/detail.html',context) 
     
 
+def faq_list(request, item_id):
+    item = get_object_or_404(Item, id=item_id)  # Item 인스턴스 가져오기
+    
+    return render(request, 'item/detail.html', {'faqs': faqs, 'item': item})
     

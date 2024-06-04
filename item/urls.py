@@ -8,5 +8,6 @@ path ('brand/',views.list_item, name='brand_list'),
 path ('perfume/',views.list_item, name='perfume_list'),
 path ('other/',views.list_item, name='other_list'),
 path('<int:item_id>/',views.detail_list_item,name='detail'),
-path('add/<int:item_id>/',views.add_cart,name='add')
+path('add/<int:item_id>/',views.add_cart,name='add'),
+path('<int:item_id>/faq/', views.faq_list, name='faq_list'),
 ]
