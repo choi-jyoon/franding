@@ -4,68 +4,107 @@
 {% block title %}register.html{% endblock %}
 {% block extra-style %}
 <style>
-    
     .signup {
-        background-color: #fff;
-        padding: 20px;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 2rem;
+        background-color: #f8f9fa;
         border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .info-id {
-        margin-bottom: 10px;
-    }
-
-    label {
-        display: inline-block; /* 또는 display: inline; 사용 가능 */
-        margin-bottom: 5px;
-        margin-right: 10px; /* 라벨과 다음 요소 사이의 간격을 조정합니다. 필요에 따라 값 조정 */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      }
+      
+      /* 섹션 스타일 */
+      .info-id {
+        margin-bottom: 1.5rem;
+      }
+      
+      .info-id label {
+        display: block;
         font-weight: bold;
-    }
-
-    .address {
+        margin-bottom: 0.5rem;
+      }
+      
+      /* 입력 필드 스타일 */
+      .info-id input[type="text"],
+      .info-id input[type="password"],
+      .info-id input[type="email"] {
         width: 100%;
-        padding: 10px;
-        margin: 5px 0 15px 0;
-        display: inline-block;
-        border: 1px solid #ccc;
+        padding: 0.8rem;
+        font-size: 1rem;
+        border: 1px solid #ced4da;
         border-radius: 4px;
-        box-sizing: border-box;
-    }
-
-    .info-id input[type=text], input[type=password], input[type=email] {
-        width: 40%;
-        padding: 8px;
-        margin: 5px 0 15px 0;
-        display: inline-block;
-        border: 1px solid #ccc;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      }
+      
+      .info-id input[type="text"]:focus,
+      .info-id input[type="password"]:focus,
+      .info-id input[type="email"]:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+      }
+      
+      /* 우편번호 찾기 버튼 스타일 */
+      .info-id .address {
+        margin-bottom: 0.5rem;
+      }
+      
+      .info-id .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
         border-radius: 4px;
-        box-sizing: border-box;
-    }
+      }
+      
+      /* 에러 메시지 스타일 */
+      .alert {
+        margin-bottom: 1.5rem;
+      }
+      
+      .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+      }
+      
+      /* 가입 버튼 스타일 */
+      .signup button[type="submit"] {
+        display: block;
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1rem;
+        font-weight: bold;
+        color: #fff;
+        background-color: #5B574F;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.15s ease-in-out;
+      }
 
-
-    
 </style>
 {% endblock %}
 
 {% block content %}
 
-    <h1>회원가입</h1>
     {% if user_form.errors %}
     <div class="alert alert-danger">
-        <div class="font-weight-bold">Wrong! Please correct the error(s) below.</div>
+        <div class="font-weight-bold">다음 사항을 다시 확인해주세요.</div>
         {{ user_form.errors }}
     </div>
     {% endif %}
 
     {% if add_info_form.errors %}
     <div class="alert alert-danger">
-        <div class="font-weight-bold">Wrong! Please correct the error(s) below.</div>
+        <div class="font-weight-bold">다음 사항을 다시 확인해주세요.</div>
         {{ add_info_form.errors }}
     </div>
     {% endif %}
 
     <form class='signup' action="." method="post">
+        <div style="text-align: center; font-weight: bold;">
+            <h3>회원가입</h3></br>
+        </div>
+
         {% csrf_token %}
 
         <!-- User Form -->
@@ -86,7 +125,7 @@
 
         <div class='info-id'>
             <label for="id_email">이메일:</label>
-            {{ user_form.email }}
+            {{ user_form.email}}
         </div>
 
         <div class='info-id'>
@@ -101,6 +140,11 @@
 
         <!-- Additional Info Form -->
         <div class='info-id'>
+            <label for="id_phone">핸드폰 번호:</label>
+            {{ add_info_form.phone }}
+        </div>
+
+        <div class='info-id'>
             <label for="id_address">주소:</label><br>
             <input type="text" id="postcode" placeholder="우편번호" name='postcode' class='address'>
             <input type="button" onclick="execDaumPostcode()" value="우편번호 찾기" class="btn btn-secondary"><br>
@@ -109,12 +153,7 @@
             <input type="text" id="extraAddress" placeholder="참고항목" name='extraAddress' class='address'>
         </div>
 
-        <div class='info-id'>
-            <label for="id_phone">핸드폰 번호:</label>
-            {{ add_info_form.phone }}
-        </div>
-
-        <button type="submit" class="btn btn-success">가입</button>
+        <button type="submit" class="btn btn-success">회원가입</button>
     </form>
 
 {% endblock %}

@@ -47,7 +47,13 @@ def payment_list(request, total_price=0):
             
         check_item = Cart.objects.get(user=request.user, item=check, status=False) 
         check_item_list.append(check_item)
-        total_price += (check_item.item.price * check_item.amount) 
+        total_price += (check_item.item.price * check_item.amount)
+        # 배송비
+        if total_price < 50000:
+            shipping_fee = 3000
+            total_price += shipping_fee
+        else:
+            shipping_fee = 0
         # 잠깐 주석처리
         cnt += 1
         # total_price += (check_item.item.price * check_item.amount)  # 총 가격
@@ -96,6 +102,7 @@ def payment_list(request, total_price=0):
     context = {
             'item_list': check_item_list,
             'total_price': total_price,
+            'shipping_fee' : shipping_fee,
             'userinfo' : userinfo
     }
     
