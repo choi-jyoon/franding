@@ -188,10 +188,18 @@
 
         // 브랜드 추가 폼 제출 이벤트
         $('#btn-add').click(function() {
+            var fieldType = $('#field-type').val();
+            var fieldValue = $('#field-name').val();
             // 폼 유효성 검사
             if ($('#field-name').val() === '') {
                 // 필드 이름이 비어 있을 경우 경고 메시지 표시
                 alert($('#field-label').text() + '을(를) 입력하세요.');
+                return false; // 폼 제출 중지
+            }
+            // 필드 타입이 'size'일 경우 숫자 유효성 검사
+            if (fieldType == 'size' && isNaN(fieldValue)) {
+                // 필드 이름이 숫자가 아닐 경우 경고 메시지 표시
+                alert('크기를 숫자로 입력하세요.');
                 return false; // 폼 제출 중지
             }
         });

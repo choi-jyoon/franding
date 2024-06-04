@@ -55,9 +55,9 @@
     }
 
     .flex-item img {
-        width: auto; /* 이미지 크기에 따라 자동 조절 */
+        width: 178px; /* 이미지 크기에 따라 자동 조절 */
         max-width: 100%; /* 부모 요소에 맞추기 */
-        height: auto;
+        height: 200px;
         margin-bottom: 10px; /* 이미지와 텍스트 사이 간격 조절 */
     }
 
@@ -112,13 +112,61 @@
     .pagination .page-link:hover {
         color: #5B574F; /* 마우스 오버 시 페이지 버튼의 텍스트 색상 */
     }
+
+    #seller-nav .nav {
+        display: flex;
+        justify-content: center;
+        border-bottom: 1px solid #ccc;
+    }
+    #seller-nav .nav-item {
+        flex: 1;
+        text-align: center;
+    }
+    #seller-nav .nav-link {
+        padding: 0.5rem 1rem;
+        color:#000;
+    }
     
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="center-content">
-    <h1 style="text-align: center;">상품 목록</h1>
+    <h1>판매자 페이지</h1>
+    <hr>
+    <br>
+    <ul class="nav nav-underline" id="seller-nav">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">상품관리</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">고객관리</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">주문내역관리</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">환불관리</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Q&A</a>
+        </li>
+    </ul>
+    <br>
+    <div class="toolbar">
+        <div class="left-section">
+            <label for="sort-options">정렬 기준:</label>
+            <select id="sort-options" name="sort-options">
+                <option value="popularity">인기순</option>
+                <option value="newest">최신순</option>
+                <option value="priceLowToHigh">가격 낮은 순</option>
+                <option value="priceHighToLow">가격 높은 순</option>
+            </select>
+        </div>
+        <div class="right-section">
+            <button id="register-button">상품 등록</button>
+        </div>
+    </div>
     <div class="grid-container flex-container">
         {% for item in items %}
         <div class="grid-item flex-item">
@@ -129,11 +177,8 @@
             <span style="font-size: 15px;">{{ item.name }}</span>
             <p>{{ item.brand }}</p>
             <p>{{ item.price|intcomma }}  ₩</p>
-            <p>{{ item.size }}</p>
-            <p>{{ item.created_at }}</p>
             <div class="button-group">
-                <a href="{% url 'seller:item_update' pk=item.pk %}" class="button">수정</a>
-                <a href="{% url 'seller:item_delete' pk=item.pk %}" class="delete-button">삭제</a>
+                <a href="{% url 'seller:item_update' pk=item.pk %}" class="button">자세히 보기</a>
             </div>
         </div>
         {% empty %}
@@ -141,6 +186,7 @@
         {% endfor %}
     </div>
 
+    <br>
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">
             {% if items.has_previous %}
