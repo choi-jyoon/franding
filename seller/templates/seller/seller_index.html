@@ -1,47 +1,163 @@
 {% extends 'base.html' %}
 
-{% block title %} sellerPage {% endblock %}
+{% load humanize %}
 
 {% block extra-style %}
 <style>
-    /* 화면 전체를 사용하기 위한 스타일 */
-    html, body {
-        height: 100%;
-        margin: 0;
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* 자동으로 항목 채우기 */
+        gap: 20px;
+        padding: 20px;
     }
-    /* 내비게이션 바를 제외한 전체 화면을 채우는 컨테이너 */
-    .container-fluid {
-        height: calc(100% - 56px); /* 내비게이션 바 높이만큼 제외 */
+
+    .grid-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between; /* 상하 간격 균등 */
+        border: 1px solid #ccc; /* 상품 테두리 추가 */
+        padding: 10px;
     }
-    /* 높이 100% 설정 */
-    .full-height {
-        height: 100%;
+
+    .grid-item img {
+        width: auto; /* 이미지 크기에 따라 자동 조절 */
+        max-width: 100%; /* 부모 요소에 맞추기 */
+        height: auto;
+        margin-bottom: 10px; /* 이미지와 텍스트 사이 간격 조절 */
     }
-    /* 왼쪽 사이드바와 중앙 콘텐츠 간의 간격 설정 */
-    .centered-content {
-        padding-left: 20px; /* 왼쪽으로부터 20px 간격 */
+
+    .separator-wrapper {
+        text-align: center; /* 텍스트 중앙 정렬 */
     }
+
+    .separator {
+        width: 100%; /* 구분선 전체 너비 */
+        border-top: 1px solid #ccc; /* 구분선 스타일 */
+        margin: 10px 0; /* 위아래 간격 */
+    }
+
+    .flex-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around; /* 항목 간 균등 간격 */
+        padding: 20px;
+    }
+
+    .flex-item {
+        flex: 0 1 200px; /* 항목 최소 크기 유지 */
+        margin: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 1px solid #ccc; /* 상품 테두리 추가 */
+        padding: 10px;
+    }
+
+    .flex-item img {
+        width: auto; /* 이미지 크기에 따라 자동 조절 */
+        max-width: 100%; /* 부모 요소에 맞추기 */
+        height: auto;
+        margin-bottom: 10px; /* 이미지와 텍스트 사이 간격 조절 */
+    }
+
+    .button-group {
+        display: flex;
+        gap: 10px; /* 버튼 간 간격 */
+        margin-top: 20px;
+    }
+
+    .button, .delete-button {
+        padding: 10px 20px;
+        font-size: 17px;
+        border-radius: 10px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: background-color 0.3s, color 0.3s;
+        background-color: #ffffff;
+        color: #333;
+        border: 2px solid #333;
+    }
+
+    .button:hover, .delete-button:hover {
+        background-color: #333;
+        color: #ffffff;
+    }
+
+    .delete-button {
+        border-color: #FF5733;
+    }
+
+    .delete-button:hover {
+        background-color: #FF5733;
+    }
+
+    /* 현재 페이지 버튼 스타일 */
+    .current-page {
+        background-color: #333;
+        color: #ffffff;
+    }
+    
+    .pagination .page-item.active .page-link {
+        background-color: #5B574F; /* 활성 페이지 버튼의 배경색 */
+        border-color: #5B574F; /* 활성 페이지 버튼의 테두리 색상 */
+        color: white;
+    }
+
+    .pagination .page-link {
+        color: #5B574F; /* 페이지 버튼의 텍스트 색상 */
+    }
+
+    .pagination .page-link:hover {
+        color: #5B574F; /* 마우스 오버 시 페이지 버튼의 텍스트 색상 */
+    }
+    
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row full-height">
-        <div class="col-2 d-flex flex-column p-3 bg-light full-height">
-            <!-- 기본 네비게이션 버튼들 -->
-            <a href="{% url 'mypage:order_index' %}" class="btn btn-outline-secondary mb-4">주문 내역</a>
-            <a href="{% url 'review:review_index' %}" class="btn btn-outline-secondary mb-4">작성 리뷰</a>
-            <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary mb-4">회원정보</a>
-            <a href="#" class="btn btn-outline-secondary mb-4">구독</a>
-        </div>
-        <div class="col-10" id="content-display">
-            <!-- 판매자 페이지의 중앙 콘텐츠는 약간의 간격을 두고 왼쪽 정렬 -->
-            <div class="centered-content">
-                <h1 class="order-title">판매자 페이지</h1>
-                <a href="{% url 'seller:item_create' %}" class="btn btn-outline-secondary mb-2">상품등록</a>
-                <a href="{% url 'seller:item_list' %}" class="btn btn-outline-secondary mb-2">상품 조회 및 관리</a>
+<div class="center-content">
+    <h1 style="text-align: center;">상품 목록</h1>
+    <div class="grid-container flex-container">
+        {% for item in items %}
+        <div class="grid-item flex-item">
+            <div class="separator-wrapper">
+                <img src="{{ item.image }}" alt="{{ item.name }}" onError="this.onerror=null;this.src='default-image.jpg';">
+                <hr class="separator"> <!-- 이미지와 텍스트 사이 구분선 -->
+            </div>
+            <span style="font-size: 15px;">{{ item.name }}</span>
+            <p>{{ item.brand }}</p>
+            <p>{{ item.price|intcomma }}  ₩</p>
+            <p>{{ item.size }}</p>
+            <p>{{ item.created_at }}</p>
+            <div class="button-group">
+                <a href="{% url 'seller:item_update' pk=item.pk %}" class="button">수정</a>
+                <a href="{% url 'seller:item_delete' pk=item.pk %}" class="delete-button">삭제</a>
             </div>
         </div>
+        {% empty %}
+        <p>상품이 없습니다.</p>
+        {% endfor %}
     </div>
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if items.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ items.previous_page_number }}">이전</a></li>
+            {% endif %}
+            {% for num in items.paginator.page_range %}
+            {% if items.number == num %}
+            <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if items.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ items.next_page_number }}">다음</a></li>
+            {% endif %}
+        </ul>
+    </nav>   
 </div>
 {% endblock %}
+

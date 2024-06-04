@@ -1,5 +1,5 @@
 from django import forms
-from item.models import Item
+from item.models import Item, Brand
 
 
 # class ItemForm(forms.ModelForm):
@@ -10,6 +10,7 @@ from item.models import Item
 
 
 class ItemForm(forms.ModelForm):
+    
     class Meta:
         model = Item
         fields = [
@@ -27,7 +28,7 @@ class ItemForm(forms.ModelForm):
             'inventory': '재고',  # 재고
             'summary': '요약',  # 요약
             'description': '설명',  # 설명
-            'image': '이미지 URL'  # 이미지 URL
+            'image': '이미지 업로드'  # 이미지 URL
         }
         help_texts = {
             'cat1': '',  # 아이템의 주요 카테고리를 선택하세요.
@@ -36,9 +37,10 @@ class ItemForm(forms.ModelForm):
             'item_type': '',  # 퍼퓸, 코롱 등과 같은 아이템의 유형을 정의하세요.
             'size': '',  # 밀리리터 단위로 아이템의 크기를 입력하세요.
             'inventory': '',  # 재고에 있는 아이템의 수량을 입력하세요.
-            'image': ''  # 제품 이미지가 호스팅된 URL을 입력하세요.
+            'image': ''  # 제품 이미지를 업로드해주세요.
         }
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 4, 'cols': 15})  # 설명을 위한 텍스트 영역 설정
+            'description': forms.Textarea(attrs={'rows': 4, 'cols': 15}),  # 설명을 위한 텍스트 영역 설정
+            'image': forms.FileInput(), # 이미지 파일필드
         }
 

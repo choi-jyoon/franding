@@ -2,25 +2,31 @@
 
 {% block content %}
 <style>
-    form {
+    .product-registration-form {
         text-align: left; /* 텍스트를 왼쪽으로 정렬 */
         margin: 0 auto; /* 폼을 가운데로 정렬 */
         width: 40%; /* 폼의 너비 지정 */
     }
 
-    form input[type="text"],
-    form input[type="email"],
-    form select, /* 새로 추가된 스타일 */
-    form textarea {
-        width: 100%; /* 입력 필드의 너비를 폼에 맞춤 */
-        box-sizing: border-box; /* padding과 border를 너비에 포함 */
-        font-size: 20px; /* 폰트 크기 설정 */
+    .product-registration-form label, 
+    .product-registration-form input[type="text"], 
+    .product-registration-form select, 
+    .product-registration-form textarea, 
+    .product-registration-form button.add-brand {
+        display: inline-block;
+        vertical-align: middle;
     }
 
-    form label {
-        display: block; /* 레이블을 블록 요소로 만들어 줄바꿈 */
-        margin-top: 10px; /* 레이블 상단의 마진 추가 */
-        font-size: 20px; /* 레이블 폰트 크기 설정 */
+    .product-registration-form label {
+        width: 25%;
+        margin-right: 10px; /* 레이블과 입력 필드 사이 간격 조정 */
+    }
+
+    .product-registration-form input[type="text"], 
+    .product-registration-form select, 
+    .product-registration-form textarea {
+        width: 65%; /* 입력 필드의 너비를 조정하여 버튼 공간 확보 */
+        margin-right: 5px; /* 입력 필드와 버튼 사이 간격 조정 */
     }
 
     .large-button {
@@ -43,12 +49,152 @@
         color: #ffffff; /* 마우스를 올렸을 때 폰트 색상 변경 */
     }
 
+    .add-brand {
+        background-color: white; /* 활성 페이지 버튼의 배경색 */
+        border-color: #5B574F; /* 활성 페이지 버튼의 테두리 색상 */
+        color: #5B574F;
+        border-radius: 5px;
+    }
+
+    .add-brand:hover {
+        background-color: #5B574F;
+        color: white; /* 마우스 오버 시 페이지 버튼의 텍스트 색상 */
+    }
+
+    #btn-add {
+        border-color: #5B574F;
+        background-color: #5B574F;
+        color: white;
+    }
+
+    #btn-add:hover {
+        background-color: #453F39; /* 기존보다 더 진한 색상 */
+        border-color: #453F39;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2); /* 그림자를 더 진하게 */
+        transform: scale(1.05); /* 버튼을 약간 확대 */
+        transition: all 0.3s ease; /* 부드러운 전환 효과 */
+        color: white;
+    }
+
 </style>
 
 <h1 style="text-align: center;">상품 등록</h1>
-<form method="post">
+<form method="post" enctype="multipart/form-data" class="product-registration-form">
     {% csrf_token %}
-    {{ form.as_p }}
+    {% for field in form.visible_fields %}
+        <hr>
+        {{ field.label_tag }}{{ field }}
+        {% if field.name == "brand" or field.name == "item_type" or field.name == "size" %}
+            <button type="button" class="add-brand" data-bs-toggle="modal" data-bs-target="#addBrandModal" data-field="{{ field.name }}">+</button>
+        {% endif %}
+        <br>
+        {% if field.name == "image" %}
+        <img id="imagePreview" src="{% if form.instance.image %}{{ form.instance.image }}{% else %}#{% endif %}" alt="Image Preview" style="max-width: 100%; height: auto;" />
+        {% endif %}
+    {% endfor %}
     <button class="btn large-button">등 록</button>
 </form>
+<!-- 브랜드 추가 모달 -->
+<div class="modal fade" id="addBrandModal" tabindex="-1" aria-labelledby="addBrandModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fs-5" id="addBrandModalLabel">브랜드 추가</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- 여기에 폼 필드 추가 -->
+          <form action="{% url 'seller:add_brand'  %}" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="field-name" class="col-form-label" id="field-label">브랜드 이름</label>
+              <input type="text" class="form-control" id="field-name" name="field-name">
+              <input type="hidden" id="field-type" name="field-type"> <!-- 히든값으로 field-type보내주기 -->
+            </div>
+            <button type="submit" class="btn btn-sucess" id='btn-add'>추가</button>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra-script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const imageInput = document.querySelector('input[name="image"]');
+        const imagePreview = document.getElementById('imagePreview');
+    
+        if (imageInput) {
+            imageInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    imagePreview.src = '#';
+                    imagePreview.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        // 브랜드 추가 모달 표시 이벤트
+        $('#addBrandModal').on('show.bs.modal', function(event) {
+            // 모달을 트리거한 버튼
+            var button = $(event.relatedTarget);
+            // 버튼의 데이터 필드
+            var fieldName = button.data('field');
+
+            // 필드 이름에 따라 모달 제목과 레이블 변경
+            var modalTitle = '';
+            var labelTitle = '';
+
+            switch (fieldName) {
+                case 'brand':
+                    modalTitle = '브랜드 추가';
+                    labelTitle = '브랜드 이름';
+                    break;
+                case 'item_type':
+                    modalTitle = '상품 유형 추가';
+                    labelTitle = '상품 유형';
+                    break;
+                case 'size':
+                    modalTitle = '크기 추가';
+                    labelTitle = '크기 (ml)';
+                    break;
+                default:
+                    modalTitle = '추가';
+                    labelTitle = '이름';
+                    break;
+            }
+
+            // 모달 제목과 레이블 변경
+            $('#addBrandModalLabel').text(modalTitle);
+            $('#field-label').text(labelTitle);
+
+            // 폼 필드 초기화
+            $('#field-name').val('');
+            // 숨겨진 필드에 데이터 필드 값 설정
+            $('#field-type').val(fieldName);
+        });
+
+        // 브랜드 추가 폼 제출 이벤트
+        $('#btn-add').click(function() {
+            // 폼 유효성 검사
+            if ($('#field-name').val() === '') {
+                // 필드 이름이 비어 있을 경우 경고 메시지 표시
+                alert($('#field-label').text() + '을(를) 입력하세요.');
+                return false; // 폼 제출 중지
+            }
+        });
+    });
+</script>
 {% endblock %}
