@@ -28,15 +28,12 @@ def list_item(request):
         items = items.filter(cat2__id__in=category2_ids)
     if category3_ids:
         items = items.filter(brand__id__in=category3_ids)
+    if category4_ids:
+            items = items.filter(item_type__id__in=category4_ids)
     if request.path == '/item/perfume/':
         items = items.filter(item_type__id__in= ['1'])
     elif request.path == '/item/other/':
         items = items.exclude(item_type__id__in=['1'])
-        if category4_ids:
-            items = items.filter(item_type__id__in=category4_ids)
-    else:
-        if category4_ids:
-            items = items.filter(item_type__id__in=category4_ids)
     #price 필터링
     price_filters = request.GET.getlist('price')
     if '1' in price_filters:
@@ -55,8 +52,6 @@ def list_item(request):
 
 
     paginator = Paginator(items, 9)  # 한 페이지에 20개씩 표시
-
-
     page_number = request.GET.get('page')
     try:
         page_obj = paginator.page(page_number)
@@ -64,6 +59,7 @@ def list_item(request):
         page_obj = paginator.page(1)
     except EmptyPage:
         page_obj = paginator.page(paginator.num_pages)
+
     if request.path == '/item/other/':
         context = {
         'item':Item.objects.all(),
@@ -79,7 +75,8 @@ def list_item(request):
         'selected_type':[int(cat_id) for cat_id in category4_ids],
         'show_note':show_note,
         'show_type':show_type,
-
+        'selected_price':request.GET.getlist('price'),
+        'page':page_number,
         }
     else:    
         context = {
@@ -94,6 +91,8 @@ def list_item(request):
         'selected_type':[int(cat_id) for cat_id in category4_ids],
         'show_note':show_note,
         'show_type':show_type,
+        'selected_price':request.GET.getlist('price'),
+        'page':page_number
         }
     return render(request, 'item/list.html', context)
 
