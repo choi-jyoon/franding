@@ -146,9 +146,12 @@ def    add_cart(request,item_id):
             "item":item
 
             }
-        return redirect(request.path)
+        if int(request.POST['go_cart']) == 1:
+            return redirect(request.path)
+        elif int(request.POST['go_cart']) == 0:
+            return redirect('cart:cart_detail')
     else:
-        return render(request,'item/detail.html',context)    
+        return render(request,'item/detail.html',context) 
     
 
     
