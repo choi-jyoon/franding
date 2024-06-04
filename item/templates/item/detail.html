@@ -193,6 +193,10 @@
   text-decoration: none;
   cursor: pointer;
 }
+.back{
+    border: #5B574F;
+    width: 100%;
+}
 </style>
 {% endblock %}
 {% load static%}
@@ -200,6 +204,7 @@
 
 <div hidden><img src="{{item.back_image}}" alt="" ></div>
 <div class="cont">
+    <button onclick="history.back()" class="back">뒤로 가기</button>
     <div class="top-box">
         <div class="image-cont">
             <!-- 이미지를 여기에 추가하세요 -->
