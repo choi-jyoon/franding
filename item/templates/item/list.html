@@ -395,14 +395,8 @@
     container.style.animationDelay = (index * 0.1) + 's';
   });
 });
-document.addEventListener('DOMContentLoaded', function () {
-        var containers = document.querySelectorAll('.grid-item');
 
-        containers.forEach(function (container, index) {
-            container.style.animationDelay = (index * 0.1) + 's';
-        });
-    });
-    document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
     // 모든 priceFilter 버튼을 선택
     var priceButtons = document.querySelectorAll('.priceFilter');
 
@@ -411,8 +405,19 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('click', function() {
             // 클릭된 버튼의 data-price 값을 가져옴
             var priceValue = button.getAttribute('data-price');
-            // price-hidden input의 값을 업데이트
-            document.getElementById('price-hidden').value = priceValue;
+            // 현재 price-hidden input의 값 가져오기
+            var currentPriceValue = document.getElementById('price-hidden').value;
+
+            // 클릭된 버튼의 data-price 값과 현재 price-hidden 값이 같으면
+            if (priceValue === currentPriceValue) {
+                // price-hidden 의 값을 0으로 설정
+                document.getElementById('price-hidden').value = '0';
+            } else {
+                // 다르면 클릭된 버튼의 data-price 값을 price-hidden의 값으로 설정
+                document.getElementById('price-hidden').value = priceValue;
+            }
+            
+            // 폼 제출
             document.getElementById('container').submit();
         });
     });
