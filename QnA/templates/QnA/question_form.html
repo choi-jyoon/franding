@@ -1,6 +1,10 @@
-<!DOCTYPE html>
-<html>
+{% extends 'base.html' %}
+{% load static %}
 
+{% block extra-style %}
+{% endblock %}
+
+{% block content %}
 <head>
     <title>Ask a Question</title>
 </head>
@@ -13,5 +17,7 @@
         <button type="submit">Submit</button>
     </form>
 </body>
+{% endblock %}
 
-</html>
+{% block extra-script %}
+{% endblock %}
