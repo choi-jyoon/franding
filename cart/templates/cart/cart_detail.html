@@ -201,7 +201,8 @@
         <table id="item_list" class="table">
             <thead>
                 <tr>
-                    <th scope="col"><input class="form-check-input" type="checkbox" value="" id="checkAll" checked></th>
+                    <th scope="col"><input class="form-check-input" type="checkbox" value="" id="checkAll" checked>
+                    </th>
                     <th scope="col">상품명</th>
                     <th scope="col">용량</th>
                     <th scope="col">수량</th>
@@ -379,6 +380,11 @@
             let row = $(this).closest("tr");
             let price = parseInt(row.find(".price").text());
             let quantity = parseInt(row.find(".quantity").text());
+
+            // price 또는 quantity가 NaN인 경우 무시
+            if (isNaN(price) || isNaN(quantity)) {
+                return;
+            }
 
             total += price * quantity;
         });
