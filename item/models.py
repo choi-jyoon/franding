@@ -53,4 +53,9 @@ class Item(models.Model):
         return self.name
     
     
-    
+class item_like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    items = models.ManyToManyField(Item)
+
+    def __str__(self):
+        return f"{self.user.username}'s Wishlist"
