@@ -39,7 +39,7 @@
         padding: 0;
     }
     .item-list {
-        width: 100%;
+        width: 80%;
         float: left;
         padding: 20px;
         margin-top: 5px;
@@ -87,19 +87,19 @@
     .grid-item{
         padding: 0 0 15px 0;
     }
-    .summary {    
-    align-items: center;
-    display: -webkit-box;
-    -webkit-line-clamp: 2; 
-    -webkit-box-orient: vertical;
-    text-align: center;
-    width: 80%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    word-break: keep-all;
-    margin: 0 5px 30px 5px;
-    margin: 0 auto;
-}
+    .summary {
+        align-items: center;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        text-align: center;
+        width: 80%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: keep-all;
+        margin: 0 5px 30px 5px;
+        margin: 0 auto;
+    }
 
     /* 페이징 스타일 */
     .pagination {
@@ -199,11 +199,11 @@
 </style>
 {% endblock %}
 {% block content %}
-
+<form action="{% url 'item:item_list' %}" method="get" id="container">
 <div class="sidebar">
     <h2 class="title">Categoty</h2>
     <br>
-    <form action="" method="get">
+    
         <div {% if show_note is False%} hidden {% endif %}>
             <h4>
                 <span class="toggle-btn">Main Note</span>
@@ -239,8 +239,7 @@
         <div class="brand-container">
             {% for brand in brand %}
             <div class="sidebar-tag">
-            <input type="checkbox" id="brand:{{ brand.id }}" {% if brand.id in selected_brand %}checked{% endif %}
-                name="brand" value="{{ brand.id }}" onchange="this.form.submit()" >
+            <input type="checkbox" id="brand:{{ brand.id }}" {% if brand.id in selected_brand %}checked{% endif %} name="brand" value="{{ brand.id }}" onchange="this.form.submit()" >
             <label for="brand:{{ brand.id }}">{{ brand.name }}</label><br>
             </div>
             {% endfor %}
@@ -254,8 +253,7 @@
             <div class="type-container">
                 {% for type in item_type %}
                 <div class="sidebar-tag">
-                <input type="checkbox" id="type:{{ type.id }}" {% if type.id in selected_type %}checked{% endif %}
-                    name="item_type" value="{{ type.id }}" onchange="this.form.submit()">
+                <input type="checkbox" id="type:{{ type.id }}" {% if type.id in selected_type %}checked{% endif %} name="item_type" value="{{ type.id }}" onchange="this.form.submit()">
                 <label for="type:{{ type.id }}">{{ type.name }}</label><br>
                 </div>
                 {% endfor %}
@@ -264,23 +262,24 @@
         <hr>
         <div>
             <!-- 가격 필터링-->
-            <form method="get" action="{% url 'item:item_list' %}">
-                <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn priceFilter {% if request.GET.price == '1' %}active{% endif %}" name="price" value="1">0 ~ 70,000</button>
-                </div>
-                <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn priceFilter {% if request.GET.price == '2' %}active{% endif %}" name="price" value="2">70,000 ~ 150,000</button>
-                </div>
-                <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn priceFilter {% if request.GET.price == '3' %}active{% endif %}" name="price" value="3">150,000 ~ 220,000</button>
-                </div>
-                <div class="d-flex justify-content-center">
-                    <button type="submit" class="btn priceFilter {% if request.GET.price == '4' %}active{% endif %}" name="price" value="4">220,000 ~ 290,000</button>
-                </div>
-            </form>
+            
+            <div class="d-flex justify-content-center">
+                <input type="hidden" id="price-hidden" name="price" value="{{request.GET.price}}">
+                <button type="button" class="btn priceFilter" data-price="1" {% if request.GET.price == '1' %} class="active" {% endif %} name="price" value="1">0 ~ 70,000</button>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="button" class="btn priceFilter" data-price="2" {% if request.GET.price == '2' %}class="active"{% endif %} name="price" value="2">70,000 ~ 150,000</button>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="button" class="btn priceFilter" data-price="3" {% if request.GET.price == '3' %}class="active"{% endif %} name="price" value="3">150,000 ~ 220,000</button>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="button" class="btn priceFilter" data-price="4" {% if request.GET.price == '4' %}class="active"{% endif %} name="price" value="4">220,000 ~ 290,000</button>
+            </div>
+            
         </div>
 
-    </form>
+    
 </div>
 <div class="item-list">
     <div class="section-title">
@@ -301,26 +300,26 @@
         </a>
         {% endfor %}
     </div>
-
     <div class="pagination">
+
         {% if items.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page={{ items.previous_page_number }}">이전</a></li>
+        <li class="page-item"><button class="page-link" name="page" value="{{ items.previous_page_number }}">이전</button></li>
         {% endif %}
 
         {% for page_num in items.paginator.page_range %}
         {% if items.number == page_num %}
-        <li class="page-item active"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+        <li class="page-item active"><button class="page-link" name="page" value="{{ page_num }}">{{ page_num }}</button></li>
         {% else %}
-        <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+        <li class="page-item"><button class="page-link" name="page" value="{{ page_num }}">{{ page_num }}</button></li>
         {% endif %}
         {% endfor %}
-
         {% if items.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{ items.next_page_number }}">다음</a></li>
-        {% endif %}
+            <li class="page-item"><button class="page-link" name="page" value="{{ items.next_page_number }}">다음</button>
+            </li>
+            {% endif %}
     </div>
 </div>
-
+</form>
 {% endblock %}
 {% block extra-script %}
 <script>
@@ -390,6 +389,27 @@
     container.style.animationDelay = (index * 0.1) + 's';
   });
 });
+document.addEventListener('DOMContentLoaded', function () {
+        var containers = document.querySelectorAll('.grid-item');
 
+        containers.forEach(function (container, index) {
+            container.style.animationDelay = (index * 0.1) + 's';
+        });
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+    // 모든 priceFilter 버튼을 선택
+    var priceButtons = document.querySelectorAll('.priceFilter');
+
+    priceButtons.forEach(function(button) {
+        // 각 버튼에 클릭 이벤트 리스너 추가
+        button.addEventListener('click', function() {
+            // 클릭된 버튼의 data-price 값을 가져옴
+            var priceValue = button.getAttribute('data-price');
+            // price-hidden input의 값을 업데이트
+            document.getElementById('price-hidden').value = priceValue;
+            document.getElementById('container').submit();
+        });
+    });
+});
 </script>
 {% endblock %}
