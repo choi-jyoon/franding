@@ -2,6 +2,7 @@
 {% load static %}
 
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,98 +14,138 @@
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 
     <style>
-        html, body {
+        html,
+        body {
             height: 100%;
         }
+
         body {
             display: flex;
-             flex-direction: column;
-             min-height: 100vh;
+            flex-direction: column;
+            min-height: 100vh;
         }
+
         .content {
-            flex: 1 0 auto; /* 콘텐츠가 차지할 수 있는 최대 공간을 차지하도록 설정 */
-            margin-top: 70px; /* 네비바 높이만큼 컨텐츠 위에 마진 추가 */
-            margin-bottom: 150px; /* 푸터 높이만큼 컨텐츠 아래에 마진 추가 */
-        
+            flex: 1 0 auto;
+            /* 콘텐츠가 차지할 수 있는 최대 공간을 차지하도록 설정 */
+            margin-top: 70px;
+            /* 네비바 높이만큼 컨텐츠 위에 마진 추가 */
+            margin-bottom: 150px;
+            /* 푸터 높이만큼 컨텐츠 아래에 마진 추가 */
+
         }
+
         .footer {
-            background-color: #f8f9fa; /* 밝은 회색 */
-            flex-shrink: 0; /* 푸터가 축소되지 않도록 설정 */
-            height:150px;
+            background-color: #f8f9fa;
+            /* 밝은 회색 */
+            flex-shrink: 0;
+            /* 푸터가 축소되지 않도록 설정 */
+            height: 150px;
             margin-top: auto;
-            margin-bottom:0px;
-            padding:30px;
+            margin-bottom: 0px;
+            padding: 30px;
         }
+
         .navbar {
             background-color: #5B574F !important;
-            height: 70px; /* 네비바 높이 설정 */
+            height: 70px;
+            /* 네비바 높이 설정 */
             margin-bottom: 70px;
         }
-               
-        .navbar-part, .nav-part {
+
+        .navbar-part,
+        .nav-part {
             display: flex;
-            flex: 1; /* 네비게이션의 세 부분이 동일한 공간을 차지하도록 함 */
-            justify-content: center; /* 항목들을 가로축 중앙에 배치 */
+            flex: 1;
+            /* 네비게이션의 세 부분이 동일한 공간을 차지하도록 함 */
+            justify-content: center;
+            /* 항목들을 가로축 중앙에 배치 */
         }
-    
-        .navbar-part:first-child, .navbar-part:last-child {
-            justify-content: flex-start; /* 첫 번째와 마지막 네비게이션 파트는 시작점에 맞춰 정렬 */
-        }
-    
+
+        .navbar-part:first-child,
         .navbar-part:last-child {
-            justify-content: flex-end; /* 마지막 네비게이션 파트는 끝점에 맞춰 정렬 */
+            justify-content: flex-start;
+            /* 첫 번째와 마지막 네비게이션 파트는 시작점에 맞춰 정렬 */
         }
-    
+
+        .navbar-part:last-child {
+            justify-content: flex-end;
+            /* 마지막 네비게이션 파트는 끝점에 맞춰 정렬 */
+        }
+
         .navbar-nav {
-            flex-direction: row; /* 네비게이션 항목들을 가로로 배열 */
-            padding: 0; /* 기본 패딩 제거 */
+            flex-direction: row;
+            /* 네비게이션 항목들을 가로로 배열 */
+            padding: 0;
+            /* 기본 패딩 제거 */
         }
+
         /* nav-item에 적용되는 기본 스타일 */
         .nav-item .nav-link {
-            color: white; /* 기본 텍스트 색상 */
-            transition: color 0.3s; /* 색상 변경 애니메이션 효과 */
+            color: white;
+            /* 기본 텍스트 색상 */
+            transition: color 0.3s;
+            /* 색상 변경 애니메이션 효과 */
         }
+
         /* 마우스 hover 시 적용되는 스타일 */
         .nav-item .nav-link:hover {
-            color: black; /* hover 시 텍스트 색상 변경 */
+            color: black;
+            /* hover 시 텍스트 색상 변경 */
         }
+
         /* 드롭다운 메뉴가 기본적으로 숨겨져 있도록 설정 */
         .navbar-nav .dropdown-menu {
             display: none;
         }
+
         /* 드롭다운 메뉴 아이템 옆의 삼각형 아이콘 제거 */
         .nav-link.dropdown-toggle::after {
             display: none;
         }
+
         /* 호버 시 드롭다운 메뉴가 표시되도록 설정 */
         .navbar-nav .nav-item:hover .dropdown-menu {
-            display: flex; /* 블록 대신 flex를 사용하여 내용물을 가로로 배열 */
-            flex-direction: row; /* 항목들을 가로 방향으로 정렬 */
+            display: flex;
+            /* 블록 대신 flex를 사용하여 내용물을 가로로 배열 */
+            flex-direction: row;
+            /* 항목들을 가로 방향으로 정렬 */
         }
 
         /* horizontal-dropdown 클래스가 적용된 드롭다운 메뉴의 항목 스타일 */
         .horizontal-dropdown .dropdown-menu .dropdown-item {
-            flex: 0 1 auto; /* flex-grow는 0, flex-shrink는 1, flex-basis는 auto로 설정하여 항목들이 필요한 만큼의 공간을 차지하도록 함 */
-            white-space: nowrap; /* 항목 텍스트가 줄바꿈되지 않도록 설정 */
-            padding: 0.5rem 1rem; /* 상하 0.5rem, 좌우 1rem의 패딩을 추가하여 항목 간격 조정 */
+            flex: 0 1 auto;
+            /* flex-grow는 0, flex-shrink는 1, flex-basis는 auto로 설정하여 항목들이 필요한 만큼의 공간을 차지하도록 함 */
+            white-space: nowrap;
+            /* 항목 텍스트가 줄바꿈되지 않도록 설정 */
+            padding: 0.5rem 1rem;
+            /* 상하 0.5rem, 좌우 1rem의 패딩을 추가하여 항목 간격 조정 */
         }
 
         /* 호버 시 드롭다운 항목의 배경색 변경 등의 추가 스타일 */
         .horizontal-dropdown .dropdown-menu .dropdown-item:hover {
-            background-color: #f8f9fa; /* 호버 시 항목의 배경색을 변경 */
-            color: #000; /* 호버 시 항목의 텍스트 색상을 검은색으로 변경 */
+            background-color: #f8f9fa;
+            /* 호버 시 항목의 배경색을 변경 */
+            color: #000;
+            /* 호버 시 항목의 텍스트 색상을 검은색으로 변경 */
         }
+
         .nav-profile-img {
-            width: 40px; /* 아이콘과 동일한 크기로 설정 */
-            height: 40px; /* 아이콘과 동일한 크기로 설정 */
-            border-radius: 50%; /* 원형 모양 만들기 */
-            object-fit: cover; /* 이미지 비율을 유지하면서 요소에 맞춤 */
+            width: 40px;
+            /* 아이콘과 동일한 크기로 설정 */
+            height: 40px;
+            /* 아이콘과 동일한 크기로 설정 */
+            border-radius: 50%;
+            /* 원형 모양 만들기 */
+            object-fit: cover;
+            /* 이미지 비율을 유지하면서 요소에 맞춤 */
         }
+
         a {
-      text-align: center;
-        text-decoration: none;
-        color: black;
-    }
+            text-align: center;
+            text-decoration: none;
+            color: black;
+        }
     </style>
     {% block extra-style %}
 
@@ -116,106 +157,115 @@
         <div class="container-fluid justify-content-center">
             <!-- 좌측 항목들 -->
             <div class="navbar-part">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0 justify-content-center">
-                <li class="nav-item horizontal-dropdown" style="margin-right: 20px;">
-                    <a class="nav-link dropdown-toggle" href="{% url 'item:perfume_list' %}">Perfume</a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'item:perfume_list' %}?cat1=1">Citrus</a></li>
-                        <li><a class="dropdown-item" href="{% url 'item:perfume_list' %}?cat1=2">Floral</a></li>
-                        <li><a class="dropdown-item" href="{% url 'item:perfume_list' %}?cat1=3">Sweet</a></li>
-                        <li><a class="dropdown-item" href="{% url 'item:perfume_list' %}?cat1=4">Woody</a></li>
-                        <li><a class="dropdown-item" href="{% url 'item:perfume_list' %}?cat1=5">Musk</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item" style="margin-right: 20px;">
-                    <a class="nav-link" href="{% url 'item:other_list' %}">Others</a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'item:other_list' %}?item_type=2">Diffuser</a></li>
-                        <li><a class="dropdown-item" href="{% url 'item:other_list' %}?item_type=3">Fabric Perfume</a></li>
-                        <li><a class="dropdown-item" href="{% url 'item:other_list' %}?item_type=4">Candle</a></li>
-                        <li><a class="dropdown-item" href="{% url 'item:other_list' %}?item_type=5">시향지</a></li>
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 justify-content-center">
+                    <li class="nav-item horizontal-dropdown" style="margin-right: 20px;">
+                        <a class="nav-link dropdown-toggle" href="{% url 'item:perfume_list' %}">Perfume</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'item:perfume_list' %}?cat1=1">Citrus</a></li>
+                            <li><a class="dropdown-item" href="{% url 'item:perfume_list' %}?cat1=2">Floral</a></li>
+                            <li><a class="dropdown-item" href="{% url 'item:perfume_list' %}?cat1=3">Sweet</a></li>
+                            <li><a class="dropdown-item" href="{% url 'item:perfume_list' %}?cat1=4">Woody</a></li>
+                            <li><a class="dropdown-item" href="{% url 'item:perfume_list' %}?cat1=5">Musk</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item" style="margin-right: 20px;">
+                        <a class="nav-link" href="{% url 'item:other_list' %}">Others</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'item:other_list' %}?item_type=2">Diffuser</a>
+                            </li>
+                            <li><a class="dropdown-item" href="{% url 'item:other_list' %}?item_type=3">Fabric
+                                    Perfume</a></li>
+                            <li><a class="dropdown-item" href="{% url 'item:other_list' %}?item_type=4">Candle</a></li>
+                            <li><a class="dropdown-item" href="{% url 'item:other_list' %}?item_type=5">시향지</a></li>
 
-                    </ul>
-                </li>
-                <li class="nav-item" style="margin-right: 20px;">
-                    <a class="nav-link" href="{% url 'item:brand_list' %}">Brand</a> 
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'item:brand_list' %}?brand=1">franding</a></li>
-                        <li><a class="dropdown-item" href="{% url 'item:brand_list' %}?brand=2">GUCCI</a></li>
-                        <li><a class="dropdown-item" href="{% url 'item:brand_list' %}?brand=3">DIPTYQUE</a></li>
-                        <li><a class="dropdown-item" href="{% url 'item:brand_list' %}?brand=4">Jo Malone</a></li>
-                        <li><a class="dropdown-item" href="{% url 'item:brand_list' %}?brand=5">LE PERSONA</a></li>
-                        <li><a class="dropdown-item" href="{% url 'item:brand_list' %}?brand=6">DIOR</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item" style="margin-right: 20px;">
+                        <a class="nav-link" href="{% url 'item:brand_list' %}">Brand</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'item:brand_list' %}?brand=1">franding</a></li>
+                            <li><a class="dropdown-item" href="{% url 'item:brand_list' %}?brand=2">GUCCI</a></li>
+                            <li><a class="dropdown-item" href="{% url 'item:brand_list' %}?brand=3">DIPTYQUE</a></li>
+                            <li><a class="dropdown-item" href="{% url 'item:brand_list' %}?brand=4">Jo Malone</a></li>
+                            <li><a class="dropdown-item" href="{% url 'item:brand_list' %}?brand=5">LE PERSONA</a></li>
+                            <li><a class="dropdown-item" href="{% url 'item:brand_list' %}?brand=6">DIOR</a></li>
 
-                    </ul>
-                </li>
-                <li class="nav-item" style="margin-right: 20px;">
-                    <a class="nav-link" href="{% url 'event:index' %}">Franding</a> 
-                </li>
-                <li class="nav-item" style="margin-right: 20px;">
-                    <a class="nav-link" href="{% url 'about' %}">About</a> 
-                </li>
-            </ul>
+                        </ul>
+                    </li>
+                    <li class="nav-item" style="margin-right: 20px;">
+                        <a class="nav-link" href="{% url 'event:index' %}">Franding</a>
+                    </li>
+                    <li class="nav-item" style="margin-right: 20px;">
+                        <a class="nav-link" href="{% url 'about' %}">About</a>
+                    </li>
+                </ul>
             </div>
             <!-- 로고 -->
             <div class="nav-part mx-auto">
-            <a class="navbar-brand" href="{% url 'home' %}">
-                <img src="{% static 'img/logo-2.png' %}" alt="Logo" width="65" height="65" class="d-inline-block align-text-top">
-            </a>
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    <img src="{% static 'img/logo-2.png' %}" alt="Logo" width="65" height="65"
+                        class="d-inline-block align-text-top">
+                </a>
             </div>
             <!-- 우측 항목들 -->
-            <div class="navbar-part" >
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0  align-items-center">
-                <!--검색-->
-                <li class="nav-item me-5">
-                    <form action='{% url 'search' %}' method='post'>
-                    {% comment %} <form action='' method='post'> {% endcomment %}
-                        {% csrf_token %}
-                    <div class="input-group mb-0">
-                        <input type="text" class="form-control" placeholder="검색어를 입력하세요" aria-label="Search_word" aria-describedby="button-addon2" name="search_word">
-                        <button class="btn btn-secondary" type="submit" id="button-addon2"><i class="bi bi-search"></i></button>
-                    </div>
-                </form>
-                </li>
-                <!--장바구니-->
-                <li class="nav-item me-3">
-                    <a class="btn btn-secondary" id="button-addon2" href="{% url 'cart:cart_detail' %}"  onclick="checkUserActiveStatus(event)" >
-                        <i class="bi bi-cart4"></i>
-                    </a>
-                </li>
-                <!--프로필-->
-                <li class="nav-item dropdown">
-                    {% if user.is_active %}
-                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <!-- 프로필 이미지, 이름 표시 -->
-                        {% if profile_img and profile_img.strip %}
-                            <img src="{{profile_img}}" alt="profile_img" class="nav-profile-img"></i>&nbsp;{{ user.last_name }}{{ user.first_name }}
-                        {% else %}
+            <div class="navbar-part">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0  align-items-center">
+                    <!--검색-->
+                    <li class="nav-item me-5">
+                        <form action="{% url 'search' %}" method='post'>
+                            {% comment %} <form action='' method='post'> {% endcomment %}
+                                {% csrf_token %}
+                                <div class="input-group mb-0">
+                                    <input type="text" class="form-control" placeholder="검색어를 입력하세요"
+                                        aria-label="Search_word" aria-describedby="button-addon2" name="search_word">
+                                    <button class="btn btn-secondary" type="submit" id="button-addon2"><i
+                                            class="bi bi-search"></i></button>
+                                </div>
+                            </form>
+                    </li>
+                    <!--장바구니-->
+                    <li class="nav-item me-3">
+                        <a class="btn btn-secondary" id="button-addon2" href="{% url 'cart:cart_detail' %}"
+                            onclick="checkUserActiveStatus(event)">
+                            <i class="bi bi-cart4"></i>
+                        </a>
+                    </li>
+                    <!--프로필-->
+                    <li class="nav-item dropdown">
+                        {% if user.is_active %}
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarUserDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <!-- 프로필 이미지, 이름 표시 -->
+                            {% if profile_img and profile_img.strip %}
+                            <img src="{{profile_img}}" alt="profile_img" class="nav-profile-img"></i>&nbsp;{{
+                            user.last_name }}{{ user.first_name }}
+                            {% else %}
                             <i class="fas fa-user-circle"></i>&nbsp;{{ user.last_name }}{{ user.first_name }}
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu-start dropdown-menu " aria-labelledby="navbarUserDropdown">
+                            <form action="{% url 'logout' %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="dropdown-item">Logout</button>
+                            </form>
+                            <li><a class="dropdown-item" href="{% url 'mypage:order_index' %}">My Page</a></li>
+                        </ul>
+                        {% else %}
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarAnonymousDropdown"
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle"></i>&nbsp;Anonymous
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="navbarAnonymousDropdown">
+                            <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
+                            <li><a class="dropdown-item" href="{% url 'register' %}">Register</a></li>
+                        </ul>
                         {% endif %}
-                    </a>
-                    <ul class="dropdown-menu-start dropdown-menu " aria-labelledby="navbarUserDropdown">
-                        <form action="{% url 'logout' %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="dropdown-item">Logout</button>
-                        </form>
-                        <li><a class="dropdown-item" href="{% url 'mypage:order_index' %}">My Page</a></li>
-                    </ul>
-                    {% else %}
-                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarAnonymousDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user-circle"></i>&nbsp;Anonymous
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="navbarAnonymousDropdown">
-                        <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
-                        <li><a class="dropdown-item" href="{% url 'register' %}">Register</a></li>
-                    </ul>
-                    {% endif %}
-                </li>
-            </ul>
-        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
-    
+
     <div class="container mb-5">
         {% block content %}{% endblock %}
     </div>
@@ -224,21 +274,24 @@
     <footer class="footer bg-light">
         <div class="container text-center">
             <p>© 2024 Franding. All rights reserved.</p>
-            <p>Follow us: <a href="#">Facebook</a> | <a href="#">Twitter</a> | <a href="https://www.instagram.com/frand_ing/">Instagram</a></p>
+            <p>Follow us: <a href="#">Facebook</a> | <a href="#">Twitter</a> | <a
+                    href="https://www.instagram.com/frand_ing/">Instagram</a></p>
             <p>개인정보처리방침 | 이용약관</p>
         </div>
     </footer>
     {% endblock %}
 
     <script src="https://kit.fontawesome.com/c998a172fe.js" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
     {% block extra-script %}{% endblock %}
 
     <script>
 
         // 사용자의 활성 상태를 Django 템플릿에서 JavaScript 변수로 전달
         var isUserActive = {{ user.is_active|yesno:"true,false" }};
-        
+
         function checkUserActiveStatus(event) {
             // 사용자가 활성 상태인 경우
             if (isUserActive) {
@@ -254,4 +307,5 @@
 
     </script>
 </body>
+
 </html>

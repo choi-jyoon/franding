@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from item.models import Category1, Category2
+from item.models import Category1, Category2, Item
 
 # Create your models here.
 
@@ -13,6 +13,7 @@ class Subscribe(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     datetime = models.DateTimeField(auto_now_add=True)
     state = models.IntegerField(default=0, choices=STATE_CHOICES)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, null=True)
     
 class Keyword(models.Model):
     category1 = models.ForeignKey(Category1, on_delete=models.CASCADE)

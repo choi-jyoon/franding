@@ -3,100 +3,118 @@
 
 {% block extra-style %}
 <style>
-    .keyword-button.selected {
-        background-color: #6c757d; /* 활성화됐을 때의 배경색 */
-        color: white; /* 활성화됐을 때의 글자색 */
-    }
+    /* 이전 스타일 코드 */
+
+    /* 추가된 스타일 */
     .grid-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between; /* 내부 컨텐츠를 상하로 균등 분포 */
-        border: 2px solid #f0f0f0;
-        border-radius: 1rem;
-        width: 100%;
-        height: auto;
-        margin: 20px;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-        transition: 0.3s;
-      }
-    .grid-out-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        grid-gap: 30px;
+        padding: 30px;
     }
-    .my-divider {
-        width:100%;
-        margin-left: 20px;
-        margin-top: 50px; /* 공간 넓히기 */
-        margin-bottom: 50px; /* 공간 넓히기 */
-        border-top: 1px solid #ccc; /* 구분선 추가 */
-    }
+
     .date-card {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-        padding: 15px;
-        background: #fff;
+        background-color: #f8f9fa;
         border-radius: 8px;
-    }
-    .keyword{
-        display: inline-block;
-        margin: 10px;
-        vertical-align: top;
-    }
-    .item-card {
-        display: inline-block;
-        width:10rem;
-        align-items: center;
-        margin-bottom: 20px;
-        margin-left: 20px;
-        margin-top: 20px;
-        padding: 15px;
-        background: #f0f0f0;
-        border-radius: 8px;
+        padding: 30px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-    .item-card p {
-        text-align: left; /* 기본적으로 텍스트를 왼쪽 정렬 */
-    }
-    
-    .item-card .keyword {
-        padding-left:70px; /* keyword 클래스를 가진 p 태그의 텍스트를 가로 중앙에 정렬 */
-        text-align: center;
+
+    .date-card-item {
+        margin-bottom: 10px;
     }
 
-    .list-inline-item{
-        padding: 15px;
+    .date-card-item p {
+        margin: 0;
+        font-size: 18px;
+        color: #6c757d;
     }
 
+    .date-card-item .item-card {
+        background-color: #fff;
+        border-radius: 4px;
+        padding: 5px 10px;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .date-card-image {
+        width: 100px;
+        height: auto;
+    }
+
+    .keyword-card {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .keyword-card p {
+        margin: 0;
+        font-size: 18px;
+        color: #6c757d;
+    }
+
+    .keyword-card .item-card {
+        background-color: #fff;
+        border-radius: 4px;
+        padding: 5px 10px;
+        font-size: 16px;
+        font-weight: bold;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
+<div class="container">
+    <div class="grid-container">
+        <div class="date-card">
+            <div class="date-card-item">
+                <p>신청 날짜:</p>
+                <p class="item-card">{{ subscribe_object.datetime }}</p>
+            </div>
+            <div class="date-card-item">
+                <p>진행 상황:</p>
+                <p class="item-card">{{ subscribe_object.get_state_display }}</p>
+                <div class="date-card-item">
+                    {% if subscribe_object.state == 0 %}
+                    <img src="https://imgur.com/NpJ5maX.gif" alt="향수 프랜딩 이미지" class="date-card-image">
+                    {% elif subscribe_object.state == 1 %}
+                    <img src="https://imgur.com/6Uy7Ec6.gif" alt="향수 프랜딩 이미지" class="date-card-image">
+                    {% else %}
+                    <img src="https://imgur.com/FxFDTKW.gif" alt="향수 프랜딩 이미지" class="date-card-image">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="date-card-item">
+                <p>상품:</p>
+                <p class="item-card">{{ subscribe_object.item.name }}</p>
+                <a href="{% url 'item:detail' subscribe_object.item.id %}">
+                <img src = {{ subscribe_object.item.image }}, alt={{subscribe_object.item.name}}, class="date-card-image">
+                </a>
+            </div>
+            
+        </div>
+    </div>
 
-<div class="grid-container">
-    <div class="date-card" >
-        {{subscribe_object}}
-        <p>신청 날짜 : {{subcribe_object.datetime}} </p><br>
-        <p style="margin-left:2rem;"> 진행 상황 : {{subcribe_object.get_state_display}} </p>
-        {% if subcribe_object.state == 0 %}
-        <img src="https://imgur.com/NpJ5maX.gif" alt="향수 프랜딩 이미지" style="width: 10%; height: auto;">
-        {% elif subcribe_object.state == 1%}
-        <img src="https://imgur.com/6Uy7Ec6.gif" alt="향수 프랜딩 이미지" style="width: 10%; height: auto;">
-        {% else %}
-        <img src="https://imgur.com/FxFDTKW.gif" alt="향수 프랜딩 이미지" style="width: 10%; height: auto;">
-        {% endif%}
+    <div class="grid-container">
+        {% for subscription in subscriptions %}
+        <div class="keyword-card">
+            <div class="keyword-card-item">
+                <p>키워드:</p>
+                <p class="item-card">{{ subscription.keyword.word }}</p>
+            </div>
+            <div class="keyword-card-item">
+                <p>카테고리 1:</p>
+                <p class="item-card">{{ subscription.keyword.category1.name }}</p>
+            </div>
+            <div class="keyword-card-item">
+                <p>카테고리 2:</p>
+                <p class="item-card">{{ subscription.keyword.category2.name }}</p>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </div>
-
-<div class="my-divider"></div>
-
-{% for subscription in subscriptions%}
-<div class="grid-container">
-    <div class="keyword">키워드 <p class="item-card">{{subscription.keyword.word}}</p></div>
-    <div class="keyword">카테고리 1 <p class="item-card">{{subscription.keyword.category1.name}}</p></div>
-    <div class="keyword">카테고리 2 <p class="item-card">{{subscription.keyword.category2.name}}</p></div>
-    <div class="keyword">상품 <p class="item-card">franding Perfume</p></div>
-</div>
-{% endfor%}
 {% endblock %}

@@ -63,7 +63,8 @@ INSTALLED_APPS = [
     #provider
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.kakao',
-    
+    'rest_framework',
+    'QnA',
 ]
 
 MIDDLEWARE = [
@@ -91,7 +92,6 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'utils.context_processors.get_profile_image',
-                
             ],
         },
     },
