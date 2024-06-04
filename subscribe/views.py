@@ -1,15 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Keyword, Subscribe, SubscribeKeyword
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from collections import defaultdict
+from collections import defaultdict, Counter
 from item.models import Item
-from collections import Counter
+from mypage.models import UserAddInfo
 import random
 # Create your views here.
 
 @login_required
 def index(request):
+    
     now = timezone.now()
     
     if request.method == 'POST':
@@ -42,6 +43,51 @@ def index(request):
         'is_subscribed': is_subscribed
     }
     return render(request, 'subscribe/index.html', context)
+
+
+@login_required
+def membership(request):
+    user_info = UserAddInfo.objects.get(user = request.user)
+    
+    # 멤버십 없는 유저는 멤버십 신청화면으로 이동
+    if user_info.membership == False :
+        if request.method == 'POST':
+            return redirect('subscribe:payment')
+        return render(request, 'subscribe/membership.html')
+    return index(request)
+
+@login_required
+def payment_process(request):
+    user_info = UserAddInfo.objects.get(user=request.user)
+    
+    if request.method == 'POST':
+        # 실제 결제 처리 로직 구현
+        # 결제 성공 시
+        user_info.membership = True
+        user_info.save()
+        return redirect('membership')
+    
+    shipping_fee = 3000
+    subscribe_item = [
+        {
+            'item': {
+                'name': 'franding membership'
+            },
+            'size': {
+                'ml': '-'
+            },
+            'amount': 1,
+            'sub_total': 15900
+        }
+    ]
+    context = {
+        'item_list': subscribe_item,
+        'total_price': 15900,
+        'shipping_fee': 0,
+        'userinfo': user_info
+    }
+    return render(request, 'payment/payment_info.html', context)
+
 
 @login_required
 def detail(request, pk):
