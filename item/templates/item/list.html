@@ -84,16 +84,21 @@
         max-width: 100%;
         height: 200px;
     }
-
-    .summary {
+    .grid-item{
+        padding: 0 0 15px 0;
+    }
+    .summary {    
+    align-items: center;
     display: -webkit-box;
-    -webkit-line-clamp: 2; /* 표시하고 싶은 줄의 수 */
+    -webkit-line-clamp: 2; 
     -webkit-box-orient: vertical;
     text-align: center;
-    width: 100%;
+    width: 80%;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-right: 5px;
+    word-break: keep-all;
+    margin: 0 5px 30px 5px;
+    margin: 0 auto;
 }
 
     /* 페이징 스타일 */
@@ -132,7 +137,10 @@
         cursor: pointer;
         border-radius: 15px 0px 0px 0px;
     }
-
+    .item-title
+    {
+        font-size: 23px;
+    }
     .title {
         padding-bottom: 10px;
 
@@ -232,7 +240,7 @@
             {% for brand in brand %}
             <div class="sidebar-tag">
             <input type="checkbox" id="brand:{{ brand.id }}" {% if brand.id in selected_brand %}checked{% endif %}
-                name="brand" value="{{ brand.id }}" onchange="this.form.submit()">
+                name="brand" value="{{ brand.id }}" onchange="this.form.submit()" >
             <label for="brand:{{ brand.id }}">{{ brand.name }}</label><br>
             </div>
             {% endfor %}
@@ -288,7 +296,6 @@
             <div class="grid-item">
                 <img src="{{ item.image }}" alt="{{ item.name }}" class="grid-img">
                 <h5 class="item item-title" bold>{{ item.name }}</h5>
-                <p class="item">가격: {{ item.price|intcomma }}&#8361;</p>
                 <p class="item summary">{{ item.summary }}</p>
             </div>
         </a>
