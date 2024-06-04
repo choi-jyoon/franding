@@ -12,3 +12,4 @@ class UserAddInfo(models.Model):
     extraAddress = models.CharField(max_length=100, null=True)
     phone = models.CharField(max_length=20)
     profile_img = models.URLField(null=True, default=' ')
+    membership = models.BooleanField(default=False)
