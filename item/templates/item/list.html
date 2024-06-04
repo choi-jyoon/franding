@@ -290,6 +290,7 @@
         </form>
     </div>
     <div class="grid-container">
+        {% if items %}
         {% for item in items %}
         <a class="grid-item-contain" href="{% url 'item:detail' item.id %}" role="button">
             <div class="grid-item">
@@ -299,6 +300,11 @@
             </div>
         </a>
         {% endfor %}
+        {% else %}
+        <p>.</p>
+        <h1>상품이 없습니다.</h1>
+        <p>.</p>
+        {% endif %}
     </div>
     <div class="pagination">
 
