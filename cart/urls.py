@@ -17,9 +17,17 @@ Including another URLconf
 
 from django.urls import path, include
 from cart import views
+from rest_framework.routers import DefaultRouter
+from .views import CartViewSet
+
 app_name = 'cart'
+
+router = DefaultRouter()
+router.register(r'items', CartViewSet)
 
 urlpatterns = [           
     path('detail/', views.cart_detail, name='cart_detail'),    
     path('accept_ajax/', views.accept_ajax, name='ajax'),    
+    path('cart_delete/', views.cart_delete, name='cart_delete'),
+    path('', include(router.urls)),
 ]

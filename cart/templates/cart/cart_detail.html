@@ -124,10 +124,7 @@
     }
 
     .best-item {
-        display: flex;
-        flex-direction: column;
         align-items: center;
-        justify-content: center;
         margin-bottom: 20px;
         margin-left: 70px;
         padding: 15px;
@@ -137,15 +134,10 @@
         width: 300px;
     }
 
-    .best-item-name {
-        font: bold 20px 'Arial', sans-serif;
-        /* Replace with your desired font */
-    }
-
-    /* .best-item-list {
+    .best-item-list {
         display: flex;
         flex-direction: column;
-    } */
+    }
 
     .img-box {
         display: flex;
@@ -179,27 +171,7 @@
         padding-left: 160px;
         /* Adjust as needed */
     }
-
-    .empty-cart {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        margin-top: 50px;
-    }
-
-    .empty-button {
-        padding: 10px 30px;
-        border: none;
-        background-color: #28a745;
-        color: white;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-right: 10px;
-        margin-top: 30px;
-    }
 </style>
-
 {% endblock%}
 
 {% block content %}
@@ -226,58 +198,45 @@
 <div class="form-container">
     <div class="my-divider">
         {% if cart %}
-        <form id="check-item" method="GET" action="{% url 'payment:payment_list' %}" style="display: inline;">
+        <table id="item_list" class="table">
+            <thead>
+                <tr>
+                    <th scope="col"><input class="form-check-input" type="checkbox" value="" id="checkAll" checked>
+                    </th>
+                    <th scope="col">상품명</th>
+                    <th scope="col">용량</th>
+                    <th scope="col">수량</th>
+                    <th scope="col">가격</th>
+                </tr>
+            </thead>
 
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="checkAll">
-                            </div>
-                        </th>
-                        <th scope="header-product">상품</th>
-                        <th scope="header-quantity">수량</th>
-                        <th scope="header-price">가격</th>
+            <form id="check-item" method="GET" action="{% url 'payment:payment_list' %}" style="display: inline;">
+                <tbody>
+                    {% for show in cart %}
+
+                    <tr id="{{show.item.id}}">
+                        <td><input class="form-check-input item-checkbox" type="checkbox" name="check-item"
+                                value="{{show.item.id}}" checked></td>
+                        <td>{{ show }}</td>
+                        <td>{{ show.item.size.ml }}ml</td>
+                        <td>
+                            <input type="hidden" id="csrfToken" value="{{csrf_token}}">
+                            <button type="button" class="plus-button"
+                                onclick="setupButtons('{{show.item.id}}', +1)">+</button>
+                            <span id="amount{{show.item.id}}" class="quantity">{{show.amount}}</span>
+                            <button type="button" class="minus-button"
+                                onclick="setupButtons('{{show.item.id}}', -1)">-</button>
+                        </td>
+                        <td id="sub_total{{show.item.id}}" class="price">{{ show.item.price }}원</td>
                     </tr>
-                </thead>
-            </table>
-
-
-            {% for show in cart %}
-            <!-- Form fields here -->
-            <div class="item-details">
-                <div class="img-box">
-                    <input class="form-check-input me-4" type="checkbox" name="checkbox" value="{{ show.item.id }}"
-                        id="firstCheckboxStretched">
-                    <label class="form-check-label" for="firstCheckboxStretched">
-                        <a href="{% url 'item:detail' show.item.id %}">
-                            <img src="{{ show.item.image }}" alt="{{ show.item.name }}" class="item-image">
-                        </a>
-                    </label>
-                </div>
-
-
-                <div class="name-box">
-                    {{ show.item.name }}
-                </div>
-
-                <div class="amount">
-                    <input type="hidden" id="csrfToken" value="{{csrf_token}}">
-                    <button type="button" onclick="modifyCartAmount('{{show.item.id}}', -1)"
-                        class="btn btn-secondary">-</button>
-                    <span id="{{show.item.id}}">{{show.amount}}</span>
-                    <button type="button" onclick="modifyCartAmount('{{show.item.id}}', 1)"
-                        class="btn btn-secondary">+</button>
-                </div>
-                <div class="price">{{ show.item.price|intcomma }}원</div>
-            </div>
-            {% endfor%}
-        </form>
+                    {% endfor %}
+                </tbody>
+            </form>
+        </table>
 
         <div class="bottom-container">
 
-            <h3>총 합계 : <span id='total_price'>{{ total_price|intcomma }}원</span></h3>
+            <h3>총 합계 : <span id='total_price'>{{ total_price }}원</span></h3>
 
 
             <div class="button-container">
@@ -288,103 +247,170 @@
                 <button class="bottom-button" type="submit" onclick="document.getElementById('check-item').submit()">선택
                     상품 결제</button>
 
-                <button class="bottom-button" onclick="delete_form()">선택 상품 삭제</button>
-                <!-- <button class="bottom-button" onclick="delete_form()">선택 상품 삭제</button> -->
+                <button class="bottom-button" id="delete-button">선택 상품 삭제</button>
             </div>
         </div>
         {% else %}
         <div class="empty-cart">
             <h4>장바구니가 비어있습니다.</h4>
             <form method="GET" action="{% url 'item:item_list' %}" style="display: inline; align-items: center;">
-                <input class="empty-button" type="submit" value="쇼핑 계속하기">
+                <input class="bottom-button" type="submit" value="쇼핑 계속하기">
             </form>
-            <img src="https://imgur.com/aW9sXHF.gif" alt="향수 프랜딩 이미지"
-                style="width: 60%; height: auto; margin-right: 60px;">
         </div>
+        <img src="https://imgur.com/aW9sXHF.gif" alt="향수 프랜딩 이미지" style="width: 60%; height: auto;">
 
         {% endif %}
     </div>
 
 
-
-    <!-- 추천 상품 목록 -->
     <div class="best-item">
         <h3>이 달의 추천 상품</h3>
         {% for product in best_items %}
-        <a href="{% url 'item:detail' product.id %}">
-            <img src="{{ product.image }}" alt="{{ product.name }}" class="best-item-image">
-        </a>
-        <ul><a class="best-item-name" href="{% url 'item:detail' product.id %}">{{ product }}</a></ul>
-        <ul>{{ product.summary }}</ul>
-        <ul>{{ product.price|intcomma }}원</ul>
+        <div class="best-item-list">
+            <a href="{% url 'item:detail' product.id %}">
+                <img src="{{ product.image }}" alt="{{ product.name }}" class="best-item-image">
+            </a>
+            <ul><a href="{% url 'item:detail' product.id %}">{{ product }}</a></ul>
+            <ul>{{ product.summary }}</ul>
+            <ul>{{ product.price|intcomma }}원</ul>
+        </div>
         {% endfor %}
     </div>
 </div>
-
 {% endblock %}
 
 {% block extra-script %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
+
+    $(document).ready(function () {
+        $('#delete-button').click(function () {
+            var item_list = []
+            $('.item-checkbox:checked').each(function () {
+                var itemId = $(this).val();
+                item_list.push(itemId);
+                $(this).parent().parent().remove();
+
+                $.ajax({
+                    url: '{% url "cart:cart_delete" %}',
+                    type: 'GET',
+                    data: {
+                        'item_list': item_list
+                    },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('X-CSRFToken', '{{csrf_token}}');
+                    },
+                    success: function (response) {
+                        location.reload();
+                    },
+                    error: function (xhr, status, error) {
+                        // Code to run if the request fails
+                        console.log(error);
+                    }
+                });
+            });
+        });
+
+        // $('#payment-button').click(function () {
+        //     var item_list = []
+        //     $('.item-checkbox:checked').each(function () {
+        //         var itemId = $(this).val();
+        //         item_list.push(itemId);
+
+        //         $.ajax({
+        //             url: '{% url "payment:payment_list" %}',
+        //             type: 'GET',
+        //             data: {
+        //                 'item_list': item_list
+        //             },
+        //             beforeSend: function (xhr) {
+        //                 xhr.setRequestHeader('X-CSRFToken', '{{csrf_token}}');
+        //             },
+        //             success: function (response) {
+        //                 console.log(response);
+        //             },
+        //             error: function (xhr, status, error) {
+        //                 // Code to run if the request fails
+        //                 console.log(error);
+        //             }
+        //         });
+        //     });
+        // });
+
+    });
+
     function getCsrfToken() {
         return document.getElementById('csrfToken').value;
     }
-    function modifyCartAmount(item_id, change) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '{% url "cart:ajax" %}', true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.setRequestHeader('X-CSRFToken', getCsrfToken());
 
-        xhr.onload = function () {
-            if (this.status === 200) {
-                var response = JSON.parse(this.responseText);
-                // console.log('currentQuantity' + item_id);
-                // console.log('ajax가 새로운 값을 쓰려고 하는 곳');
-                // console.log(response.total_price);
-                document.getElementById(item_id).textContent = response.new_amount;
-                // document.getElementById('total_price').textContent = response.total_price;
-                document.getElementById('total_price').innerText = numberWithCommas(response.total_price) + '원';
-                console.log('Update successful:', response.message);
-            } else {
-                console.error('Error updating:', this.statusText);
-            }
-        };
-        xhr.send(`item_id=${item_id}&amountChange=${change}`);
+    function setupButtons(itemId, change_amount) {
+        if (document.getElementById('amount' + itemId).innerText == 1 && change_amount == -1) {
+            alert("최소 갯수입니다.");
+        } else {
+            // console.log(itemId, change_amount);
+            $.ajax({
+                url: '{% url "cart:ajax" %}',
+                type: 'POST',
+                data: {
+                    'item_id': itemId,
+                    'change_amount': change_amount
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRFToken', getCsrfToken());
+                },
+                success: function (response) {
+                    console.log(response);
+                    document.getElementById('amount' + itemId).innerText = response.new_amount;
+                    // document.getElementById('total_price').innerText = numberWithCommas(response.total_price) + '원';
+                    updateTotal();
+                },
+                error: function (xhr, status, error) {
+                    // Code to run if the request fails
+                    console.log(error);
+                }
+            });
+        }
+
     }
+
+
+    function updateTotal() {
+        let total = 0;
+        $("input[type=checkbox]:checked").each(function () {
+            let row = $(this).closest("tr");
+            let price = parseInt(row.find(".price").text());
+            let quantity = parseInt(row.find(".quantity").text());
+
+            // price 또는 quantity가 NaN인 경우 무시
+            if (isNaN(price) || isNaN(quantity)) {
+                return;
+            }
+
+            total += price * quantity;
+        });
+        $("#total_price").text(total.toLocaleString() + "원");
+    }
+
+    $(document).ready(function () {
+        // 체크박스 변경 이벤트 감지
+        $("input[type=checkbox]").on("change", updateTotal);
+
+        // 수량 입력 필드의 값 변경 이벤트 감지
+        $(".quantity").on("input change", function () {
+            // 해당 행의 체크박스가 체크된 상태에서만 합계 업데이트
+            let checkbox = $(this).closest("tr").find("input[type=checkbox]");
+            if (checkbox.is(":checked")) {
+                updateTotal();
+            }
+        });
+
+        // 페이지 로드 시 초기 합계 계산
+        updateTotal();
+    });
 
     function numberWithCommas(x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
-
-    function delete_form() {
-        var form = document.getElementById('check-item');
-        form.action = '{% url "payment:cart_delete" %}';
-        form.submit();
-    }
-
-    // function delete_form() {
-    //     var form = document.getElementById('check-item');
-    //     var checkboxes = form.querySelectorAll('input[type="checkbox"]:checked');
-    //     var checkboxValues = Array.from(checkboxes).map(c => c.value);
-
-    //     var xhr = new XMLHttpRequest();
-    //     xhr.open('POST', '{% url "payment:cart_delete" %}', true);  // Assuming the URL for delete operation is 'cart:delete'
-    //     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    //     xhr.setRequestHeader('X-CSRFToken', getCsrfToken());
-
-    //     xhr.onload = function () {
-    //         if (this.status === 200) {
-    //             var response = JSON.parse(this.responseText);
-    //             console.log('Delete successful:', response.message);
-    //             // Here you can update the UI accordingly
-    //             location.reload();
-    //         } else {
-    //             console.error('Error deleting:', this.statusText);
-    //         }
-    //     };
-
-    //     xhr.send(`checkbox=${checkboxValues.join(',')}`);
-    // }
-
 
     document.getElementById('checkAll').addEventListener('change', function () {
         var checkboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -392,5 +418,9 @@
             checkbox.checked = this.checked;
         }
     });
+
+    function reload() {
+        location.reload();
+    }
 </script>
 {% endblock %}
