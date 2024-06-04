@@ -6,8 +6,8 @@ from django.urls import reverse
 
 # Create your views here.
 
-def question_list(request, product_id):
-    questions = Question.objects.filter(product_id=product_id)
+def question_list(request, item_id):
+    questions = Question.objects.filter(item_id=item_id)
     return render(request, 'QnA/question_list.html', {'questions': questions})
 
 def question_detail(request, question_id):

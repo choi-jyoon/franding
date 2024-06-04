@@ -179,9 +179,9 @@
 {% if messages %}
 <ul class="messages">
     {% for message in messages %}
-    <div class="alert alert-primary" role="alert">
-        상품을 1개 이상 담아주세요.
-    </div>
+    <div class="alert alert-{{ message.tags }}" role="alert">
+        {{ message }}
+    </div>    
     {% endfor %}
 </ul>
 {% endif %}

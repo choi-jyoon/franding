@@ -7,6 +7,7 @@ import os
 from dotenv import load_dotenv
 from django.contrib import messages
 from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 
 load_dotenv()
 admin_key = os.getenv('admin_key')
@@ -46,9 +47,14 @@ def payment_list(request, total_price=0):
             print('선택된 상품이 없습니다.') 
             
         check_item = Cart.objects.get(user=request.user, item=check, status=False) 
+
+        if check_item.item.inventory == 0:  # 상품 재고가 0인지 확인합니다.
+            messages.warning(request, '재고가 없는 상품이 있습니다.')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))  # 재고가 없으면 결제를 중단합니다.
+        
         check_item_list.append(check_item)
         total_price += (check_item.item.price * check_item.amount)
-        # 배송비
+        
     
         # 잠깐 주석처리
         cnt += 1
@@ -58,6 +64,7 @@ def payment_list(request, total_price=0):
     if cnt > 1:
         item_name += '외 {}건'.format(cnt-1) 
 
+    # 배송비
     if total_price < 50000:
         shipping_fee = 3000
         total_price += shipping_fee
