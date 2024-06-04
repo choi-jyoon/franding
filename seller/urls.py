@@ -11,4 +11,5 @@ urlpatterns = [
     path('item-list/', ItemListView.as_view(), name='item_list'),  # 상품 조회 페이지
     path('item-update/<int:pk>/', views.item_update, name='item_update'), # 상품 업데이트 페이지
     path('item-delete/<int:pk>/', views.item_delete, name='item_delete'),  # 상품 삭제 페이지
+    path('add-brand/', views.add_brand, name='add_brand'),
 ]
