@@ -49,18 +49,20 @@ def payment_list(request, total_price=0):
         check_item_list.append(check_item)
         total_price += (check_item.item.price * check_item.amount)
         # 배송비
-        if total_price < 50000:
-            shipping_fee = 3000
-            total_price += shipping_fee
-        else:
-            shipping_fee = 0
+    
         # 잠깐 주석처리
         cnt += 1
         # total_price += (check_item.item.price * check_item.amount)  # 총 가격
         total_amount += check_item.amount  # 총 수량
         item_name = check_item.item.name # 대표 구매 물품 이름
     if cnt > 1:
-        item_name += '외 {}건'.format(cnt-1)     
+        item_name += '외 {}건'.format(cnt-1) 
+
+    if total_price < 50000:
+        shipping_fee = 3000
+        total_price += shipping_fee
+    else:
+        shipping_fee = 0    
                           
            
     if request.method == "POST": # False
