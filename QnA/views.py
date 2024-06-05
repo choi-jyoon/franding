@@ -3,11 +3,14 @@ from .models import Question, Answer
 from .forms import QuestionForm, AnswerForm
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from .models import FAQ
+from django.contrib.auth.models import User
 
 # Create your views here.
 
-def question_list(request, item_id):
-    questions = Question.objects.filter(item_id=item_id)
+def question_list(request):
+    # questions = Question.objects.filter(item_id=item_id)
+    questions = Question.objects.all().order_by('-created_at')  # 모든 질문을 가져옵니다.
     return render(request, 'QnA/question_list.html', {'questions': questions})
 
 def question_detail(request, question_id):
@@ -29,10 +32,17 @@ def question_create(request, item_id):
         form = QuestionForm(request.POST)
         if form.is_valid():
             question = form.save(commit=False)
-            question.user = request.user
+            question.user_id_id= request.user.id
             question.item_id.id = item_id
             question.save()            
             return redirect(reverse('QnA:question_list', args=[item_id]))
+            # return redirect(reverse('QnA:question_list'))
+            
     else:
-        form = QuestionForm()
+        form = QuestionForm(initial={'item_id': item_id})
     return render(request, 'QnA/question_form.html', {'form': form})
+
+
+def home(request):
+    questions = Question.objects.filter(user_id=request.user).order_by('-created_at')  # 모든 질문을 가져옵니다.
+    return render(request, 'QnA/home.html', {'questions': questions})

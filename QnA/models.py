@@ -24,3 +24,11 @@ class Answer(models.Model):
 
     def __str__(self):
         return self.content[:20]
+    
+
+class FAQ(models.Model):
+    question = models.CharField(max_length=200)
+    answer = models.TextField()
+
+    def __str__(self):
+        return self.question

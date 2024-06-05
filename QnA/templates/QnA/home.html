@@ -1,4 +1,23 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra-style %}
+<style>
+    /* 화면 전체를 사용하기 위한 스타일 */
+    html, body {
+        height: 100%;
+        margin: 0;
+    }
+    /* 내비게이션 바를 제외한 전체 화면을 채우는 컨테이너 */
+    .container-fluid {
+        height: calc(100% - 56px); /* 내비게이션 바 높이만큼 제외 */
+    }
+    /* 높이 100% 설정 */
+    .full-height {
+        height: 100%;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
@@ -10,20 +29,20 @@
             <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary mb-4">회원정보</a>
             <a href="{% url 'event:index' %}" class="btn btn-outline-secondary mb-4">나의 Franding</a>
             <a href="{% url 'subscribe:index' %}" class="btn btn-outline-secondary mb-4">구독</a>
-            <a href="{% url 'mypage:wishlist' %}" class="btn btn-outline-secondary mb-4">찜 목록</a>
-            <a href="{% url 'QnA:home' %}" class="btn btn-outline-secondary mb-4">Q&A</a>    
+            <a href="{% url 'QnA:home' %}" class="btn btn-outline-secondary mb-4">Q&A</a>
             {% if user.is_staff %}
                 <a href="{% url 'seller:seller_index' %}" class="btn btn-outline-secondary mb-4">판매자페이지</a>
             {% endif %}
-        </div>
-        <div class="col-10">
-            <h1>{{ user.username }}'s Wishlist</h1>
-            <ul>
-            {% for item in wishlist.items.all %}
-                <li>{{ item.name }}</li>
+        </div>  
+        <div class="col-10" id="content-display">
+            <h1>Question</h1>
+            {% for question in questions %}
+            <li><a>{{ question.title }}</a></li>
             {% endfor %}
-            </ul>
-        </div>
-    </div>
-</div>            
+        </div>          
+    </div>     
+</div>
+{% endblock %}
+
+{% block extra-script %}
 {% endblock %}
