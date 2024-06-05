@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row full-height">
+        <div class="col-2 d-flex flex-column p-3 bg-light full-height">
+            <!-- 버튼들 -->
+            <a href="{% url 'mypage:order_index' %}" class="btn btn-outline-secondary mb-4">주문 내역</a>
+            <a href="{% url 'review:review_index' %}" class="btn btn-outline-secondary mb-4">작성 리뷰</a>
+            <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary mb-4">회원정보</a>
+            <a href="{% url 'event:index' %}" class="btn btn-outline-secondary mb-4">나의 Franding</a>
+            <a href="{% url 'subscribe:index' %}" class="btn btn-outline-secondary mb-4">구독</a>
+            <a href="{% url 'mypage:itemlike' %}" class="btn btn-outline-secondary mb-4">찜 목록</a>
+            {% if user.is_staff %}
+                <a href="{% url 'seller:seller_index' %}" class="btn btn-outline-secondary mb-4">판매자페이지</a>
+            {% endif %}
+        </div>
+        <div class="col-10">
+            <h1>{{ user.username }}'s Wishlist</h1>
+            <ul>
+            {% for item in itemlike.items.all %}
+                <li>
+                    <a href="{% url 'mypage:item_detail' item.id %}">{{ item.name }}</a>
+                    <button class="like-button" data-item-id="{{ item.id }}">
+                        <i class="fas fa-heart text-danger"></i> <!-- 꽉 찬 하트 -->
+                    </button>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.like-button').forEach(button => {
+    button.addEventListener('click', function() {
+        var itemId = this.getAttribute('data-item-id');
+        var url = "{% url 'mypage:add_to_itemlike' 0 %}".replace('0', itemId);
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        }).then(response => response.json()).then(data => {
+            if (data.liked) {
+                this.innerHTML = '<i class="fas fa-heart text-danger"></i>';
+            } else {
+                this.innerHTML = '<i class="far fa-heart text-danger"></i>';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

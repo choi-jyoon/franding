@@ -4,9 +4,7 @@
 {% block extra-style %}
 <style>
     body {
-        background-image:url("{{item.back_image}}");
-        
-        
+        background-image: url("{{item.back_image}}");
     }
 
     .h-100 {
@@ -39,7 +37,6 @@
         background-color: #ffffff;
         display: flex;
         flex-direction: column;
-
     }
 
     .mb-5 {
@@ -48,7 +45,6 @@
         justify-content: center;
         align-items: center;
         background-color: #ffffff;
-
     }
 
     .top-box {
@@ -56,12 +52,15 @@
         display: flex;
         flex-direction: row;
     }
-    .center{
+
+    .center {
         text-align: center;
     }
+
     .image-cont {
         flex: 1;
-        /* 이미지 스타일링을 위한 추가 CSS를 적용하세요 */
+        border-top: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
     }
 
     .right-box {
@@ -71,34 +70,26 @@
         text-align: center;
         align-items: center;
         justify-content: center;
-        /* 추가적인 스타일링이 필요한 경우 여기에 적용하세요 */
         border-top: 1px solid #ccc;
         border-bottom: 1px solid #ccc;
     }
-    .image-cont{
-        border-top: 1px solid #ccc;
-        border-bottom: 1px solid #ccc;
-    }
+
     .bottom-box {
-        /* 밑 상자의 스타일링을 위한 추가 CSS를 적용하세요 */
         flex: 1;
         display: flex;
         flex-direction: column;
         text-align: center;
         align-items: center;
-
     }
 
     .description {
         margin-top: 50px;
     }
 
-    /*플로팅 배너*/
     .floating-banner {
         position: fixed;
         top: 100px;
         right: -300px;
-        /* 초기에는 오른쪽 밖으로 숨김 */
         width: 300px;
         background-color: #fff;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -108,7 +99,6 @@
 
     .floating-banner.show {
         right: 20px;
-        /* 스크롤 내리면 오른쪽으로 나타남 */
     }
 
     .banner-content {
@@ -117,115 +107,109 @@
         align-items: center;
         justify-content: center;
     }
-/*review*/
-.review-card{
-    height: 100px;
-}
-.pagination{
-    justify-content:center;
-    display: flex;
-    margin-top: 30px;
-    width: 100%;  
-    
-}
 
-.message
-{
-    color: #5B574F;
-}
-.pagination .page-item.active .page-link {
-        background-color: #5B574F; /* 활성 페이지 버튼의 배경색 */
-        border-color: #5B574F; /* 활성 페이지 버튼의 테두리 색상 */
+    .review-card {
+        height: 100px;
+    }
+
+    .pagination {
+        justify-content: center;
+        display: flex;
+        margin-top: 30px;
+        width: 100%;
+    }
+
+    .message {
+        color: #5B574F;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #5B574F;
+        border-color: #5B574F;
         color: white;
     }
 
     .pagination .page-link {
-        
-        color: #5B574F; /* 페이지 버튼의 텍스트 색상 */
-
+        color: #5B574F;
     }
 
     .pagination .page-link:hover {
-        color: #5B574F; /* 마우스 오버 시 페이지 버튼의 텍스트 색상 */
+        color: #5B574F;
     }
-/* 모달 창 스타일링 */
-.modal {
-  display: none; /* 기본적으로 모달 창을 숨깁니다. */
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgb(0,0,0);
-  background-color: rgba(0,0,0,0.4);
-  justify-items: center;
-  align-items: center;
-}
 
-.modal-content {
-  background-color: #fefefe;
-  margin: 20% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 30%;
-  text-align: center;
-}
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.4);
+        justify-items: center;
+        align-items: center;
+    }
 
-.close {
-    background-color: transparent;
-  border: none;
-  color: #aaa;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-  display: inline-block;
-  vertical-align: middle;
-  margin-left: 20px;
-  padding: 10px;
+    .modal-content {
+        background-color: #fefefe;
+        margin: 20% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 30%;
+        text-align: center;
+    }
 
-}
+    .close {
+        background-color: transparent;
+        border: none;
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: 20px;
+        padding: 10px;
+    }
 
-.close:hover,
-.close:focus {
-    color: #5B574F;
-  text-decoration: none;
-  cursor: pointer;
-}
-.back{
-    border: #5B574F;
-    width: 100%;
-}
+    .close:hover,
+    .close:focus {
+        color: #5B574F;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .back {
+        border: #5B574F;
+        width: 100%;
+    }
 </style>
 {% endblock %}
-{% load static%}
+{% load static %}
 {% block content %}
 
-<div hidden><img src="{{item.back_image}}" alt="" ></div>
+<div hidden><img src="{{item.back_image}}" alt=""></div>
 <div class="cont">
     <button onclick="history.back()" class="back">뒤로 가기</button>
     <div class="top-box">
         <div class="image-cont">
-            <!-- 이미지를 여기에 추가하세요 -->
             <img src="{{item.image}}" alt="{{ item.name }}" class="img-fluid">
-            
         </div>
         <div class="right-box">
             <div class="right-box-item center">
-                <!-- 오른쪽 상자의 상위 항목 -->
                 <h1 class="text">{{ item.name }}</h1>
                 <p>Price: {{ item.price }}원</p>
                 <p>Size: {{ item.size.ml }}ml</p>
             </div>
             <div class="right-box-item">
-                <!-- 오른쪽 상자의 하위 항목 -->
                 <div class="d-flex justify-content-center">
                     <button class="btn btn-secondary btn-sm decrease-btn">-</button>
                     <span class="mx-2" id="current-quantity">1</span>
                     <button class="btn btn-secondary btn-sm increase-btn">+</button>
                 </div>
-                
+
                 <form id="add-to-cart-form" action="{% url 'item:add' item.id %}" method="post">
                     {% csrf_token %}
                     <input type="hidden" id="current-quantity-hidden" value="1" name="current-amount">
@@ -233,48 +217,48 @@
                     <button class="btn btn-primary mt-3 add-to-cart-btn" type="button">장바구니 추가</button>
                 </form>
             </div>
-
+            <div class="right-box-item center">
+                <button id="like-button" data-item-id="{{ item.id }}">
+                    {% if is_liked %}
+                        <i class="fas fa-heart text-danger"></i> <!-- 꽉 찬 하트 -->
+                    {% else %}
+                        <i class="far fa-heart text-danger"></i> <!-- 비어 있는 하트 -->
+                    {% endif %}
+                </button>
+                <p>좋아요 수: <span id="like-count">{{ like_count }}</span></p>
+            </div>
         </div>
     </div>
     <div class="bottom-box">
-        <!-- 아이템 설명을 여기에 추가하세요 -->
         <h2 class="description">상세 설명</h2>
-        <p class=>{{ item.description|safe }}</p>
+        <p>{{ item.description|safe }}</p>
     </div>
     <div>
-        <!-- 리뷰 칸 입니다.-->
         <h2 class="center">Review</h2>
         <hr>
         {% if review %}
         {% for review in review %}
-        
-        
         <div class="review-card">
-            
-            <h5 >{{review.user}}</h5>
+            <h5>{{ review.user }}</h5>
             <div class="rating" data-value="{{ review.star }}">
                 {% for i in '12345' %}
-                    {% if forloop.counter <= review.star %} <!-- i가 str으로 인식되어서 forloop.counter로 int맞춤 -->
+                    {% if forloop.counter <= review.star %}
                         <span>&#9733;</span>
                     {% else %}
                         <span>&#9734;</span>
                     {% endif %}
-                    
                 {% endfor %}
-                
             </div>
-            
             <br>
-            <p class="card-text"> {{ review.content }}</p>
+            <p class="card-text">{{ review.content }}</p>
         </div>
         <hr>
         {% endfor %}
-        
-        {%else%}
-        <p class="center message">{{message}}</p>
-        {%endif%}
+        {% else %}
+        <p class="center message">{{ message }}</p>
+        {% endif %}
     </div>
-    <div class="pagination" >
+    <div class="pagination">
         {% if review.has_previous %}
         <li class="page-item"><a class="page-link" href="?page={{ review.previous_page_number }}">이전</a></li>
         {% endif %}
@@ -291,7 +275,6 @@
         <li class="page-item"><a class="page-link" href="?page={{ review.next_page_number }}">다음</a></li>
         {% endif %}
     </div>
-<!-- 플로팅배너-->
     <div id="floating-banner" class="floating-banner">
         <div class="banner-content">
             <h3>{{ item.name }}</h3>
@@ -313,150 +296,110 @@
 </div>
 <div id="myModal" class="modal">
     <div class="modal-content">
-      <p id="modal-text"></p>
-      <button class="close">장바구니 바로가기</button>
+        <p id="modal-text"></p>
+        <button class="close">장바구니 바로가기</button>
     </div>
-  </div>
+</div>
 
 {% endblock %}
 {% block extra-script %}
 <script>
     let currentQuantity = 1;
+
     document.querySelector('.add-to-cart-btn').addEventListener('click', function() {
-    // 장바구니에 담긴 상품 수량 가져오기
-    var currentQuantity = document.getElementById('current-quantity').innerText;
+        var currentQuantity = document.getElementById('current-quantity').innerText;
+        var popupContent = '장바구니에 {{ item.name }}이 ' + currentQuantity + '개 담겼습니다.';
+        document.getElementById('modal-text').innerText = popupContent;
+        var modal = document.getElementById('myModal');
+        modal.style.display = "block";
+    });
 
-    // 팝업창에 표시할 내용 설정
-    var popupContent = '장바구니에 {{ item.name }}이 ' + currentQuantity + '개 담겼습니다.';
+    document.querySelector('.add-to-cart-btn-float').addEventListener('click', function() {
+        var currentQuantity = document.getElementById('current-quantity').innerText;
+        var popupContent = '장바구니에 {{ item.name }}이 ' + currentQuantity + '개 담겼습니다.';
+        document.getElementById('modal-text').innerText = popupContent;
+        var modal = document.getElementById('myModal');
+        modal.style.display = "block";
+    });
 
-    // 모달 창의 텍스트 설정
-    document.getElementById('modal-text').innerText = popupContent;
-
-    // 모달 창 띄우기
-    var modal = document.getElementById('myModal');
-    modal.style.display = "block";
-});
-
-document.querySelector('.add-to-cart-btn-float').addEventListener('click', function() {
-    // 장바구니에 담긴 상품 수량 가져오기
-    var currentQuantity = document.getElementById('current-quantity').innerText;
-
-    // 팝업창에 표시할 내용 설정
-    var popupContent = '장바구니에 {{ item.name }}이 ' + currentQuantity + '개 담겼습니다.';
-
-    // 모달 창의 텍스트 설정
-    document.getElementById('modal-text').innerText = popupContent;
-
-    // 모달 창 띄우기
-    var modal = document.getElementById('myModal');
-    modal.style.display = "block";
-});
-
-// 모달 창 닫기 버튼 기능 추가
-document.querySelector('.close').addEventListener('click', function() {
-    var modal = document.getElementById('myModal');
-    modal.style.display = "none";
-    document.getElementById('add-to-cart-form').submit();//<-장바구니로 이어지는 코드 작성 필요
-});
-
-// 모달 창 외부 클릭 시 닫기 기능 추가
-window.addEventListener('click', function(event) {
-    var modal = document.getElementById('myModal');
-    if (event.target == modal) {
+    document.querySelector('.close').addEventListener('click', function() {
+        var modal = document.getElementById('myModal');
         modal.style.display = "none";
-        document.getElementById('go-cart').value = "1";
-        document.getElementById('go-cart-float').value = "1";
-        document.getElementById('add-to-cart-form').submit(); // 폼 제출
-    }
-});
-    //수량 조절
+        document.getElementById('add-to-cart-form').submit();
+    });
 
-    // current-quantity 요소 가져오기
+    window.addEventListener('click', function(event) {
+        var modal = document.getElementById('myModal');
+        if (event.target == modal) {
+            modal.style.display = "none";
+            document.getElementById('go-cart').value = "1";
+            document.getElementById('go-cart-float').value = "1";
+            document.getElementById('add-to-cart-form').submit();
+        }
+    });
+
     const currentQuantityElement = document.getElementById('current-quantity');
 
-    // decreaseQuantity 함수 정의
     function decreaseQuantity() {
-        // current-quantity 값 가져오기
         let currentQuantity = parseInt(currentQuantityElement.textContent);
-
-        // 현재 수량이 0보다 큰 경우에만 감소
         if (currentQuantity > 1) {
             currentQuantity--;
             currentQuantityElement.textContent = currentQuantity;
             document.getElementById('current-quantity-hidden').value = currentQuantity;
             document.getElementById('current-quantity-hidden-float').value = currentQuantity;
             document.getElementById('current-quantity-float').textContent = currentQuantity;
-
         }
     }
 
-    // decrease-btn에 이벤트 리스너 등록
     document.querySelector('.decrease-btn').addEventListener('click', decreaseQuantity);
     document.querySelector('.decrease-btn-float').addEventListener('click', decreaseQuantity);
 
-
     function increaseQuantity() {
-        // current-quantity 값 가져오기
         let currentQuantity = parseInt(currentQuantityElement.textContent);
-
-        // 현재 수량이 0보다 큰 경우에만 감소
-
         currentQuantity++;
         currentQuantityElement.textContent = currentQuantity;
         document.getElementById('current-quantity-hidden').value = currentQuantity;
         document.getElementById('current-quantity-hidden-float').value = currentQuantity;
         document.getElementById('current-quantity-float').textContent = currentQuantity;
-
     }
+
     document.querySelector('.increase-btn').addEventListener('click', increaseQuantity);
     document.querySelector('.increase-btn-float').addEventListener('click', increaseQuantity);
 
-
-
-    //플로팅 배너
-    window.addEventListener('scroll', function () {
+    window.addEventListener('scroll', function() {
         var floatingBanner = document.getElementById('floating-banner');
         var scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-
-        if (scrollPosition > 500) { // 300px 이상 스크롤하면 배너 표시
+        if (scrollPosition > 500) {
             floatingBanner.classList.add('show');
         } else {
             floatingBanner.classList.remove('show');
         }
     });
+
     document.querySelector('.add-to-cart-btn-float').addEventListener('click', function(event) {
-    event.preventDefault(); // 기본 폼 제출 동작을 막습니다.
+        event.preventDefault();
+        setTimeout(function() {
+            document.getElementById('add-to-cart-form').submit();
+        }, 3000);
+    });
 
-    // 딜레이를 주기 위한 setTimeout 설정 (예: 2초 딜레이)
-    setTimeout(function() {
-        document.getElementById('add-to-cart-form').submit(); // 폼 제출
-    }, 30000); // 2000밀리초 = 2초 
-});
-    // 장바구니 담기 버튼 클릭 시 이벤트 처리
-/*
-document.querySelector('.add-to-cart-btn').addEventListener('click', function() {
-    // 장바구니에 담긴 상품 수량 가져오기
-    var currentQuantity = document.getElementById('current-quantity').innerText;
-
-    // 팝업창에 표시할 내용 설정
-    var popupContent = '장바구니에 {{ item.name }}이'+ currentQuantity + '개 담겼습니다.';
-
-    // 팝업창 띄우기
-    alert(popupContent);
-});
-    
-    // 장바구니 담기 버튼 클릭 시 이벤트 처리
-    document.querySelector('.add-to-cart-btn-float').addEventListener('click', function() {
-    // 장바구니에 담긴 상품 수량 가져오기
-    var currentQuantity = document.getElementById('current-quantity').innerText;
-
-    // 팝업창에 표시할 내용 설정
-    var popupContent = '장바구니에 {{ item.name }}이'+ currentQuantity + '개 담겼습니다.';
-
-    // 팝업창 띄우기
-    alert(popupContent);
-});
-*/
-
+    // 좋아요 기능 처리
+    document.getElementById('like-button').addEventListener('click', function() {
+        var itemId = this.getAttribute('data-item-id');
+        var url = "{% url 'mypage:add_to_itemlike' 0 %}".replace('0', itemId);
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        }).then(response => response.json()).then(data => {
+            if (data.liked) {
+                this.innerHTML = '<i class="fas fa-heart text-danger"></i>';
+            } else {
+                this.innerHTML = '<i class="far fa-heart text-danger"></i>';
+            }
+            document.getElementById('like-count').innerText = data.like_count;
+        });
+    });
 </script>
 {% endblock %}

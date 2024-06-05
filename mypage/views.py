@@ -6,7 +6,7 @@ from django.contrib.auth import logout as auth_logout
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator
 from item.models import Itemlike, Item
-from django.contrib import messages
+from django.http import JsonResponse
 
 
 
@@ -125,18 +125,31 @@ def user_delete(request):
 
 @login_required
 def itemlike(request):
-    wishlist, created = Itemlike.objects.get_or_create(user=request.user)
-    return render(request, 'mypage/wishlist.html', {'wishlist': wishlist})
+    itemlike, created = Itemlike.objects.get_or_create(user=request.user)
+    return render(request, 'mypage/itemlike.html', {'itemlike': itemlike})
 
-
+@login_required
 def add_to_itemlike(request, item_id):
     item = get_object_or_404(Item, id=item_id)
-    wishlist = request.session.get('wishlist', [])
-    if item_id not in wishlist:
-        wishlist.append(item_id)
-        request.session['wishlist.html'] = wishlist
-        messages.success(request, 'Item successfully added to your wishlist!')
-    else:
-        messages.info(request, 'Item is already in your wishlist!')
+    itemlike, created = Itemlike.objects.get_or_create(user=request.user)
     
-    return render(request, 'mypage/wishlist.html')
+    if item in itemlike.items.all():
+        itemlike.items.remove(item)
+        liked = False
+    else:
+        itemlike.items.add(item)
+        liked = True
+    
+    like_count = Itemlike.objects.filter(items__id=item_id).count()
+    
+    return JsonResponse({'liked': liked, 'like_count': like_count})
+
+def item_detail(request, item_id):
+    item = get_object_or_404(Item, id=item_id)
+    like_count = Itemlike.objects.filter(items__id=item_id).count()
+    liked_items = []
+    if request.user.is_authenticated:
+        itemlike, created = Itemlike.objects.get_or_create(user=request.user)
+        liked_items = itemlike.items.all()
+    
+    return render(request, 'item_detail.html', {'item': item, 'liked_items': liked_items, 'like_count': like_count})

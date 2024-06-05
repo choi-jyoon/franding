@@ -60,4 +60,4 @@ class Itemlike(models.Model):
     #item = models.ForeignKey(Item, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.user.username}'s Wishlist"
+        return f"{self.user.username}'s itemlike"
