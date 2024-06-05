@@ -6,6 +6,12 @@ from collections import defaultdict, Counter
 from item.models import Item
 from mypage.models import UserAddInfo
 import random
+import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+SECRET_KEY = os.getenv('SECRET_KEY')
 # Create your views here.
 
 @login_required
@@ -57,17 +63,41 @@ def membership(request):
     return index(request)
 
 @login_required
-def payment_process(request):
+def first_pay_process(request):
+
     user_info = UserAddInfo.objects.get(user=request.user)
+    current_domain = request.get_host()
     
     if request.method == 'POST':
         # 실제 결제 처리 로직 구현
         
+        url = "https://open-api.kakaopay.com/online/v1/payment/ready"
+        headers = {
+            "Authorization": f"SECRET_KEY {SECRET_KEY}",
+            'Content-Type':'application/json',
+        }
         
-        # 결제 성공 시
-        user_info.membership = True
-        user_info.save()
-        return redirect('membership')
+        data = {
+            "cid": "TCSUBSCRIP",    # 테스트용 코드 (정기결제용 cid)
+            "partner_order_id": "1001",     # 주문번호
+            "partner_user_id": "{}".format(request.user),    # 유저 아이디
+            "item_name": "franding membership",        # 구매 물품 이름
+            "quantity": "1",                # 구매 물품 수량
+            "total_amount": "15900",        # 구매 물품 가격
+            "tax_free_amount": "0",         # 구매 물품 비과세
+            'approval_url':f'http://{current_domain}/subscribe/paysuccess', 
+            'fail_url':f'http://{current_domain}/subscribe/payfail',
+            'cancel_url':f'http://{current_domain}/subscribe/paycancel'
+        }
+        
+        response = requests.post(url, headers= headers, json=data)
+        request.session['tid'] = response.json()['tid']     # 결제 승인시 사용할 tid 세션에 저장
+        next_url = response.json()['next_redirect_pc_url']  # 결제 페이지로 넘어갈 url
+        
+        
+        return redirect(next_url)
+    
+    
     
     shipping_fee = 3000
     subscribe_item = [
@@ -75,20 +105,37 @@ def payment_process(request):
             'item': {
                 'name': 'franding membership'
             },
-            'size': {
-                'ml': '-'
-            },
-            'amount': 1,
+
             'sub_total': 15900
         }
     ]
     context = {
         'item_list': subscribe_item,
         'total_price': 15900,
-        'shipping_fee': 0,
+        'shipping_fee': 300,
         'userinfo': user_info
     }
-    return render(request, 'payment/payment_info.html', context)
+    return render(request, 'subscribe/regular_pay.html', context)
+
+@login_required
+def pay_success(request):
+    # 결제 성공 후 처리 로직
+    user_info = UserAddInfo.objects.get(user=request.user)
+    user_info.membership = True
+    user_info.save()
+    
+    # index 함수 호출
+    return index(request)
+
+@login_required
+def pay_fail(request):
+    # 결제 실패 후 처리 로직
+    return render(request, 'payment/payfail.html')
+
+@login_required
+def pay_cancel(request):
+    # 결제 취소 후 처리 로직
+    return render(request, 'payment/paycancel.html')
 
 
 @login_required
