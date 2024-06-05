@@ -90,9 +90,12 @@
 
     }
 
-    .description {
+    /* .description {
         margin-top: 50px;
-    }
+        상품세부설명 위에 nav바에 50px 적용돼서
+        주석 처리했습니다.
+    } */
+    
 
     /*플로팅 배너*/
     .floating-banner {
@@ -240,7 +243,7 @@
         padding: 10px;
         font-size: 17px;
         background-color: #fff;
-    }
+    }    
 </style>
 {% endblock %}
 {% load static%}
@@ -280,12 +283,26 @@
 
         </div>
     </div>
-    <div class="bottom-box">
-        <!-- 아이템 설명을 여기에 추가하세요 -->
+
+    <nav class="nav justify-content-center">
+        <a class="nav-link active" aria-current="page" href="#description">상품상세정보</a>
+        <a class="nav-link" href="#review" style="color: gray;">리뷰</a>
+        <a class="nav-link" href="#FAQ" style="color: gray;">FAQ</a>
+    </nav>
+
+    <div class="bottom-box" id="description">
+        <!-- 아이템 설명을 여기에 추가하세요 -->    
         <h2 class="description">상세 설명</h2>
         <p class=>{{ item.description|safe }}</p>
     </div>
-    <div>
+
+    <nav class="nav justify-content-center">
+        <a class="nav-link active" aria-current="page" href="#description" style="color: gray;">상품상세정보</a>
+        <a class="nav-link" href="#review">리뷰</a>
+        <a class="nav-link" href="#FAQ" style="color: gray;">FAQ</a>
+    </nav>
+
+    <div id="review">
         <!-- 리뷰 칸 입니다.-->
         <h2 class="center">Review</h2>
         <hr>
@@ -356,50 +373,38 @@
     </div>
 
     <!-- FAQ -->
+    <nav class="nav justify-content-center">
+        <a class="nav-link active" aria-current="page" href="#description" style="color: gray;">상품상세정보</a>
+        <a class="nav-link" href="#review" style="color: gray;">리뷰</a>
+        <a class="nav-link" href="#FAQ">FAQ</a>
+    </nav>
 
-    <div id="tabs">
-        <div class="tab">
-            <button class="tablinks" onclick="openTab(event, 'information')">상세 정보</button>
-            <button class="tablinks" onclick="openTab(event, 'review')">리뷰</button>
-            <button class="tablinks" onclick="openTab(event, 'FAQ')">FAQ</button>
-        </div>
-        <div id="information" class="tabcontent">
-            <h3>상세정보</h3>
-            <p>Tab 1 content...</p>
-        </div>
-        <div id="review" class="tabcontent">
-            <h3>리뷰</h3>
-            <p>Tab 2 content...</p>
-        </div>
-        <div id="FAQ" class="tabcontent" style="text-align: center;">
-            <section id="faq">
-                <h2>자주 묻는 질문</h2>
-                {% for faq in faqs %}
-                <div class="faq-item">
-                    <button class="faq-question">{{ faq.question }}</button>
-                    <div class="faq-answer">
-                        <p>{{ faq.answer }}</p>
-                    </div>
+    <div id="FAQ" class="tabcontent" style="text-align: center;">
+        <section id="faq">
+            <h2>자주 묻는 질문</h2>
+            {% for faq in faqs %}
+            <div class="faq-item">
+                <button class="faq-question">{{ faq.question }}</button>
+                <div class="faq-answer">
+                    <p>{{ faq.answer }}</p>
                 </div>
-                {% endfor %}
-            </section>
-            <button onclick="openInquiryForm('{{item.id}}')" style="
-                background-color: #4CAF50; /* Green */
-                border: none;
-                color: white;
-                padding: 15px 32px;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 16px;
-                margin: 4px 2px;
-                cursor: pointer;
-                border-radius: 12px;
-                ">1대1 문의하기</button>
-        </div>
-    </div>
-
-    
+            </div>
+            {% endfor %}
+        </section>
+        <button onclick="openInquiryForm('{{item.id}}')" style="
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 12px;
+            ">1대1 문의하기</button>
+    </div>     
 </div>
 <div id="myModal" class="modal">
     <div class="modal-content">
@@ -565,23 +570,9 @@ document.querySelector('.add-to-cart-btn').addEventListener('click', function() 
                 }
             });
         });
-    });
+    });    
 
-    // 탭
-    function openTab(evt, tabName) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tabcontent");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        document.getElementById(tabName).style.display = "block";
-        evt.currentTarget.className += " active";
-    }
-
+    // 1대1 문의하기
     function openInquiryForm(item_id) {
         window.location.href = "{% url 'QnA:question_create' item.id %}";  // 여기에 실제 이동할 페이지의 URL을 설정해야 합니다.
     }
