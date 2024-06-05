@@ -5,7 +5,7 @@
     .product-registration-form {
         text-align: left; /* 텍스트를 왼쪽으로 정렬 */
         margin: 0 auto; /* 폼을 가운데로 정렬 */
-        width: 40%; /* 폼의 너비 지정 */
+        width: 90%; /* 폼의 너비 지정 */
     }
 
     .product-registration-form label, 
@@ -29,24 +29,37 @@
         margin-right: 5px; /* 입력 필드와 버튼 사이 간격 조정 */
     }
 
-    .large-button {
-        margin-top: 20px;
-        padding: 10px 0; /* 수정: 좌우 패딩을 0으로 조정 */
-        font-size: 20px;
-        border-radius: 10px; /* 버튼 모서리를 둥글게 만듭니다. */
-        cursor: pointer;
-        text-decoration: none;
-        display: block; /* 수정: 블록 요소로 변경 */
-        transition: background-color 0.3s, color 0.3s; /* 배경색과 폰트 색상에 대한 전환 효과 */
-        background-color: #ffffff; /* 기본 배경색 */
-        color: #333; /* 기본 폰트 색상 */
-        border: 2px solid #333; /* 테두리 스타일과 색상 지정 */
-        width: 100%; /* 수정: 버튼의 너비를 폼에 맞춤 */
+    .form-layout {
+        display: flex;
+        align-items: flex-start; /* 이미지와 폼 필드를 상단에서 정렬 */
+    }
+    
+    .image-preview {
+        flex: 1; /* 이미지 컨테이너가 유연하게 너비 조정 */
+        max-width: 100%; /* 이미지 컨테이너의 최대 너비 설정 */
+        display: flex;
+        margin-top: 15px;
+    }
+    
+    .form-fields {
+        flex: 2; /* 폼 필드 컨테이너가 유연하게 너비 조정 */
+        padding-left: 20px; /* 이미지와 폼 필드 사이의 간격 */
+    }
+    
+    .field-container {
+        margin-bottom: 10px; /* 필드 간 간격 */
     }
 
-    .large-button:hover {
-        background-color: #333; /* 마우스를 올렸을 때 배경색 변경 */
-        color: #ffffff; /* 마우스를 올렸을 때 폰트 색상 변경 */
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+    
+    .button-container .btn {
+        flex: 1;
+        margin: 0 5px;
+        text-align: center;
     }
 
     .add-brand {
@@ -75,24 +88,57 @@
         transition: all 0.3s ease; /* 부드러운 전환 효과 */
         color: white;
     }
-
+    /* 리뷰 */
+    .review-card{
+        margin: 0 auto;
+        width: 80%;
+    }
+    .review-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 18px;
+        text-align: left;
+    }
+    
+    .review-table th, .review-table td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        font-size: 15px;
+    }
+    
+    .review-table th {
+        background-color: #f2f2f2;
+    }
+    
+    .rating span {
+        color: gold;
+    }
 </style>
 
-<h1 style="text-align: center;">상품 등록</h1>
+<h1 style="text-align: center;">상품 정보</h1>
 <form method="post" enctype="multipart/form-data" class="product-registration-form">
     {% csrf_token %}
-    {% for field in form.visible_fields %}
-        <hr>
-        {{ field.label_tag }}{{ field }}
-        {% if field.name == "brand" or field.name == "item_type" or field.name == "size" %}
-            <button type="button" class="add-brand" data-bs-toggle="modal" data-bs-target="#addBrandModal" data-field="{{ field.name }}">+</button>
-        {% endif %}
-        <br>
-        {% if field.name == "image" %}
-        <img id="imagePreview" src="{% if form.instance.image %}{{ form.instance.image }}{% else %}#{% endif %}" alt="Image Preview" style="max-width: 100%; height: auto;">
-        {% endif %}
-    {% endfor %}
-    <button class="btn large-button">등 록</button>
+    <div class="form-layout">
+        <div class="image-preview">
+            <img id="imagePreview" src="{% if form.instance.image %}{{ form.instance.image }}{% else %}#{% endif %}" alt="Image Preview" style="max-width: 100%; height: auto;">
+        </div>
+        <div class="form-fields">
+            {% for field in form.visible_fields %}
+                <hr>
+                <div class="field-container">
+                    {{ field.label_tag }}{{ field }}
+                    {% if field.name == "brand" or field.name == "item_type" or field.name == "size" %}
+                        <button type="button" class="add-brand" data-bs-toggle="modal" data-bs-target="#addBrandModal" data-field="{{ field.name }}">+</button>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <div class="button-container">
+                <button type="submit" class="btn btn-success">저장</button>
+                <a href="{% url 'seller:item_delete' pk=item.pk %}" class="btn btn-danger">삭제</a>
+            </div>
+        </div>
+    </div>
 </form>
 <!-- 브랜드 추가 모달 -->
 <div class="modal fade" id="addBrandModal" tabindex="-1" aria-labelledby="addBrandModalLabel" aria-hidden="true">
@@ -117,6 +163,47 @@
       </div>
     </div>
 </div>
+<br>
+<hr>
+<br>
+<h1 style="text-align: center;">리뷰</h1>
+<br>
+<a href="#" class="btn btn-secondary" style="float: right;">리뷰 분석</a>
+<br>
+<table class="review-table">
+    <thead>
+        <tr>
+            <th>사용자</th>
+            <th>별점</th>
+            <th>내용</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for review in reviews %}
+        <tr class="review-card">
+            <td>{{ review.user }}</td>
+            <td>
+                <div class="rating" data-value="{{ review.star }}">
+                    {% for i in '12345' %}
+                        {% if forloop.counter <= review.star %} <!-- i가 str으로 인식되어서 forloop.counter로 int맞춤 -->
+                            <span>&#9733;</span>
+                        {% else %}
+                            <span>&#9734;</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </td>
+            <td>{{ review.content }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <th>평점</th>
+            <th>{{average}}</th>
+            <th></th>
+        </tr>
+    </tbody>
+</table>
+<a href="#" class="btn btn-secondary" style="float: right;">배너 광고 문의</a>
 {% endblock %}
 
 {% block extra-script %}
