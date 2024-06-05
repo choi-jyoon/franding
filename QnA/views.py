@@ -4,6 +4,7 @@ from .forms import QuestionForm, AnswerForm
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .models import FAQ
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -39,6 +40,5 @@ def question_create(request, item_id):
     return render(request, 'QnA/question_form.html', {'form': form})
 
 
-def faq_list(request):
-    faqs = FAQ.objects.all()
-    return render(request, 'FAQ/faq_list.html', {'faqs': faqs})
+def home(request):
+    return render(request, 'QnA/home.html')

@@ -383,7 +383,19 @@
                 </div>
                 {% endfor %}
             </section>
-            <button onclick="openInquiryForm()">1대1 문의하기</button>
+            <button onclick="openInquiryForm('{{item.id}}')" style="
+                background-color: #4CAF50; /* Green */
+                border: none;
+                color: white;
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                cursor: pointer;
+                border-radius: 12px;
+                ">1대1 문의하기</button>
         </div>
     </div>
 
@@ -570,8 +582,8 @@ document.querySelector('.add-to-cart-btn').addEventListener('click', function() 
         evt.currentTarget.className += " active";
     }
 
-    function openInquiryForm() {
-        // 1대1 문의하기 폼 열기 코드
+    function openInquiryForm(item_id) {
+        window.location.href = "{% url 'QnA:question_create' item.id %}";  // 여기에 실제 이동할 페이지의 URL을 설정해야 합니다.
     }
 </script>
 {% endblock %}

@@ -2,22 +2,23 @@
 {% load static %}
 
 {% block extra-style %}
+<style>
+    
+</style>
 {% endblock %}
 
 {% block content %}
-<head>
-    <title>QnA List</title>
-</head>
-
-<body>
+<div>
     <h1>Questions</h1>
+
     <ul>
         {% for question in questions %}
         <li><a href="{% url 'QnA:question_detail' question.id %}">{{ question.title }}</a></li>
         {% endfor %}
     </ul>
     <a href="{% url 'QnA:question_create' questions.0.item_id.id %}">Ask a Question</a>
-</body>
+        
+</div>
 {% endblock %}
 
 {% block extra-script %}

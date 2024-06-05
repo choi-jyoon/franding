@@ -136,8 +136,11 @@
     <hr>
     <br>
     <ul class="nav nav-underline" id="seller-nav">
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="#">상품관리</a>
+        </li> -->
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#" onclick="openTab(event, 'product')">상품관리</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">고객관리</a>
@@ -149,61 +152,85 @@
           <a class="nav-link" href="#">환불관리</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Q&A</a>
+            <a class="nav-link" href="#" onclick="openTab(event, 'Q&A')">Q&A</a>
         </li>
     </ul>
     <br>
-    <div class="toolbar">
-        <div class="left-section">
-            <label for="sort-options">정렬 기준:</label>
-            <select id="sort-options" name="sort-options">
-                <option value="popularity">인기순</option>
-                <option value="newest">최신순</option>
-                <option value="priceLowToHigh">가격 낮은 순</option>
-                <option value="priceHighToLow">가격 높은 순</option>
-            </select>
-        </div>
-        <div class="right-section">
-            <button id="register-button">상품 등록</button>
-        </div>
-    </div>
-    <div class="grid-container flex-container">
-        {% for item in items %}
-        <div class="grid-item flex-item">
-            <div class="separator-wrapper">
-                <img src="{{ item.image }}" alt="{{ item.name }}" onError="this.onerror=null;this.src='default-image.jpg';">
-                <hr class="separator"> <!-- 이미지와 텍스트 사이 구분선 -->
+    <div id="product" class="tabcontent">
+        <div class="toolbar">
+            <div class="left-section">
+                <label for="sort-options">정렬 기준:</label>
+                <select id="sort-options" name="sort-options">
+                    <option value="popularity">인기순</option>
+                    <option value="newest">최신순</option>
+                    <option value="priceLowToHigh">가격 낮은 순</option>
+                    <option value="priceHighToLow">가격 높은 순</option>
+                </select>
             </div>
-            <span style="font-size: 15px;">{{ item.name }}</span>
-            <p>{{ item.brand }}</p>
-            <p>{{ item.price|intcomma }}  ₩</p>
-            <div class="button-group">
-                <a href="{% url 'seller:item_update' pk=item.pk %}" class="button">자세히 보기</a>
+            <div class="right-section">
+                <button id="register-button">상품 등록</button>
             </div>
         </div>
-        {% empty %}
-        <p>상품이 없습니다.</p>
-        {% endfor %}
-    </div>
-
-    <br>
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center">
-            {% if items.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page={{ items.previous_page_number }}">이전</a></li>
-            {% endif %}
-            {% for num in items.paginator.page_range %}
-            {% if items.number == num %}
-            <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
-            {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
-            {% endif %}
+        <div class="grid-container flex-container">
+            {% for item in items %}
+            <div class="grid-item flex-item">
+                <div class="separator-wrapper">
+                    <img src="{{ item.image }}" alt="{{ item.name }}" onError="this.onerror=null;this.src='default-image.jpg';">
+                    <hr class="separator"> <!-- 이미지와 텍스트 사이 구분선 -->
+                </div>
+                <span style="font-size: 15px;">{{ item.name }}</span>
+                <p>{{ item.brand }}</p>
+                <p>{{ item.price|intcomma }}  ₩</p>
+                <div class="button-group">
+                    <a href="{% url 'seller:item_update' pk=item.pk %}" class="button">자세히 보기</a>
+                </div>
+            </div>
+            {% empty %}
+            <p>상품이 없습니다.</p>
             {% endfor %}
-            {% if items.has_next %}
-            <li class="page-item"><a class="page-link" href="?page={{ items.next_page_number }}">다음</a></li>
-            {% endif %}
-        </ul>
-    </nav>   
+        </div>
+
+        <br>
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if items.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ items.previous_page_number }}">이전</a></li>
+                {% endif %}
+                {% for num in items.paginator.page_range %}
+                {% if items.number == num %}
+                <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+                {% endfor %}
+                {% if items.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ items.next_page_number }}">다음</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>   
+</div>
+
+<div id="Q&A" class="tabcontent" style="display: none;">
+    <!-- Q&A 내용 -->
+    <h1>q&a</h1>
 </div>
 {% endblock %}
 
+{% block extra-script %}
+<script>
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("nav-link");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+</script>
+{% endblock %}

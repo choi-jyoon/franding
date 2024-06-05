@@ -158,9 +158,4 @@ def    add_cart(request,item_id):
     else:
         return render(request,'item/detail.html',context) 
     
-
-def faq_list(request, item_id):
-    item = get_object_or_404(Item, id=item_id)  # Item 인스턴스 가져오기
-    
-    return render(request, 'item/detail.html', {'faqs': faqs, 'item': item})
     
