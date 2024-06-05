@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 
 # Create your views here.
 
-def question_list(request):
+def question_list(request, item_id):
     # questions = Question.objects.filter(item_id=item_id)
     questions = Question.objects.all().order_by('-created_at')  # 모든 질문을 가져옵니다.
     return render(request, 'QnA/question_list.html', {'questions': questions})
