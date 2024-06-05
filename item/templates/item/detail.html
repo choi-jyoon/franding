@@ -335,6 +335,52 @@
         <li class="page-item"><a class="page-link" href="?page={{ review.next_page_number }}">다음</a></li>
         {% endif %}
     </div>
+        <!-- FAQ -->
+
+        <div id="tabs">
+            <div class="tab">
+                <button class="tablinks" onclick="openTab(event, 'information')">상세 정보</button>
+                <button class="tablinks" onclick="openTab(event, 'review')">리뷰</button>
+                <button class="tablinks" onclick="openTab(event, 'FAQ')">FAQ</button>
+            </div>
+            <div id="information" class="tabcontent">
+                <h3>상세정보</h3>
+                <p>Tab 1 content...</p>
+            </div>
+            <div id="review" class="tabcontent">
+                <h3>리뷰</h3>
+                <p>Tab 2 content...</p>
+            </div>
+            <div id="FAQ" class="tabcontent" style="text-align: center;">
+                <section id="faq">
+                    <h2>자주 묻는 질문</h2>
+                    {% for faq in faqs %}
+                    <div class="faq-item">
+                        <button class="faq-question">{{ faq.question }}</button>
+                        <div class="faq-answer">
+                            <p>{{ faq.answer }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </section>
+                <button onclick="openInquiryForm('{{item.id}}')" style="
+                    background-color: #4CAF50; /* Green */
+                    border: none;
+                    color: white;
+                    padding: 15px 32px;
+                    text-align: center;
+                    text-decoration: none;
+                    display: inline-block;
+                    font-size: 16px;
+                    margin: 4px 2px;
+                    cursor: pointer;
+                    border-radius: 12px;
+                    ">1대1 문의하기</button>
+            </div>
+        </div>
+    
+        
+    </div>
     <!-- 플로팅배너-->
     <div id="floating-banner" class="floating-banner">
         <div class="banner-content">
@@ -355,52 +401,7 @@
         </div>
     </div>
 
-    <!-- FAQ -->
 
-    <div id="tabs">
-        <div class="tab">
-            <button class="tablinks" onclick="openTab(event, 'information')">상세 정보</button>
-            <button class="tablinks" onclick="openTab(event, 'review')">리뷰</button>
-            <button class="tablinks" onclick="openTab(event, 'FAQ')">FAQ</button>
-        </div>
-        <div id="information" class="tabcontent">
-            <h3>상세정보</h3>
-            <p>Tab 1 content...</p>
-        </div>
-        <div id="review" class="tabcontent">
-            <h3>리뷰</h3>
-            <p>Tab 2 content...</p>
-        </div>
-        <div id="FAQ" class="tabcontent" style="text-align: center;">
-            <section id="faq">
-                <h2>자주 묻는 질문</h2>
-                {% for faq in faqs %}
-                <div class="faq-item">
-                    <button class="faq-question">{{ faq.question }}</button>
-                    <div class="faq-answer">
-                        <p>{{ faq.answer }}</p>
-                    </div>
-                </div>
-                {% endfor %}
-            </section>
-            <button onclick="openInquiryForm('{{item.id}}')" style="
-                background-color: #4CAF50; /* Green */
-                border: none;
-                color: white;
-                padding: 15px 32px;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 16px;
-                margin: 4px 2px;
-                cursor: pointer;
-                border-radius: 12px;
-                ">1대1 문의하기</button>
-        </div>
-    </div>
-
-    
-</div>
 <div id="myModal" class="modal">
     <div class="modal-content">
       <p id="modal-text"></p>
