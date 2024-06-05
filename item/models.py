@@ -48,14 +48,16 @@ class Item(models.Model):
     image = models.URLField(null=True)
     back_image = models.URLField(null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
+    views = models.IntegerField(default=0)  # 조회수
 
     def __str__(self):
         return self.name
     
-    
+
 class item_like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     items = models.ManyToManyField(Item)
+    #item = models.ForeignKey(Item, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.user.username}'s Wishlist"

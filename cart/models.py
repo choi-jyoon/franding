@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from item.models import Item
-from payment.models import Delivery
+from payment.models import Delivery, UserCoupon
 # Create your models here.
 
 # CartItem
@@ -22,6 +22,7 @@ class Order(models.Model):
     datetime = models.DateTimeField(auto_now_add=True)  # 주문 시간
     total_price = models.IntegerField(default=0)    # 총 가격
     delivery_info =models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True)  # 배송지 정보 
+    user_coupon = models.ForeignKey(UserCoupon, on_delete=models.CASCADE, null=True)  # 유저 쿠폰
 
 
 # 결제완료시 차례대로 delivery, order, ordercart  데이터 생성 
@@ -33,3 +34,9 @@ class OrderCart(models.Model):
 
     def __str__(self):
         return self.cart.item.name
+
+class Refund(models.Model):
+    ordercart = models.ForeignKey(OrderCart, on_delete=models.CASCADE)
+    refund_date = models.DateTimeField(auto_now_add=True)
+    price = models.IntegerField()
+    status = models.BooleanField(default=True)

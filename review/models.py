@@ -12,3 +12,15 @@ class Review(models.Model):
     star = models.IntegerField()
     content = models.TextField()
     datetime = models.DateTimeField(default=timezone.now)
+
+
+class ReviewLike(models.Model):
+    review = models.ForeignKey(Review, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+class ReviewReply(models.Model):
+    review = models.ForeignKey(Review, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.TextField()
+    datetime = models.DateTimeField(auto_now_add=True)
+    isLike = models.BooleanField(default=False)

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from item.models import Category1, Category2, Item
+from payment.models import Delivery
 
 # Create your models here.
 
@@ -14,6 +15,7 @@ class Subscribe(models.Model):
     datetime = models.DateTimeField(auto_now_add=True)
     state = models.IntegerField(default=0, choices=STATE_CHOICES)
     item = models.ForeignKey(Item, on_delete=models.CASCADE, null=True)
+    delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True)
     
 class Keyword(models.Model):
     category1 = models.ForeignKey(Category1, on_delete=models.CASCADE)

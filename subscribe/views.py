@@ -62,6 +62,8 @@ def payment_process(request):
     
     if request.method == 'POST':
         # 실제 결제 처리 로직 구현
+        
+        
         # 결제 성공 시
         user_info.membership = True
         user_info.save()
