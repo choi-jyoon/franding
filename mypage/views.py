@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator
-from item.models import ItemLike, Item
+from item.models import Itemlike, Item
 from django.contrib import messages
 
 
@@ -125,7 +125,7 @@ def user_delete(request):
 
 @login_required
 def itemlike(request):
-    wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+    wishlist, created = Itemlike.objects.get_or_create(user=request.user)
     return render(request, 'mypage/wishlist.html', {'wishlist': wishlist})
 
 

@@ -54,7 +54,7 @@ class Item(models.Model):
         return self.name
     
 
-class item_like(models.Model):
+class Itemlike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     items = models.ManyToManyField(Item)
     #item = models.ForeignKey(Item, on_delete=models.CASCADE)
