@@ -117,6 +117,10 @@ def first_pay_process(request):
     }
     return render(request, 'subscribe/regular_pay.html', context)
 
+# @login_required
+# def second_pay_process(request):
+#     # 2회차 이후 정기결제 로직 
+
 @login_required
 def pay_success(request):
     # 결제 성공 후 처리 로직
@@ -171,3 +175,7 @@ def detail(request, pk):
         'subscriptions' : sub_keywords,
     }
     return render(request, 'subscribe/detail.html', context)
+
+@login_required
+def membership_detail(request):
+    return render(request, 'subscribe/membership_detail.html')

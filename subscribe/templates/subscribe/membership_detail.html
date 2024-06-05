@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block extra-style %}
+<style>
+    .membership-info {
+        border: 1px solid #ddd;
+        padding: 20px;
+        border-radius: 5px;
+    }
+
+    .membership-info h4 {
+        margin-bottom: 10px;
+    }
+
+    .membership-info p {
+        margin-bottom: 5px;
+    }
+
+    .btn-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+
+    .btn-container .btn {
+        margin-left: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h3> 멤버십 관리하기 </h3>
+            <div class="membership-info">
+                <h4>멤버십 정보</h4>
+                <p>구독 시작 날짜: 2023년 5월 1일</p>
+                <p>다음 결제 예정일: 2023년 6월 1일</p>
+                <p>결제 수단: 신용카드 (1234)</p>
+            </div>
+            <div class="btn-container">
+                <a href="#" class="btn btn-primary" onclick="showChangePaymentPopup()">결제 수단 변경</a>
+                <a href="#" class="btn btn-danger" onclick="showCancelMembershipPopup()">멤버십 해지</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra-script %}
+<script>
+    function showChangePaymentPopup() {
+        if (confirm('결제 수단을 변경하시겠습니까?')) {
+            // 결제 수단 변경 로직 실행
+            window.location.href = '#';
+        }
+    }
+
+    function showCancelMembershipPopup() {
+        if (confirm('멤버십을 해지하시겠습니까?')) {
+            // 멤버십 해지 로직 실행
+            window.location.href = '#';
+        }
+    }
+</script>
+{% endblock %}
