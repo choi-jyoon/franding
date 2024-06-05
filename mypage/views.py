@@ -1,10 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from cart.models import OrderCart, Order
 from .models import UserAddInfo
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator
+from item.models import ItemLike, Item
+from django.contrib import messages
+
 
 
 @login_required
@@ -119,3 +122,21 @@ def user_delete(request):
     request.user.delete()
     auth_logout(request)
     return redirect('home')
+
+@login_required
+def itemlike(request):
+    wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+    return render(request, 'mypage/wishlist.html', {'wishlist': wishlist})
+
+
+def add_to_itemlike(request, item_id):
+    item = get_object_or_404(Item, id=item_id)
+    wishlist = request.session.get('wishlist', [])
+    if item_id not in wishlist:
+        wishlist.append(item_id)
+        request.session['wishlist.html'] = wishlist
+        messages.success(request, 'Item successfully added to your wishlist!')
+    else:
+        messages.info(request, 'Item is already in your wishlist!')
+    
+    return render(request, 'mypage/wishlist.html')
