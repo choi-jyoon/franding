@@ -12,4 +12,7 @@ urlpatterns = [
     path('add_userinfo/', views.add_user_info, name='add_user_info'), # 등록
     path('update_userinfo/', views.update_user_info, name='update_user_info'), # 수정
     path('user_delete/', views.user_delete, name='user_delete'), # 탈퇴
+    path('itemlike/', views.itemlike, name='itemlike'),
+    path('itemlike/<int:item_id>', views.add_to_itemlike, name='add_to_itemlike'),
+
 ]
