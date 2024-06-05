@@ -1,14 +1,6 @@
 from django.db import models
-# from cart.models import Order
+from django.contrib.auth.models import User
 # Create your models here.
-
-# class Coupon(models.Model):
-#     # 쿠폰 -> 쿠폰 번호, 쿠폰 할인율, 쿠폰 사용 여부, 쿠폰 만료일
-#     coupon_number = models.CharField(max_length=10)
-#     coupon_discount_rate = models.IntegerField()
-#     coupon_use = models.BooleanField()
-#     coupon_expire_date = models.DateField()
-
 
 
 # Create your models here.
@@ -24,4 +16,14 @@ class Delivery(models.Model):
     receiver_email = models.EmailField(null=True)    # 받는 사람 이메일
 
 
+class Coupon(models.Model):
+    name = models.CharField(max_length=100)
+    discount_rate = models.IntegerField()
+    date_of_use = models.IntegerField(default=30)
+    
+class UserCoupon(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE)
+    create_date = models.DateField(auto_now_add=True)
+    is_used = models.BooleanField(default=False)
     
