@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .models import FAQ
 from django.contrib.auth.models import User
+from datetime import datetime, timedelta
 
 # Create your views here.
 
@@ -46,3 +47,39 @@ def question_create(request, item_id):
 def home(request):
     questions = Question.objects.filter(user_id=request.user).order_by('-created_at')  # 모든 질문을 가져옵니다.
     return render(request, 'QnA/home.html', {'questions': questions})
+
+
+def seller_questions(request):
+    period = request.GET.get('period', '3days')
+    now = datetime.now()
+
+    if period == '1day':
+        start_date = now - timedelta(days=1)
+    elif period == '3days':
+        start_date = now - timedelta(days=3)
+    elif period == '1week':
+        start_date = now - timedelta(weeks=1)
+    elif period == '3weeks':
+        start_date = now - timedelta(weeks=3)
+    else:
+        start_date = now - timedelta(days=3)  # default to 3 days
+
+    questions = Question.objects.filter(created_at__gte=start_date).order_by('-created_at')
+
+    return render(request, 'QnA/seller_questions.html', {'questions': questions})
+
+
+def answer_question(request, question_id):
+    question = get_object_or_404(Question, id=question_id)
+    # answers = get_object_or_404(Answer, id=question_id)
+    answers = Answer.objects.filter(question=question)
+    if request.method == 'POST':
+        form = AnswerForm(request.POST)
+        if form.is_valid():
+            answer = form.save(commit=False)
+            answer.question = question
+            answer.user_id_id= request.user.id
+            answer.save()
+            return redirect('QnA:seller_questions')
+    form = AnswerForm()
+    return render(request, 'QnA/seller_answer_form.html', {'form': form, 'question' : question, 'answers': answers})
