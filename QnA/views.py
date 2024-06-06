@@ -6,6 +6,7 @@ from django.urls import reverse
 from .models import FAQ
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
+from django.core.paginator import Paginator
 
 # Create your views here.
 
@@ -64,7 +65,11 @@ def seller_questions(request):
     else:
         start_date = now - timedelta(days=3)  # default to 3 days
 
-    questions = Question.objects.filter(created_at__gte=start_date).order_by('-created_at')
+    questions_list = Question.objects.filter(created_at__gte=start_date).order_by('-created_at')
+    paginator = Paginator(questions_list, 5)  # Show 5 questions per page.
+
+    page_number = request.GET.get('page')
+    questions = paginator.get_page(page_number)
 
     return render(request, 'QnA/seller_questions.html', {'questions': questions})
 
@@ -79,6 +84,7 @@ def answer_question(request, question_id):
             answer = form.save(commit=False)
             answer.question = question
             answer.user_id_id= request.user.id
+            # question.is_answered = True
             answer.save()
             return redirect('QnA:seller_questions')
     form = AnswerForm()
