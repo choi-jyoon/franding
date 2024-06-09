@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.views.generic import ListView,DetailView
 from django.views.generic import FormView
 
-from django.db.models import Q
+
+from django.db.models import Q,Count
 from .models import *
 from cart.models import Cart
 from review.models import Review
@@ -102,7 +103,7 @@ def list_item(request):
 
 def detail_list_item(request,item_id):
     item=Item.objects.get(id=item_id)
-    review = Review.objects.filter(item = item_id).order_by('-datetime')
+    review = Review.objects.filter(item=item_id).annotate(likes_count=Count('reviewlike')).order_by('-datetime')
     paginator = Paginator(review, 3)
     faqs = FAQ.objects.all()  
 
