@@ -4,7 +4,10 @@
 {% block extra-style %}
 <style>
     body {
-        background-image: url("{{item.back_image}}");
+        background-image:url("{{item.back_image}}");
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        margin: 0;
+        padding: 0;        
     }
 
     .h-100 {
@@ -37,6 +40,7 @@
         background-color: #ffffff;
         display: flex;
         flex-direction: column;
+        height: 100%;  /* 높이 설정 */
     }
 
     .mb-5 {
@@ -82,10 +86,11 @@
         align-items: center;
     }
 
-    .description {
+    /* .description {
         margin-top: 50px;
     }
 
+    /*플로팅 배너*/
     .floating-banner {
         position: fixed;
         top: 100px;
@@ -174,17 +179,59 @@
         padding: 10px;
     }
 
-    .close:hover,
-    .close:focus {
-        color: #5B574F;
-        text-decoration: none;
-        cursor: pointer;
+.close:hover,
+.close:focus {
+    color: #5B574F;
+  text-decoration: none;
+  cursor: pointer;
+}
+.back{
+    border: #5B574F;
+    width: 100%;
+}
+
+    /* faq */
+    #faq {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-top: 1px solid #e0e0e0;
     }
 
-    .back {
-        border: #5B574F;
-        width: 100%;
+    #faq h2 {
+        text-align: left;
+        font-size: 26px;
+        margin-bottom: 35px;
+        font-weight: bold;
     }
+
+    .faq-item {
+        margin-bottom: 10px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .faq-question {
+        width: 100%;
+        padding: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: left;
+        border: none;
+        background: none;
+        cursor: pointer;
+        outline: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .faq-question:hover {
+        background-color: #e0e0e0;
+    }
+
+    .faq-answer {
+        display: none;
+        padding: 10px;
+        font-size: 17px;
+        background-color: #fff;
+    }    
 </style>
 {% endblock %}
 {% load static %}
@@ -229,11 +276,27 @@
             </div>
         </div>
     </div>
-    <div class="bottom-box">
+
+    <nav class="nav justify-content-center">
+        <a class="nav-link active" aria-current="page" href="#description">상품상세정보</a>
+        <a class="nav-link" href="#review" style="color: gray;">리뷰</a>
+        <a class="nav-link" href="#FAQ" style="color: gray;">FAQ</a>
+    </nav>
+
+    <div class="bottom-box" id="description">
+        <!-- 아이템 설명을 여기에 추가하세요 -->    
         <h2 class="description">상세 설명</h2>
         <p>{{ item.description|safe }}</p>
     </div>
-    <div>
+
+    <nav class="nav justify-content-center">
+        <a class="nav-link active" aria-current="page" href="#description" style="color: gray;">상품상세정보</a>
+        <a class="nav-link" href="#review">리뷰</a>
+        <a class="nav-link" href="#FAQ" style="color: gray;">FAQ</a>
+    </nav>
+
+    <div id="review">
+        <!-- 리뷰 칸 입니다.-->
         <h2 class="center">Review</h2>
         <hr>
         {% if review %}
@@ -275,6 +338,7 @@
         <li class="page-item"><a class="page-link" href="?page={{ review.next_page_number }}">다음</a></li>
         {% endif %}
     </div>
+    <!-- 플로팅배너-->
     <div id="floating-banner" class="floating-banner">
         <div class="banner-content">
             <h3>{{ item.name }}</h3>
@@ -293,6 +357,40 @@
             </form>
         </div>
     </div>
+
+    <!-- FAQ -->
+    <nav class="nav justify-content-center">
+        <a class="nav-link active" aria-current="page" href="#description" style="color: gray;">상품상세정보</a>
+        <a class="nav-link" href="#review" style="color: gray;">리뷰</a>
+        <a class="nav-link" href="#FAQ">FAQ</a>
+    </nav>
+
+    <div id="FAQ" class="tabcontent" style="text-align: center;">
+        <section id="faq">
+            <h2>자주 묻는 질문</h2>
+            {% for faq in faqs %}
+            <div class="faq-item">
+                <button class="faq-question">{{ faq.question }}</button>
+                <div class="faq-answer">
+                    <p>{{ faq.answer }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+        <button onclick="openInquiryForm('{{item.id}}')" style="
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 12px;
+            ">1대1 문의하기</button>
+    </div>     
 </div>
 <div id="myModal" class="modal">
     <div class="modal-content">
@@ -300,6 +398,8 @@
         <button class="close">장바구니 바로가기</button>
     </div>
 </div>
+
+
 
 {% endblock %}
 {% block extra-script %}
@@ -377,29 +477,59 @@
     });
 
     document.querySelector('.add-to-cart-btn-float').addEventListener('click', function(event) {
-        event.preventDefault();
-        setTimeout(function() {
-            document.getElementById('add-to-cart-form').submit();
-        }, 3000);
-    });
+    event.preventDefault(); // 기본 폼 제출 동작을 막습니다.
 
-    // 좋아요 기능 처리
-    document.getElementById('like-button').addEventListener('click', function() {
-        var itemId = this.getAttribute('data-item-id');
-        var url = "{% url 'mypage:add_to_itemlike' 0 %}".replace('0', itemId);
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
-            },
-        }).then(response => response.json()).then(data => {
-            if (data.liked) {
-                this.innerHTML = '<i class="fas fa-heart text-danger"></i>';
-            } else {
-                this.innerHTML = '<i class="far fa-heart text-danger"></i>';
-            }
-            document.getElementById('like-count').innerText = data.like_count;
+    // 딜레이를 주기 위한 setTimeout 설정 (예: 2초 딜레이)
+    setTimeout(function() {
+        document.getElementById('add-to-cart-form').submit(); // 폼 제출
+    }, 30000); // 2000밀리초 = 2초 
+});
+    // 장바구니 담기 버튼 클릭 시 이벤트 처리
+/*
+document.querySelector('.add-to-cart-btn').addEventListener('click', function() {
+    // 장바구니에 담긴 상품 수량 가져오기
+    var currentQuantity = document.getElementById('current-quantity').innerText;
+
+    // 팝업창에 표시할 내용 설정
+    var popupContent = '장바구니에 {{ item.name }}이'+ currentQuantity + '개 담겼습니다.';
+
+    // 팝업창 띄우기
+    alert(popupContent);
+});
+    
+    // 장바구니 담기 버튼 클릭 시 이벤트 처리
+    document.querySelector('.add-to-cart-btn-float').addEventListener('click', function() {
+    // 장바구니에 담긴 상품 수량 가져오기
+    var currentQuantity = document.getElementById('current-quantity').innerText;
+
+    // 팝업창에 표시할 내용 설정
+    var popupContent = '장바구니에 {{ item.name }}이'+ currentQuantity + '개 담겼습니다.';
+
+    // 팝업창 띄우기
+    alert(popupContent);
+});
+*/
+    // faq
+    document.addEventListener('DOMContentLoaded', function() {
+        const faqQuestions = document.querySelectorAll('.faq-question');
+
+        faqQuestions.forEach(question => {
+            question.addEventListener('click', function() {
+                const answer = this.nextElementSibling;
+                const isOpen = answer.style.display === 'block';
+
+                document.querySelectorAll('.faq-answer').forEach(ans => ans.style.display = 'none');
+                
+                if (!isOpen) {
+                    answer.style.display = 'block';
+                }
+            });
         });
-    });
+    });    
+
+    // 1대1 문의하기
+    function openInquiryForm(item_id) {
+        window.location.href = "{% url 'QnA:question_create' item.id %}";  // 여기에 실제 이동할 페이지의 URL을 설정해야 합니다.
+    }
 </script>
 {% endblock %}

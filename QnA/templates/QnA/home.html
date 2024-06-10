@@ -33,16 +33,13 @@
             {% if user.is_staff %}
                 <a href="{% url 'seller:seller_index' %}" class="btn btn-outline-secondary mb-4">판매자페이지</a>
             {% endif %}
-        </div>
+        </div>  
         <div class="col-10" id="content-display">
-            <h1>Questions</h1>
-            <ul>
-                {% for question in questions %}
-                <li><a href="{% url 'QnA:question_detail' question.id %}">{{ question.title }}</a></li>
-                {% endfor %}
-            </ul>
-            <a href="{% url 'QnA:question_create' questions.0.item_id.id %}">Ask a Question</a>
-        </div>            
+            <h1>Question</h1>
+            {% for question in questions %}
+            <li><a>{{ question.title }}</a></li>
+            {% endfor %}
+        </div>          
     </div>     
 </div>
 {% endblock %}
