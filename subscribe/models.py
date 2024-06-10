@@ -29,3 +29,17 @@ class Keyword(models.Model):
 class SubscribeKeyword(models.Model):
     keyword = models.ForeignKey(Keyword, on_delete=models.CASCADE)
     subscribe = models.ForeignKey(Subscribe, on_delete=models.CASCADE)
+    
+class SubscribePayInfo(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tid = models.CharField(max_length=50)
+    cid = models.CharField(max_length=50)
+    sid = models.CharField(max_length=30,null=True) 
+    payment_method_type = models.CharField(max_length=30)
+    item_name = models.CharField(max_length=100)
+    quantity = models.IntegerField()
+    total_amount = models.IntegerField()
+    status = models.CharField(max_length=20, default='prepared')  # 결제 상태 (예: prepared, completed, cancelled)
+    created_at = models.DateTimeField(auto_now_add=True)
+    approved_at = models.DateTimeField(auto_now_add=True)
+    
