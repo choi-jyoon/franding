@@ -48,6 +48,7 @@
                 <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary mb-4">회원정보</a>
                 <a href="{% url 'event:index' %}" class="btn btn-outline-secondary mb-4">나의 Franding</a>
                 <a href="{% url 'subscribe:index' %}" class="btn btn-outline-secondary mb-4">구독</a>
+                <a href="{% url 'QnA:home' %}" class="btn btn-outline-secondary mb-4">Q&A</a>
                 <a href="{% url 'mypage:wishlist' %}" class="btn btn-outline-secondary mb-4">찜 목록</a>
                 {% if user.is_staff %}
                     <a href="{% url 'seller:seller_index' %}" class="btn btn-outline-secondary mb-4">판매자페이지</a>
