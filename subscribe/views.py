@@ -1,11 +1,17 @@
 from django.shortcuts import render, redirect
-from .models import Keyword, Subscribe, SubscribeKeyword
+from .models import Keyword, Subscribe, SubscribeKeyword, SubscribePayInfo
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from collections import defaultdict, Counter
 from item.models import Item
 from mypage.models import UserAddInfo
 import random
+import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+SECRET_KEY = os.getenv('SECRET_KEY')
 # Create your views here.
 
 @login_required
@@ -57,17 +63,50 @@ def membership(request):
     return index(request)
 
 @login_required
-def payment_process(request):
+def first_pay_process(request):
+
     user_info = UserAddInfo.objects.get(user=request.user)
+    current_domain = request.get_host()
     
     if request.method == 'POST':
-        # 실제 결제 처리 로직 구현
+        # 실제 결제 요청 로직 구현
         
+        url = "https://open-api.kakaopay.com/online/v1/payment/ready"
+        headers = {
+            "Authorization": f"SECRET_KEY {SECRET_KEY}",
+            'Content-Type':'application/json',
+        }
         
-        # 결제 성공 시
-        user_info.membership = True
-        user_info.save()
-        return redirect('membership')
+        data = {
+            "cid": "TCSUBSCRIP",    # 테스트용 코드 (정기결제용 cid)
+            "partner_order_id": "1001",     # 주문번호
+            "partner_user_id": "{}".format(request.user),    # 유저 아이디
+            "item_name": "franding membership",        # 구매 물품 이름
+            "quantity": "1",                # 구매 물품 수량
+            "total_amount": "15900",        # 구매 물품 가격
+            "tax_free_amount": "0",         # 구매 물품 비과세
+            'approval_url':f'http://{current_domain}/subscribe/paysuccess', 
+            'fail_url':f'http://{current_domain}/subscribe/payfail',
+            'cancel_url':f'http://{current_domain}/subscribe/paycancel'
+        }
+        
+        response = requests.post(url, headers= headers, json=data)
+        request.session['tid'] = response.json()['tid']     # 결제 승인시 사용할 tid 세션에 저장
+        next_url = response.json()['next_redirect_pc_url']  # 결제 페이지로 넘어갈 url
+        
+        SubscribePayInfo.objects.create(
+            user=request.user,
+            tid=request.session['tid'],
+            cid="TCSUBSCRIP",
+            payment_method_type ="MONEY",
+            item_name="franding membership",
+            quantity=1,
+            total_amount=15900,
+            status='prepared'  # 결제 준비 상태로 저장
+        )
+        return redirect(next_url)
+    
+    
     
     shipping_fee = 3000
     subscribe_item = [
@@ -75,20 +114,138 @@ def payment_process(request):
             'item': {
                 'name': 'franding membership'
             },
-            'size': {
-                'ml': '-'
-            },
-            'amount': 1,
+
             'sub_total': 15900
         }
     ]
     context = {
         'item_list': subscribe_item,
         'total_price': 15900,
-        'shipping_fee': 0,
+        'shipping_fee': 300,
         'userinfo': user_info
     }
-    return render(request, 'payment/payment_info.html', context)
+    return render(request, 'subscribe/regular_pay.html', context)
+
+
+@login_required
+def pay_success(request):
+    # 결제 처리 로직
+    tid = request.session.get('tid')
+    if tid:
+        # 카카오페이 결제 승인 API 호출
+        url = f'https://open-api.kakaopay.com/online/v1/payment/approve'
+        headers = {
+            "Authorization": f"SECRET_KEY {SECRET_KEY}",
+            'Content-Type':'application/json',
+        }
+        data = {
+            "cid": "TCSUBSCRIP",    # 테스트용 코드 (정기결제용 cid)
+            "tid": tid,
+            "partner_order_id": "1001",     # 주문번호
+            "partner_user_id": "{}".format(request.user),    # 유저 아이디
+            "pg_token": request.GET.get('pg_token')  # 결제 승인시 전달되는 pg_token
+        }
+        response = requests.post(url, headers=headers, json=data)
+        response_data = response.json()
+        
+        if response.status_code == 200:
+            sid = response_data.get('sid')
+            payment_info = SubscribePayInfo.objects.get(tid=tid, user=request.user)
+            payment_info.status = 'approved'  # 결제 완료 상태로 변경
+            payment_info.approved_at = timezone.now()  # 승인 시간 업데이트
+            if sid:
+                payment_info.sid = sid  # sid 값 저장
+            payment_info.save()
+            
+            # 결제 완료 후 처리할 로직 추가 (예: 구독 활성화)
+            user_info = UserAddInfo.objects.get(user=request.user)
+            user_info.membership = True
+            user_info.save()
+            
+            # 세션에서 tid 제거
+            del request.session['tid']
+            
+            # index 함수 호출
+            return index(request)
+
+    return render(request, 'payment/payfail.html')
+
+@login_required
+def second_pay_process(request):
+    # 2회차 이후 정기결제 로직 
+    pay_info = SubscribePayInfo.objects.get(user = request.user).order_by('-id').first()
+    
+    # 정기 결제 처리 로직 구현
+    
+    url = "https://open-api.kakaopay.com/online/v1/payment/subscription"
+    headers = {
+        "Authorization": f"SECRET_KEY {SECRET_KEY}",
+        'Content-Type':'application/json',
+    }
+    data = {
+        "cid": "TCSUBSCRIP",    # 테스트용 코드 (정기결제용 cid)
+        "sid": pay_info.sid,
+        "partner_order_id": "1002",     # 주문번호
+        "partner_user_id": "{}".format(request.user),    # 유저 아이디
+        "item_name": "franding membership",        # 구매 물품 이름
+        "quantity": "1",                # 구매 물품 수량
+        "total_amount": "15900",        # 구매 물품 가격
+        "tax_free_amount": "0",         # 구매 물품 비과세
+    }
+    response = requests.post(url, headers=headers, json=data)
+    response_data = response.json()
+    
+    if response.status_code == 200:
+        # n회차 결제 성공 데이터 저장 
+        SubscribePayInfo.objects.create(
+            user=request.user,
+            tid=response_data.get('tid'),
+            cid="TCSUBSCRIP",
+            sid= response_data.get('sid'),
+            # aid= response_data.get('aid'),
+            payment_method_type ="MONEY",
+            item_name="franding membership",
+            quantity=1,
+            total_amount=15900,
+            status='approved' 
+        )
+        return index(request)
+    
+    return render(request, 'payment/payfail.html')
+
+@login_required
+def pay_fail(request):
+    # 결제 실패 후 처리 로직
+    return render(request, 'payment/payfail.html')
+
+@login_required
+def pay_cancel(request):
+    # 정기결제 비활성화 
+    pay_info = SubscribePayInfo.objects.filter(user = request.user).order_by('-id').first()
+    if request.method == 'POST':
+        url = f'https://open-api.kakaopay.com/online/v1/payment/manage/subscription/inactive'
+        headers = {
+            "Authorization": f"SECRET_KEY {SECRET_KEY}",
+            'Content-Type':'application/json',
+        }
+        data = {
+            "cid": "TCSUBSCRIP",    # 테스트용 코드 (정기결제용 cid)
+            "sid": pay_info.sid,
+        }
+        response = requests.post(url, headers=headers, json=data)
+        response_data = response.json()
+        
+        pay_info.status = 'INACTIVE'  # 결제 완료 상태로 변경
+        pay_info.inactivated_at = timezone.now()  # 승인 시간 업데이트
+
+        pay_info.save()
+            
+        # 해지 완료 후 구독 비활성화
+        user_info = UserAddInfo.objects.get(user=request.user)
+        user_info.membership = False
+        user_info.save()
+        
+    return render(request, 'subscribe:membershipcancel.html')
 
 
 @login_required
@@ -124,3 +281,7 @@ def detail(request, pk):
         'subscriptions' : sub_keywords,
     }
     return render(request, 'subscribe/detail.html', context)
+
+@login_required
+def membership_detail(request):
+    return render(request, 'subscribe/membership_detail.html')

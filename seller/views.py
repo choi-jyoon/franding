@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ItemForm
+from .forms import ItemForm, ReviewReplyForm
 from item.models import Item, Brand, ItemType, Size
-from review.models import Review
+from review.models import Review, ReviewReply
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator
@@ -121,3 +121,16 @@ def item_delete(request, pk):
         item.delete()
         return redirect('seller:seller_index')
     return render(request, 'seller/item_confirm_delete.html', {'item': item})
+
+@login_required
+def add_review_reply(request, review_id):
+    review = Review.objects.get(id=review_id)
+    if request.method == "POST":
+        form = ReviewReplyForm(request.POST)
+        if form.is_valid():
+            ReviewReply.objects.create(
+                review=review,
+                user=request.user,
+                comment=form.cleaned_data['comment']
+            )
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
