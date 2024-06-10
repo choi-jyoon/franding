@@ -7,6 +7,8 @@
     html, body {
         height: 100%;
         margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: #f5f5f7;
     }
     /* 내비게이션 바를 제외한 전체 화면을 채우는 컨테이너 */
     .container-fluid {
@@ -15,6 +17,71 @@
     /* 높이 100% 설정 */
     .full-height {
         height: 100%;
+    }
+    /* 콘텐츠 디스플레이 스타일 */
+    #content-display {
+        padding: 2rem;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        overflow-y: auto;
+    }
+    h1 {
+        color: #333333;
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+    .question-item {
+        border-bottom: 1px solid #e1e1e3;
+        padding: 1rem 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+    .question-item a {
+        text-decoration: none;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+    .question-item a:hover {
+        text-decoration: underline;
+    }
+    .btn-primary {
+        background-color: #0071e3;
+        border-color: #0071e3;
+        color: #ffffff;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+    }
+    .btn-primary:hover {
+        background-color: #005bb5;
+        border-color: #005bb5;
+    }
+    form {
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        justify-content: flex-end;
+    }
+    form select {
+        padding: 0.5rem;
+        border-radius: 5px;
+        border: 1px solid #ced4da;
+        font-size: 1rem;
+    }
+    nav .pagination .page-item .page-link {
+        color: #0071e3;
+        border: 1px solid #dee2e6;
+        padding: 0.5rem 0.75rem;
+        border-radius: 5px;
+    }
+    nav .pagination .page-item.active .page-link {
+        background-color: #0071e3;
+        border-color: #0071e3;
+        color: #ffffff;
     }
 </style>
 {% endblock %}
@@ -37,7 +104,7 @@
         <div class="col-10" id="content-display">
             <h1>Question</h1>
 
-            <form method="get" action="{% url 'QnA:seller_questions' %}" style="float: right;">
+            <form method="get" action="{% url 'QnA:seller_questions' %}">
                 <select name="period" onchange="this.form.submit()">
                     <option>최근 작성일</option>
                     <option value="1day" {% if request.GET.period == '1day' %}selected{% endif %}>1일</option>
@@ -45,23 +112,23 @@
                     <option value="1week" {% if request.GET.period == '1week' %}selected{% endif %}>1주</option>
                     <option value="3weeks" {% if request.GET.period == '3weeks' %}selected{% endif %}>3주</option>
                 </select>
-            </form>            
+            </form>
+
             <div style="height: 720px;">
                 {% for question in questions %}
-                <li>
-                    <a>문의 내용 : {{ question.title }}</a><br>
-                    <a>문의 상품 : {{ question.item_id }}</a><br>
-                    <a>작성자 : {{ question.user_id }}</a><br>
-                    <a>작성일 : {{ question.created_at|date:"Y년 n월 j일" }}</a><br>
-
+                <div class="question-item">
+                    <a>문의 내용: {{ question.title }}</a>
+                    <a>문의 상품: {{ question.item_id }}</a>
+                    <a>작성자: {{ question.user_id }}</a>
+                    <a>작성일: {{ question.created_at|date:"Y년 n월 j일" }}</a>
                     {% if question.is_answered %}
-                        <button disabled>답변 완료</button>
+                    <a href="{% url 'QnA:answer_question' question.id %}" class="btn btn-primary">답변확인</a>
                     {% else %}
                         <a href="{% url 'QnA:answer_question' question.id %}" class="btn btn-primary">답변하기</a>
                     {% endif %}
-                </li>
+                </div>
                 {% endfor %}
-            </div>          
+            </div>
 
             <nav aria-label="Page navigation fixed-bottom">
                 <ul class="pagination justify-content-center">

@@ -16,6 +16,27 @@
     .full-height {
         height: 100%;
     }
+    .nav-btn {
+        margin-bottom: 1rem;
+        width: 100%;
+    }
+    .nav-btn:hover {
+        background-color: #f8f9fa;
+        border-color: #6c757d;
+    }
+    /* 콘텐츠 디스플레이 스타일 */
+    #content-display {
+        padding: 2rem;
+        background-color: #ffffff;
+        border-left: 1px solid #dee2e6;
+    }
+    .content-item {
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        background-color: #f8f9fa;
+    }
 </style>
 {% endblock %}
 
@@ -24,27 +45,26 @@
     <div class="row full-height">
         <div class="col-2 d-flex flex-column p-3 bg-light full-height">
             <!-- 버튼들 -->
-            <a href="{% url 'mypage:order_index' %}" class="btn btn-outline-secondary mb-4">주문 내역</a>
-            <a href="{% url 'review:review_index' %}" class="btn btn-outline-secondary mb-4">작성 리뷰</a>
-            <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary mb-4">회원정보</a>
-            <a href="{% url 'event:index' %}" class="btn btn-outline-secondary mb-4">나의 Franding</a>
-            <a href="{% url 'subscribe:index' %}" class="btn btn-outline-secondary mb-4">구독</a>
-            <a href="{% url 'QnA:home' %}" class="btn btn-outline-secondary mb-4">Q&A</a>
+            <a href="{% url 'mypage:order_index' %}" class="btn btn-outline-secondary nav-btn">주문 내역</a>
+            <a href="{% url 'review:review_index' %}" class="btn btn-outline-secondary nav-btn">작성 리뷰</a>
+            <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary nav-btn">회원정보</a>
+            <a href="{% url 'event:index' %}" class="btn btn-outline-secondary nav-btn">나의 Franding</a>
+            <a href="{% url 'subscribe:index' %}" class="btn btn-outline-secondary nav-btn">구독</a>
+            <a href="{% url 'QnA:home' %}" class="btn btn-outline-secondary nav-btn">Q&A</a>
             {% if user.is_staff %}
-                <a href="{% url 'seller:seller_index' %}" class="btn btn-outline-secondary mb-4">판매자페이지</a>
+                <a href="{% url 'seller:seller_index' %}" class="btn btn-outline-secondary nav-btn">판매자페이지</a>
             {% endif %}
         </div>  
         <div class="col-10" id="content-display">
-            <li>
-                <a>작성 내용 : {{ question.content }}</a>                           
-            </li>
-            <br>
+            <div class="content-item">
+                <strong>작성 내용:</strong> {{ question.content }}
+            </div>
             {% if answers %}
-                <li>                    
-                    {% for answer in answers %}
-                        <a>답변 : {{ answer.content }}</a><br>
-                    {% endfor %}
-                </li>
+                {% for answer in answers %}
+                    <div class="content-item">
+                        <strong>답변:</strong> {{ answer.content }}
+                    </div>
+                {% endfor %}
             {% endif %}
         </div>          
     </div>     

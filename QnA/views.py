@@ -38,8 +38,8 @@ def question_create(request, item_id):
             question.user_id_id= request.user.id
             question.item_id.id = item_id
             question.save()            
-            return redirect(reverse('QnA:question_list', args=[item_id]))
-            # return redirect(reverse('QnA:question_list'))
+            # return redirect(reverse('QnA:question_list', args=[item_id]))
+            return redirect(reverse('QnA:home'))
             
     else:
         form = QuestionForm(initial={'item_id': item_id})
@@ -47,8 +47,13 @@ def question_create(request, item_id):
 
 
 def home(request):
-    questions = Question.objects.filter(user_id=request.user).order_by('-created_at')  # 모든 질문을 가져옵니다.
-    return render(request, 'QnA/home.html', {'questions': questions,})
+    questions_list = Question.objects.filter(user_id=request.user).order_by('-created_at')  # 모든 질문을 가져옵니다.
+    paginator = Paginator(questions_list, 3)  # Show 5 questions per page.
+
+    page_number = request.GET.get('page')
+    questions = paginator.get_page(page_number)
+    
+    return render(request, 'QnA/home.html', {'questions': questions})
 
 
 def answer_detail(request, question_id):
@@ -73,7 +78,7 @@ def seller_questions(request):
         start_date = now - timedelta(days=3)  # default to 3 days
 
     questions_list = Question.objects.filter(created_at__gte=start_date).order_by('is_answered','-created_at')
-    paginator = Paginator(questions_list, 5)  # Show 5 questions per page.
+    paginator = Paginator(questions_list, 3)  # Show 5 questions per page.
 
     page_number = request.GET.get('page')
     questions = paginator.get_page(page_number)
