@@ -37,8 +37,13 @@
         <div class="col-10" id="content-display">
             <h1>Question</h1>
             {% for question in questions %}
-            <li><a>{{ question }}</a></li>
-            <a href="" class="btn btn-primary">답변확인</a>
+                <li><a>{{ question }}</a></li>
+                
+                {% if question.is_answered %}
+                <a href="{% url 'QnA:answer_detail' question.id %}" class="btn btn-primary">답변확인</a>
+                {% else %}
+                    <button class="btn btn-primary" style="display: none;">답변 확인</button>
+                {% endif %}
             {% endfor %}
         </div>          
     </div>     
