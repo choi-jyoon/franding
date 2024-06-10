@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block extra-style %}
+<style>
+    .container {
+        max-width: 600px;
+        margin-top: 50px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>멤버십 해지 완료</h1>
+
+<div class="container">
+    <h1 class="display-4">멤버십 해지 완료</h1>
+    <p class="lead">멤버십 정기 결제가 성공적으로 해지되었습니다.</p>
+    <hr class="my-4">
+    <p>멤버십 해지 처리에 대한 더 자세한 정보가 필요하시면 고객 지원 센터로 문의해주세요.</p>
+    <a class="btn btn-primary btn-lg" href="/" role="button">홈으로</a>
+    <a class="btn btn-secondary btn-lg" href="/support" role="button">고객 지원</a>
+</div>
+{% endblock %}
