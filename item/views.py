@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView,DetailView
 from django.views.generic import FormView
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_protect
 
-from django.db.models import Q
+from django.db.models import Q,Count
 from .models import *
 from cart.models import Cart
-from review.models import Review
+from review.models import *
 from QnA.models import FAQ
 from item.models import Item
 from django.shortcuts import get_object_or_404
@@ -102,7 +104,7 @@ def list_item(request):
 
 def detail_list_item(request,item_id):
     item=Item.objects.get(id=item_id)
-    review = Review.objects.filter(item = item_id).order_by('-datetime')
+    review = Review.objects.filter(item=item_id).annotate(likes_count=Count('reviewlike')).order_by('-datetime')
     paginator = Paginator(review, 3)
     faqs = FAQ.objects.all()  
 
@@ -157,5 +159,38 @@ def    add_cart(request,item_id):
             return redirect('cart:cart_detail')
     else:
         return render(request,'item/detail.html',context) 
-    
-    
+
+
+@login_required
+@csrf_protect
+def like_review(request):
+    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        try:
+            review_id = request.POST.get('review_id')
+            review = get_object_or_404(Review, id=review_id)
+            user = request.user
+
+            if ReviewLike.objects.filter(review=review, user=user).exists():
+                ReviewLike.objects.filter(review=review, user=user).delete()
+                liked = False
+            else:
+                ReviewLike.objects.create(review=review, user=user)
+                liked = True
+
+            likes_count = review.reviewlike_set.count()
+            return JsonResponse({'liked': liked, 'likes_count': likes_count})
+        except Exception as e:
+           
+            return JsonResponse({'error': str(e)}, status=500)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+def check_like_status(request, review_id):
+    if request.method == 'GET' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        try:
+            review = get_object_or_404(Review, id=review_id)
+            user = request.user
+            liked = ReviewLike.objects.filter(review=review, user=user).exists()
+            return JsonResponse({'liked': liked})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
