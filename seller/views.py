@@ -2,16 +2,17 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ItemForm, ReviewReplyForm
 from item.models import Item, Brand, ItemType, Size
 from review.models import Review, ReviewReply
+from cart.models import Order
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Avg, Value, IntegerField, Count, Q
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, ExtractMonth, ExtractYear
 
 
 
-
+# 상품관리(등록,수정,삭제 등등)
 @login_required
 def seller_index(request):
     sort_option = request.GET.get('sort-options', 'newest')
@@ -134,3 +135,44 @@ def add_review_reply(request, review_id):
                 comment=form.cleaned_data['comment']
             )
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+# 주문 내역 관리
+def seller_orderindex(request):
+    sort_option_month = request.GET.get('sort-options-month', 'all')
+    sort_option_deliverystatus = request.GET.get('sort-options-deliverystatus', 'all')
+    orders = Order.objects.order_by('-datetime')
+    
+    if sort_option_month != 'all' and sort_option_deliverystatus != 'all':
+        year, month = map(int, sort_option_month.split('-'))
+        orders = orders.filter(datetime__year=year, datetime__month=month, delivery_info__status=int(sort_option_deliverystatus))
+    elif sort_option_month != 'all':
+        year, month = map(int, sort_option_month.split('-'))
+        orders = orders.filter(datetime__year=year, datetime__month=month)
+    elif sort_option_deliverystatus != 'all':
+        orders = orders.filter(delivery_info__status=int(sort_option_deliverystatus))
+    else:
+        orders = Order.objects.order_by('-datetime')
+        
+    months_queryset = Order.objects.annotate(year=ExtractYear('datetime'),month=ExtractMonth('datetime')).values('year', 'month').distinct().order_by('-year', '-month')
+    months = [f"{entry['year']}-{entry['month']:02d}" for entry in months_queryset]
+    
+    paginator = Paginator(orders, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'orders':page_obj,
+        'months':months,
+        'sort_option_month': sort_option_month,
+        'sort_option_deliverystatus': sort_option_deliverystatus,
+    }
+    return render(request, 'seller/order_index.html', context)
+
+def update_delivery_status(request, pk):
+    if request.method == 'POST':
+        order = get_object_or_404(Order, id=pk)
+        new_status = request.POST.get('delivery_status')
+        if new_status is not None:
+            order.delivery_info.status = new_status
+            order.delivery_info.save()
+        return redirect('seller:seller_orderindex')
