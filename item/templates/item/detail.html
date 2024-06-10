@@ -74,11 +74,11 @@
         justify-content: center;
         /* 추가적인 스타일링이 필요한 경우 여기에 적용하세요 */
         border-top: 1px solid #ccc;
-        border-bottom: 1px solid #ccc;
+       
     }
     .image-cont{
         border-top: 1px solid #ccc;
-        border-bottom: 1px solid #ccc;
+        
     }
     .bottom-box {
         /* 밑 상자의 스타일링을 위한 추가 CSS를 적용하세요 */
@@ -122,9 +122,70 @@
         justify-content: center;
     }
 /*review*/
-.review-card{
-    height: 100px;
+.review-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 20px;
 }
+
+.review-up {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.rating {
+    display: flex;
+}
+
+.rating span {
+    font-size: 20px;
+    color: gold;
+}
+
+.like-con {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.like-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.like-btn i {
+    font-size: 20px;
+}
+
+.like-btn {
+    color: red;
+}
+
+.like {
+    margin: 0;
+    font-size: 14px;
+    text-align: center;
+}
+
+.review-down {
+    margin-top: 10px;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background: #ddd;
+    margin-top: 20px;
+}
+
 .pagination{
     justify-content:center;
     display: flex;
@@ -132,7 +193,9 @@
     width: 100%;  
     
 }
-
+.like-btn{
+    border: #fff;
+}
 .message
 {
     color: #5B574F;
@@ -244,6 +307,9 @@
         font-size: 17px;
         background-color: #fff;
     }    
+    .nav{
+        border-top:1px solid #ccc;
+    }
 </style>
 {% endblock %}
 {% load static%}
@@ -295,49 +361,55 @@
         <h2 class="description">상세 설명</h2>
         <p class=>{{ item.description|safe }}</p>
     </div>
+  
 
     <nav class="nav justify-content-center">
         <a class="nav-link active" aria-current="page" href="#description" style="color: gray;">상품상세정보</a>
         <a class="nav-link" href="#review">리뷰</a>
         <a class="nav-link" href="#FAQ" style="color: gray;">FAQ</a>
-    </nav>
-
-    <div id="review">
+    </nav><div id="review">
         <!-- 리뷰 칸 입니다.-->
         <h2 class="center">Review</h2>
         <hr>
         {% if review %}
         {% for review in review %}
-        
-        
+    
         <div class="review-card">
-            
-            <h5 >{{review.user}}</h5>
-            <div class="rating" data-value="{{ review.star }}">
-                {% for i in '12345' %}
-                    {% if forloop.counter <= review.star %} <!-- i가 str으로 인식되어서 forloop.counter로 int맞춤 -->
+            <div class="review-up">
+                <div class="user-info">
+                    <h5>{{ review.user }}</h5>
+                    <div class="rating" data-value="{{ review.star }}">
+                        {% for i in '12345' %}
+                        {% if forloop.counter <= review.star %}
                         <span>&#9733;</span>
-                    {% else %}
+                        {% else %}
                         <span>&#9734;</span>
-                    {% endif %}
-                    
-                {% endfor %}
-                
-            </div>
-            <div>
-                <button class="like-btn"></button>
-                <p class="like">좋아요: {{ review.likes_count }}</p>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
-            
-            <p class="card-text"> {{ review.content }}</p>
+                <div class="like-con">
+                    <button class="like-btn" data-review-id="{{ review.id }}">
+                        {% if user in review.reviewlike_set.all %}
+                        <i class="bi bi-heart-fill liked"></i>
+                        {% else %}
+                        <i class="bi bi-heart"></i>
+                        {% endif %}
+                    </button>
+                    <p class="like">{{ review.likes_count }}</p>
+                </div>
+            </div>
+            <div class="review-down">
+                <p class="card-text">{{ review.content }}</p>
+            </div>
             <br>
         </div>
-        <hr>
+        <br>        
         {% endfor %}
         
-        {%else%}
-        <p class="center message">{{message}}</p>
-        {%endif%}
+        {% else %}
+        <p class="center message">{{ message }}</p>
+        {% endif %}
     </div>
     <div class="pagination" >
         {% if review.has_previous %}
@@ -356,6 +428,7 @@
         <li class="page-item"><a class="page-link" href="?page={{ review.next_page_number }}">다음</a></li>
         {% endif %}
     </div>
+    <br>
     <!-- FAQ -->
     <nav class="nav justify-content-center">
         <a class="nav-link active" aria-current="page" href="#description" style="color: gray;">상품상세정보</a>
@@ -420,6 +493,8 @@
 
 {% endblock %}
 {% block extra-script %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     let currentQuantity = 1;
     document.querySelector('.add-to-cart-btn').addEventListener('click', function() {
@@ -579,5 +654,60 @@ document.querySelector('.add-to-cart-btn').addEventListener('click', function() 
     function openInquiryForm(item_id) {
         window.location.href = "{% url 'QnA:question_create' item.id %}";  // 여기에 실제 이동할 페이지의 URL을 설정해야 합니다.
     }
+
+    $(document).ready(function() {
+    // 페이지 로드 시 각 리뷰의 좋아요 상태 확인
+    $('.like-btn').each(function() {
+        var button = $(this);
+        var reviewId = button.data('review-id');
+
+        $.ajax({
+            url: '/item/check_like_status/' + reviewId + '/',
+            type: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function(response) {
+            var icon = button.find('i');
+            if (response.liked) {
+                icon.removeClass('bi-heart').addClass('bi-heart-fill');
+            } else {
+                icon.removeClass('bi-heart-fill').addClass('bi-heart');
+            }
+        },
+            error: function(xhr, status, error) {
+                console.log('Error: ' + error);
+            }
+        });
+    });
+
+    // 좋아요 버튼 클릭 이벤트
+    $('.like-btn').click(function() {
+        var button = $(this);
+        var reviewId = button.data('review-id');
+        
+        $.ajax({
+            url: "{% url 'item:like_review' %}",
+            type: "POST",
+            data: {
+                'review_id': reviewId,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+            var icon = button.find('i');
+            if (response.liked) {
+                icon.removeClass('bi-heart').addClass('bi-heart-fill');
+            } else {
+                icon.removeClass('bi-heart-fill').addClass('bi-heart');
+            }
+            button.next('.like').text(response.likes_count);
+        },
+            error: function(response) {
+                alert('오류가 발생했습니다.');
+            }
+        });
+    });
+});
+    
 </script>
 {% endblock %}
