@@ -34,12 +34,28 @@
                 <a href="{% url 'seller:seller_index' %}" class="btn btn-outline-secondary mb-4">판매자페이지</a>
             {% endif %}
         </div>  
-        <div class="col-10" id="content-display">
-            <h1>Question</h1>
-            {% for question in questions %}
-            <li><a>{{ question }}</a></li>
-            <a href="" class="btn btn-primary">답변확인</a>
-            {% endfor %}
+        <div class="col-10" id="content-display">                                  
+            <li>
+                <a>작성 내용 : {{ question.content }}</a>                           
+            </li>
+            <br>
+            {% if answers %}
+                <li>                    
+                    {% for answer in answers %}
+                        <a>{{ answer.content }}</a><br>
+                    {% endfor %}
+                </li>
+            {% endif %}
+            
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Submit</button>
+            </form>
+
+            <a href="{% url 'QnA:seller_questions' %}">
+                <button type="button">Q&A창으로 이동하기</button>
+            </a>
         </div>          
     </div>     
 </div>

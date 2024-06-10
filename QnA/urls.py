@@ -5,6 +5,8 @@ app_name = 'QnA'
 
 urlpatterns = [
     path('', views.home, name='home'),
+    path('seller_questions/', views.seller_questions, name='seller_questions'),
+    path('answer_question/<int:question_id>/', views.answer_question, name='answer_question'),
     path('<int:item_id>/', views.question_list, name='question_list'),
     path('question/<int:question_id>/', views.question_detail, name='question_detail'),
     # re_path(r'^question/(?P<question_id>[0-9]+)/$', views.question_detail, name='question_detail'),
