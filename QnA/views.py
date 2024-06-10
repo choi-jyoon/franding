@@ -50,6 +50,11 @@ def home(request):
     return render(request, 'QnA/home.html', {'questions': questions})
 
 
+def answer_detail(request, question_id):
+    answer = get_object_or_404(Answer, question_id=question_id)  # question_id를 기반으로 답변을 가져옵니다.
+    return render(request, 'answer_detail.html', {'answer': answer})
+
+
 def seller_questions(request):
     period = request.GET.get('period', '3days')
     now = datetime.now()

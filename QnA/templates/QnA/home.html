@@ -37,7 +37,8 @@
         <div class="col-10" id="content-display">
             <h1>Question</h1>
             {% for question in questions %}
-            <li><a>{{ question.title }}</a></li>
+            <li><a>{{ question }}</a></li>
+            <a href="" class="btn btn-primary">답변확인</a>
             {% endfor %}
         </div>          
     </div>     
