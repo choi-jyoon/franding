@@ -41,7 +41,6 @@
         margin-bottom: 1rem;
     }
     .question-item a {
-        
         text-decoration: none;
         font-size: 1.1rem;
         margin-bottom: 0.5rem;
@@ -61,17 +60,18 @@
         background-color: #005bb5;
         border-color: #005bb5;
     }
-
-    .btn-question {
-        background-color: #28a745; /* 초록색 배경 */
-        border-color: #28a745; /* 초록색 테두리 */
-        color: #ffffff;
+    form {
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        justify-content: flex-end;
     }
-    .btn-question:hover {
-        background-color: #218838; /* 마우스 오버 시 더 어두운 초록색 */
-        border-color: #1e7e34;
+    form select {
+        padding: 0.5rem;
+        border-radius: 5px;
+        border: 1px solid #ced4da;
+        font-size: 1rem;
     }
-
     nav .pagination .page-item .page-link {
         color: #0071e3;
         border: 1px solid #dee2e6;
@@ -103,19 +103,32 @@
         </div>  
         <div class="col-10" id="content-display">
             <h1>Question</h1>
-            {% for question in questions %}
+
+            <form method="get" action="{% url 'QnA:seller_questions' %}">
+                <select name="period" onchange="this.form.submit()">
+                    <option>최근 작성일</option>
+                    <option value="1day" {% if request.GET.period == '1day' %}selected{% endif %}>1일</option>
+                    <option value="3days" {% if request.GET.period == '3days' %}selected{% endif %}>3일</option>
+                    <option value="1week" {% if request.GET.period == '1week' %}selected{% endif %}>1주</option>
+                    <option value="3weeks" {% if request.GET.period == '3weeks' %}selected{% endif %}>3주</option>
+                </select>
+            </form>
+
+            <div style="height: 720px;">
+                {% for question in questions %}
                 <div class="question-item">
                     <a>문의 내용: {{ question.title }}</a>
                     <a>문의 상품: {{ question.item_id }}</a>
+                    <a>작성자: {{ question.user_id }}</a>
                     <a>작성일: {{ question.created_at|date:"Y년 n월 j일" }}</a>
-
                     {% if question.is_answered %}
-                        <a href="{% url 'QnA:answer_detail' question.id %}" class="btn btn-primary">답변확인</a>
+                    <a href="{% url 'QnA:answer_question' question.id %}" class="btn btn-primary">답변확인</a>
                     {% else %}
-                        <a href="{% url 'QnA:answer_detail' question.id %}" class="btn btn-primary btn-question">질문확인</a>
+                        <a href="{% url 'QnA:answer_question' question.id %}" class="btn btn-primary">답변하기</a>
                     {% endif %}
                 </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
 
             <nav aria-label="Page navigation fixed-bottom">
                 <ul class="pagination justify-content-center">

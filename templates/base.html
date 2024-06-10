@@ -173,8 +173,7 @@
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="{% url 'item:other_list' %}?item_type=2">Diffuser</a>
                             </li>
-                            <li><a class="dropdown-item" href="{% url 'item:other_list' %}?item_type=3">Fabric
-                                    Perfume</a></li>
+                            <li><a class="dropdown-item" href="{% url 'item:other_list' %}?item_type=3">Fabric Perfume</a></li>
                             <li><a class="dropdown-item" href="{% url 'item:other_list' %}?item_type=4">Candle</a></li>
                             <li><a class="dropdown-item" href="{% url 'item:other_list' %}?item_type=5">시향지</a></li>
 
@@ -196,6 +195,9 @@
                         <a class="nav-link" href="{% url 'event:index' %}">Franding</a>
                     </li>
                     <li class="nav-item" style="margin-right: 20px;">
+                        <a class="nav-link" href="{% url 'subscribe:index' %}">Membership</a>
+                    </li>
+                    <li class="nav-item" style="margin-right: 20px;">
                         <a class="nav-link" href="{% url 'about' %}">About</a>
                     </li>
                 </ul>
@@ -203,8 +205,7 @@
             <!-- 로고 -->
             <div class="nav-part mx-auto">
                 <a class="navbar-brand" href="{% url 'home' %}">
-                    <img src="{% static 'img/logo-2.png' %}" alt="Logo" width="65" height="65"
-                        class="d-inline-block align-text-top">
+                    <img src="{% static 'img/logo-21.png' %}" alt="Logo" width="65" height="auto" class="d-inline-block align-text-top">
                 </a>
             </div>
             <!-- 우측 항목들 -->
@@ -216,10 +217,8 @@
                             {% comment %} <form action='' method='post'> {% endcomment %}
                                 {% csrf_token %}
                                 <div class="input-group mb-0">
-                                    <input type="text" class="form-control" placeholder="검색어를 입력하세요"
-                                        aria-label="Search_word" aria-describedby="button-addon2" name="search_word">
-                                    <button class="btn btn-secondary" type="submit" id="button-addon2"><i
-                                            class="bi bi-search"></i></button>
+                                    <input type="text" class="form-control" placeholder="검색어를 입력하세요" aria-label="Search_word" aria-describedby="button-addon2" name="search_word">
+                                    <button class="btn btn-secondary" type="submit" id="button-addon2"><i class="bi bi-search"></i></button>
                                 </div>
                             </form>
                     </li>
@@ -233,12 +232,10 @@
                     <!--프로필-->
                     <li class="nav-item dropdown">
                         {% if user.is_active %}
-                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarUserDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <!-- 프로필 이미지, 이름 표시 -->
                             {% if profile_img and profile_img.strip %}
-                            <img src="{{profile_img}}" alt="profile_img" class="nav-profile-img"></i>&nbsp;{{
-                            user.last_name }}{{ user.first_name }}
+                            <img src="{{profile_img}}" alt="profile_img" class="nav-profile-img"></i>&nbsp;{{user.last_name }}{{ user.first_name }}
                             {% else %}
                             <i class="fas fa-user-circle"></i>&nbsp;{{ user.last_name }}{{ user.first_name }}
                             {% endif %}
@@ -251,8 +248,7 @@
                             <li><a class="dropdown-item" href="{% url 'mypage:order_index' %}">My Page</a></li>
                         </ul>
                         {% else %}
-                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarAnonymousDropdown"
-                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarAnonymousDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-user-circle"></i>&nbsp;Anonymous
                         </a>
                         <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="navbarAnonymousDropdown">
@@ -274,17 +270,14 @@
     <footer class="footer bg-light">
         <div class="container text-center">
             <p>© 2024 Franding. All rights reserved.</p>
-            <p>Follow us: <a href="#">Facebook</a> | <a href="#">Twitter</a> | <a
-                    href="https://www.instagram.com/frand_ing/">Instagram</a></p>
+            <p>Follow us: <a href="#">Facebook</a> | <a href="#">Twitter</a> | <a href="https://www.instagram.com/frand_ing/">Instagram</a></p>
             <p>개인정보처리방침 | 이용약관</p>
         </div>
     </footer>
     {% endblock %}
 
     <script src="https://kit.fontawesome.com/c998a172fe.js" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     {% block extra-script %}{% endblock %}
 
     <script>

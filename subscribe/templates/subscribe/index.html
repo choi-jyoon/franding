@@ -25,7 +25,7 @@
         align-items: center;
     }
     .my-divider {
-        margin-top: 50px; /* 공간 넓히기 */
+        margin-top: 20px; /* 공간 넓히기 */
         margin-bottom: 50px; /* 공간 넓히기 */
         border-top: 1px solid #ccc; /* 구분선 추가 */
     }
@@ -60,9 +60,14 @@
 {% endblock %}
 
 {% block content %}
-<div>
-    <h3> Franding 향수 구독 서비스 </h3>
-    <p style="margin-top: 20px;">여러분을 표현할 수 있는 2-3개의 키워드를 선택해 주세요. franding은 여러분의 선택을 토대로 여러분이 매혹될 수 있는 맞춤형 향수를 엄선하여 제공합니다. <br>Franding과 함께 향기로운 여정을 시작하세요.</p>
+<div style="display: flex; flex-direction: column; justify-content: space-between; ">
+    <div>
+        <h3>Franding 향수 구독 서비스</h3>
+        <p style="margin-top: 20px;">여러분을 표현할 수 있는 2-3개의 키워드를 선택해 주세요. franding은 여러분의 선택을 토대로 여러분이 매혹될 수 있는 맞춤형 향수를 엄선하여 제공합니다. <br>Franding과 함께 향기로운 여정을 시작하세요.</p>
+    </div>
+    <div style="display: flex; justify-content: flex-end;">
+        <a href='{% url "subscribe:membership_detail" %}' class="btn btn-primary" style="height: 40px; text-align: center;">membership</a>
+    </div>
 </div>
 
 <div class="my-divider"></div>
@@ -73,7 +78,20 @@
 <form id="keyword-form" method="post" action="{% url 'subscribe:index' %}">
     {% csrf_token %}
     <div class="grid-out-container">
-        <div class="grid-container">
+        <div class="grid-container d-flex justify-content-center align-items-center ">
+            {% if keywords %}
+                <ul class="list-inline text-center">
+                    {% for keyword in keywords %}
+                    <li class="list-inline-item">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill keyword-button" data-id="{{ keyword.id }}">{{ keyword.word }}</button>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+            <div class="text-center">
+                <p>이달의 키워드를 준비 중입니다.</p>
+            </div>
+            {% endif %}
             <ul class="list-inline text-center">
                 {% for keyword in keywords %}
                 <li class="list-inline-item">

@@ -1,13 +1,6 @@
 from django import forms
-from item.models import Item, Brand
-
-
-# class ItemForm(forms.ModelForm):
-#     class Meta:
-#         model = Item
-#         fields = '__all__'  # 이렇게 하면 모든 필드를 폼에 포함시킵니다.
-
-
+from item.models import Item
+from review.models import ReviewReply
 
 class ItemForm(forms.ModelForm):
     
@@ -44,3 +37,7 @@ class ItemForm(forms.ModelForm):
             'image': forms.FileInput(), # 이미지 파일필드
         }
 
+class ReviewReplyForm(forms.ModelForm):
+    class Meta:
+        model = ReviewReply
+        fields = ['comment']

@@ -193,7 +193,30 @@
                     {% endfor %}
                 </div>
             </td>
-            <td>{{ review.content }}</td>
+            <td>
+                {{ review.content }}
+                <button class="btn btn-light reply-toggle" data-target="reply-form-{{ review.id }}" style="float: right;">대댓글</button>
+                <div id="reply-form-{{ review.id }}" class="reply-form" style="display: none;">
+                    <br>
+                    <hr>
+                    {% if review.reviewreply_set.exists %}
+                        <div class="existing-replies">
+                            {% for reply in review.reviewreply_set.all %}
+                                <div class="reply">
+                                    <strong>{{ reply.user }}:</strong> {{ reply.comment }}
+                                    <span class="datetime">{{ reply.datetime }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <form method="post" action="{% url 'seller:add_review_reply' review.id %}">
+                            {% csrf_token %}
+                            <textarea name="comment" rows="3" cols="100" placeholder="댓글을 입력하세요..."></textarea>
+                            <button type="submit" class="btn btn-light">댓글 달기</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </td>
         </tr>
         {% endfor %}
         <tr>
@@ -289,6 +312,22 @@
                 alert('크기를 숫자로 입력하세요.');
                 return false; // 폼 제출 중지
             }
+        });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var toggles = document.querySelectorAll(".reply-toggle");
+        toggles.forEach(function(toggle) {
+            toggle.addEventListener("click", function() {
+                var targetId = this.getAttribute("data-target");
+                var targetElement = document.getElementById(targetId);
+                if (targetElement.style.display === "block") {
+                    targetElement.style.display = "none";
+                } else {
+                    targetElement.style.display = "block";
+                }
+            });
         });
     });
 </script>

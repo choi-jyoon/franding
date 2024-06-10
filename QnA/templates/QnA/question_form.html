@@ -2,22 +2,82 @@
 {% load static %}
 
 {% block extra-style %}
+<style>
+    /* 위의 CSS 스타일을 추가 */
+    /* html, body {
+        height: 100%;
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: #f5f5f7;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    } */
+    .container {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        padding: 2rem;
+        max-width: 600px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    h1 {
+        font-size: 24px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 1.5rem;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #333;
+    }
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        color: #333;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075);
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+    .form-control:focus {
+        border-color: #0071e3;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        outline: 0;
+    }
+    .btn-submit {
+        background-color: #0071e3;
+        border-color: #0071e3;
+        color: #fff;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    }
+    .btn-submit:hover {
+        background-color: #005bb5;
+        border-color: #005bb5;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<head>
-    <title>Ask a Question</title>
-</head>
-
-<body>
+<div class="container">
     <h1>Ask a Question</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Submit</button>
+        <button type="submit" class="btn-submit">Submit</button>
     </form>
-</body>
-{% endblock %}
-
-{% block extra-script %}
+</div>
 {% endblock %}

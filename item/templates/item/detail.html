@@ -75,9 +75,12 @@
         align-items: center;
         justify-content: center;
         border-top: 1px solid #ccc;
-        border-bottom: 1px solid #ccc;
+       
     }
-
+    .image-cont{
+        border-top: 1px solid #ccc;
+        
+    }
     .bottom-box {
         flex: 1;
         display: flex;
@@ -112,25 +115,88 @@
         align-items: center;
         justify-content: center;
     }
+/*review*/
+.review-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 20px;
+}
 
-    .review-card {
-        height: 100px;
-    }
+.review-up {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
 
-    .pagination {
-        justify-content: center;
-        display: flex;
-        margin-top: 30px;
-        width: 100%;
-    }
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
 
-    .message {
-        color: #5B574F;
-    }
+.rating {
+    display: flex;
+}
 
-    .pagination .page-item.active .page-link {
-        background-color: #5B574F;
-        border-color: #5B574F;
+.rating span {
+    font-size: 20px;
+    color: gold;
+}
+
+.like-con {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.like-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.like-btn i {
+    font-size: 20px;
+}
+
+.like-btn {
+    color: red;
+}
+
+.like {
+    margin: 0;
+    font-size: 14px;
+    text-align: center;
+}
+
+.review-down {
+    margin-top: 10px;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background: #ddd;
+    margin-top: 20px;
+}
+
+.pagination{
+    justify-content:center;
+    display: flex;
+    margin-top: 30px;
+    width: 100%;  
+    
+}
+.like-btn{
+    border: #fff;
+}
+.message
+{
+    color: #5B574F;
+}
+.pagination .page-item.active .page-link {
+        background-color: #5B574F; /* 활성 페이지 버튼의 배경색 */
+        border-color: #5B574F; /* 활성 페이지 버튼의 테두리 색상 */
         color: white;
     }
 
@@ -232,6 +298,9 @@
         font-size: 17px;
         background-color: #fff;
     }    
+    .nav{
+        border-top:1px solid #ccc;
+    }
 </style>
 {% endblock %}
 {% load static %}
@@ -288,35 +357,52 @@
         <h2 class="description">상세 설명</h2>
         <p>{{ item.description|safe }}</p>
     </div>
+  
 
     <nav class="nav justify-content-center">
         <a class="nav-link active" aria-current="page" href="#description" style="color: gray;">상품상세정보</a>
         <a class="nav-link" href="#review">리뷰</a>
         <a class="nav-link" href="#FAQ" style="color: gray;">FAQ</a>
-    </nav>
-
-    <div id="review">
+    </nav><div id="review">
         <!-- 리뷰 칸 입니다.-->
         <h2 class="center">Review</h2>
         <hr>
         {% if review %}
         {% for review in review %}
+    
         <div class="review-card">
-            <h5>{{ review.user }}</h5>
-            <div class="rating" data-value="{{ review.star }}">
-                {% for i in '12345' %}
-                    {% if forloop.counter <= review.star %}
+            <div class="review-up">
+                <div class="user-info">
+                    <h5>{{ review.user }}</h5>
+                    <div class="rating" data-value="{{ review.star }}">
+                        {% for i in '12345' %}
+                        {% if forloop.counter <= review.star %}
                         <span>&#9733;</span>
-                    {% else %}
+                        {% else %}
                         <span>&#9734;</span>
-                    {% endif %}
-                {% endfor %}
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="like-con">
+                    <button class="like-btn" data-review-id="{{ review.id }}">
+                        {% if user in review.reviewlike_set.all %}
+                        <i class="bi bi-heart-fill liked"></i>
+                        {% else %}
+                        <i class="bi bi-heart"></i>
+                        {% endif %}
+                    </button>
+                    <p class="like">{{ review.likes_count }}</p>
+                </div>
+            </div>
+            <div class="review-down">
+                <p class="card-text">{{ review.content }}</p>
             </div>
             <br>
-            <p class="card-text">{{ review.content }}</p>
         </div>
-        <hr>
+        <br>        
         {% endfor %}
+        
         {% else %}
         <p class="center message">{{ message }}</p>
         {% endif %}
@@ -338,26 +424,7 @@
         <li class="page-item"><a class="page-link" href="?page={{ review.next_page_number }}">다음</a></li>
         {% endif %}
     </div>
-    <!-- 플로팅배너-->
-    <div id="floating-banner" class="floating-banner">
-        <div class="banner-content">
-            <h3>{{ item.name }}</h3>
-            <p>Price: {{ item.price }}원</p>
-            <p>Size: {{ item.size.ml }}ml</p>
-            <div class="d-flex justify-content-center">
-                <button class="btn btn-secondary btn-sm decrease-btn-float">-</button>
-                <span class="mx-2" id="current-quantity-float">1</span>
-                <button class="btn btn-secondary btn-sm increase-btn-float">+</button>
-            </div>
-            <form id="add-to-cart-form" action="{% url 'item:add' item.id %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" id="go-cart-float" name="go_cart" value="0">
-                <input type="hidden" id="current-quantity-hidden-float" value="1" name="current-amount">
-                <button class="btn btn-primary mt-3 add-to-cart-btn-float" type="button">장바구니 추가</button>
-            </form>
-        </div>
-    </div>
-
+    <br>
     <!-- FAQ -->
     <nav class="nav justify-content-center">
         <a class="nav-link active" aria-current="page" href="#description" style="color: gray;">상품상세정보</a>
@@ -391,6 +458,25 @@
             border-radius: 12px;
             ">1대1 문의하기</button>
     </div>     
+    <!-- 플로팅배너-->
+    <div id="floating-banner" class="floating-banner">
+        <div class="banner-content">
+            <h3>{{ item.name }}</h3>
+            <p>Price: {{ item.price }}원</p>
+            <p>Size: {{ item.size.ml }}ml</p>
+            <div class="d-flex justify-content-center">
+                <button class="btn btn-secondary btn-sm decrease-btn-float">-</button>
+                <span class="mx-2" id="current-quantity-float">1</span>
+                <button class="btn btn-secondary btn-sm increase-btn-float">+</button>
+            </div>
+            <form id="add-to-cart-form" action="{% url 'item:add' item.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" id="go-cart-float" name="go_cart" value="0">
+                <input type="hidden" id="current-quantity-hidden-float" value="1" name="current-amount">
+                <button class="btn btn-primary mt-3 add-to-cart-btn-float" type="button">장바구니 추가</button>
+            </form>
+        </div>
+    </div>
 </div>
 <div id="myModal" class="modal">
     <div class="modal-content">
@@ -403,6 +489,8 @@
 
 {% endblock %}
 {% block extra-script %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     let currentQuantity = 1;
 
@@ -531,5 +619,60 @@ document.querySelector('.add-to-cart-btn').addEventListener('click', function() 
     function openInquiryForm(item_id) {
         window.location.href = "{% url 'QnA:question_create' item.id %}";  // 여기에 실제 이동할 페이지의 URL을 설정해야 합니다.
     }
+
+    $(document).ready(function() {
+    // 페이지 로드 시 각 리뷰의 좋아요 상태 확인
+    $('.like-btn').each(function() {
+        var button = $(this);
+        var reviewId = button.data('review-id');
+
+        $.ajax({
+            url: '/item/check_like_status/' + reviewId + '/',
+            type: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function(response) {
+            var icon = button.find('i');
+            if (response.liked) {
+                icon.removeClass('bi-heart').addClass('bi-heart-fill');
+            } else {
+                icon.removeClass('bi-heart-fill').addClass('bi-heart');
+            }
+        },
+            error: function(xhr, status, error) {
+                console.log('Error: ' + error);
+            }
+        });
+    });
+
+    // 좋아요 버튼 클릭 이벤트
+    $('.like-btn').click(function() {
+        var button = $(this);
+        var reviewId = button.data('review-id');
+        
+        $.ajax({
+            url: "{% url 'item:like_review' %}",
+            type: "POST",
+            data: {
+                'review_id': reviewId,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+            var icon = button.find('i');
+            if (response.liked) {
+                icon.removeClass('bi-heart').addClass('bi-heart-fill');
+            } else {
+                icon.removeClass('bi-heart-fill').addClass('bi-heart');
+            }
+            button.next('.like').text(response.likes_count);
+        },
+            error: function(response) {
+                alert('오류가 발생했습니다.');
+            }
+        });
+    });
+});
+    
 </script>
 {% endblock %}
