@@ -120,17 +120,23 @@
             <nav aria-label="Page navigation fixed-bottom">
                 <ul class="pagination justify-content-center">
                     {% if questions.has_previous %}
-                    <li class="page-item"><a class="page-link" href="?page=1&period={{ request.GET.period }}">&laquo; 처음</a></li>
-                    <li class="page-item"><a class="page-link" href="?page={{ questions.previous_page_number }}&period={{ request.GET.period }}">이전</a></li>
-                    {% endif %}
-
-                    {% for page in questions.paginator.page_range %}
-                    <li class="page-item {% if questions.number == page %}active{% endif %}"><a class="page-link" href="?page={{ page }}&period={{ request.GET.period }}">{{ page }}</a></li>
-                    {% endfor %}
+                        <li class="page-item"><a class="page-link" href="?page=1&period={{ request.GET.period }}">&laquo;</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ questions.previous_page_number }}&period={{ request.GET.period }}">&lt;</a></li>
+                    {% endif %}                    
+        
+                    {% with current=questions.number max_pages=questions.paginator.num_pages %}
+                        {% with start_page=current|add:-2|default_if_none:1 end_page=current|add:2 %}
+                            {% for page in questions.paginator.page_range %}
+                                {% if page >= start_page and page <= end_page %}
+                                <li class="page-item {% if questions.number == page %}active{% endif %}"><a class="page-link" href="?page={{ page }}&period={{ request.GET.period }}">{{ page }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                        {% endwith %}
+                    {% endwith %}
                     
                     {% if questions.has_next %}
-                    <li class="page-item"><a class="page-link" href="?page={{ questions.next_page_number }}&period={{ request.GET.period }}">다음</a></li>
-                    <li class="page-item"><a class="page-link" href="?page={{ questions.paginator.num_pages }}&period={{ request.GET.period }}">맨 끝 &raquo;</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ questions.next_page_number }}&period={{ request.GET.period }}">&gt;</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ questions.paginator.num_pages }}&period={{ request.GET.period }}">&raquo;</a></li>
                     {% endif %}
                 </ul>
             </nav>
