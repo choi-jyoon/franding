@@ -106,7 +106,7 @@
         border: 1px solid #ddd;
         font-size: 15px;
     }
-    
+
     .review-table th {
         background-color: #f2f2f2;
     }
@@ -114,6 +114,37 @@
     .rating span {
         color: gold;
     }
+
+    .reply {
+        padding: 10px 15px; /* 내부 여백 */
+        margin-bottom: 10px; /* 아래 여백 */
+        margin-left: 5px; /* 대댓글 들여쓰기 */
+    }
+
+    .arrow {
+        font-size: 1.2em; /* 아이콘 크기 */
+        color: #555; /* 아이콘 색상 */
+        margin-right: 8px; /* 아이콘과 텍스트 사이의 여백 */
+    }
+    
+    .reply-user {
+        font-weight: bold; /* 글자 굵게 */
+        color: #333; /* 글자 색 */
+    }
+    
+    .reply-comment {
+        display: block; /* 블록 요소로 변환 */
+        margin-top: 5px; /* 위쪽 여백 */
+        color: #555; /* 글자 색 */
+    }
+    
+    .datetime {
+        display: block; /* 블록 요소로 변환 */
+        margin-top: 8px; /* 위쪽 여백 */
+        font-size: 0.875em; /* 글자 크기 */
+        color: #999; /* 글자 색 */
+        text-align: right; /* 오른쪽 정렬 */
+    }   
 </style>
 
 <h1 style="text-align: center;">상품 정보</h1>
@@ -134,8 +165,8 @@
                 </div>
             {% endfor %}
             <div class="button-container">
-                <button type="submit" class="btn btn-success">저장</button>
-                <a href="{% url 'seller:item_delete' pk=item.pk %}" class="btn btn-danger">삭제</a>
+                <button type="submit" class="btn btn-outline-success">저장</button>
+                <a href="{% url 'seller:item_delete' pk=item.pk %}" class="btn btn-outline-danger">삭제</a>
             </div>
         </div>
     </div>
@@ -203,7 +234,8 @@
                         <div class="existing-replies">
                             {% for reply in review.reviewreply_set.all %}
                                 <div class="reply">
-                                    <strong>{{ reply.user }}:</strong> {{ reply.comment }}
+                                    <span class="arrow">↳</span>
+                                    <strong class="reply-user">{{ reply.user }}:</strong> {{ reply.comment }}
                                     <span class="datetime">{{ reply.datetime }}</span>
                                 </div>
                             {% endfor %}
