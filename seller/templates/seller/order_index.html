@@ -55,7 +55,7 @@
     .left-section form {
         margin-right: 20px; /* 폼 간의 여백 추가 */
     }
-    /* 리뷰 */
+    /* 오더 */
     .order-card{
         margin: 0 auto;
         width: 80%;
@@ -82,6 +82,25 @@
         color: gold;
     }
     
+    .order-link-btn {
+        border: 2px solid #f2f2f2;
+        background-color: transparent;
+        cursor: pointer;
+        border-radius: 10px; /* 둥글게 만들기 */
+        padding: 4px 10px; /* 버튼 크기 조절 */
+        transition: background-color 0.3s, box-shadow 0.3s; /* 부드러운 전환 효과 */
+    }
+    
+    .order-link-btn:hover {
+        background-color: #f2f2f2;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 호버 시 그림자 추가 */
+    }
+
+    .order-link-btn:active {
+        background-color: #e0e0e0; /* 눌렸을 때 배경색 변경 */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 눌렸을 때 그림자 변경 */
+        transform: translateY(2px); /* 눌렸을 때 버튼 살짝 내려가기 */
+    }
 </style>
 {% endblock %}
 
@@ -146,7 +165,9 @@
                 <tr class="order-card">
                     <td>{{ order.ordercart_set.all.0.cart.user }}</td> <!-- 첫 번째 OrderCart의 사용자 -->
                     <td>{{ order.datetime }}</td>
-                    <td>{{ order.id }}</td>
+                    <td class="order-id-toggle" data-target="order-detail-{{ order.id }}" data-order-id="{{ order.id }}">
+                        <button class="order-link-btn" data-order-id="{{ order.id }}">{{ order.id }}</button>
+                    </td>
                     <td>
                         <form method="post" action="{% url 'seller:update_delivery_status' pk=order.id %}" id="delivery_status_form_{{ order.id }}">
                             {% csrf_token %}
@@ -185,5 +206,36 @@
 {% endblock %}
 
 {% block extra-script %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var toggles = document.querySelectorAll(".order-id-toggle");
+        toggles.forEach(function(toggle) {
+            toggle.addEventListener("click", function(event) {
+                event.preventDefault(); // 링크 기본 동작 방지
+                var targetId = this.getAttribute("data-target");
+                var existingRow = document.getElementById(targetId);
+                var orderId = this.getAttribute("data-order-id");
+                var orderDetailUrlTemplate = "{% url 'seller:order_detail' pk=0 %}";
+                var orderDetailUrl = orderDetailUrlTemplate.replace('/0/', `/${orderId}/`);
 
+                if (existingRow) {
+                    existingRow.style.display = existingRow.style.display === "none" ? "table-row" : "none";
+                } else {
+                    fetch(orderDetailUrl)
+                        .then(response => response.text())
+                        .then(html => {
+                            var newRow = document.createElement('tr');
+                            newRow.id = targetId;
+                            newRow.innerHTML = `<td colspan="4">${html}</td>`; // 열 수에 맞춰 colspan 조정
+                            newRow.style.display = "table-row";
+                            this.closest('tr').after(newRow);
+                        })
+                        .catch(error => {
+                            console.error('Error fetching order details:', error);
+                        });
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

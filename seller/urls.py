@@ -14,4 +14,5 @@ urlpatterns = [
     # 주문내역관리
     path('seller_orderindex/', views.seller_orderindex, name='seller_orderindex'),
     path('update_delivery_status/<int:pk>/', views.update_delivery_status, name='update_delivery_status'),
+    path('order_detail/<int:pk>/', views.order_detail, name='order_detail'),
 ]

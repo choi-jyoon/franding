@@ -13,7 +13,7 @@ class Question(models.Model):
     is_answered = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.title
+        return self.item_id.name
 
 
 class Answer(models.Model):
