@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ItemForm, ReviewReplyForm
 from item.models import Item, Brand, ItemType, Size
 from review.models import Review, ReviewReply
-from cart.models import Order
+from cart.models import Order, OrderCart
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator
@@ -176,3 +176,12 @@ def update_delivery_status(request, pk):
             order.delivery_info.status = new_status
             order.delivery_info.save()
         return redirect('seller:seller_orderindex')
+    
+def order_detail(request, pk):
+    order = Order.objects.get(pk=pk)
+    ordercarts = OrderCart.objects.filter(order_id = pk)
+    context={
+        'order' : order,
+        'ordercarts':ordercarts
+    }
+    return render(request, 'seller/order_detail.html', context)
