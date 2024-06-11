@@ -393,6 +393,11 @@ hr {
         <h2 class="center">Review</h2>
         <hr>
         {% if review %}
+        <form method="get" action="{% url 'item:detail' item.id%}">
+        <button type="submit" name="sort_by" value="-datetime">날짜순</button>
+        <button type="submit" name="sort_by" value="-star">평점순</button>
+        <button type="submit" name="sort_by" value="-likes">좋아요순</button>
+        </form>  
     {% for review in review %}
         <div class="review-card">
             <div class="review-up">
@@ -446,23 +451,25 @@ hr {
     {% endfor %}
 {% endif %}
     </div>
+    <form method="get" action="{% url 'item:detail' item.id%}">
     <div class="pagination" >
         {% if review.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page={{ review.previous_page_number }}">이전</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ review.previous_page_number }}&sort_by={{ sort_by }}">이전</a></li>
         {% endif %}
 
         {% for page_num in review.paginator.page_range %}
         {% if review.number == page_num %}
-        <li class="page-item active"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+        <li class="page-item active"><a class="page-link"  href="?page={{ page_num }}&sort_by={{ sort_by }}">{{ page_num }}</a></li>
         {% else %}
-        <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+        <li class="page-item"><a class="page-link"   href="?page={{ page_num }}&sort_by={{ sort_by }}">{{ page_num }}</a></li>
         {% endif %}
         {% endfor %}
 
         {% if review.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{ review.next_page_number }}">다음</a></li>
+        <li class="page-item"><a class="page-link"   href="?page={{ review.next_page_number }}&sort_by={{ sort_by }}">다음</a></li>
         {% endif %}
     </div>
+</form> 
     <br>
     <!-- FAQ -->
     <nav class="nav justify-content-center">
@@ -567,6 +574,7 @@ document.querySelector('.close').addEventListener('click', function() {
     var modal = document.getElementById('myModal');
     modal.style.display = "none";
     document.getElementById('add-to-cart-form').submit();//<-장바구니로 이어지는 코드 작성 필요
+
 });
 
 // 모달 창 외부 클릭 시 닫기 기능 추가
@@ -577,6 +585,7 @@ window.addEventListener('click', function(event) {
         document.getElementById('go-cart').value = "1";
         document.getElementById('go-cart-float').value = "1";
         document.getElementById('add-to-cart-form').submit(); // 폼 제출
+
     }
 });
     //수량 조절
@@ -642,31 +651,6 @@ window.addEventListener('click', function(event) {
         document.getElementById('add-to-cart-form').submit(); // 폼 제출
     }, 30000); // 2000밀리초 = 2초 
 });
-    // 장바구니 담기 버튼 클릭 시 이벤트 처리
-/*
-document.querySelector('.add-to-cart-btn').addEventListener('click', function() {
-    // 장바구니에 담긴 상품 수량 가져오기
-    var currentQuantity = document.getElementById('current-quantity').innerText;
-
-    // 팝업창에 표시할 내용 설정
-    var popupContent = '장바구니에 {{ item.name }}이'+ currentQuantity + '개 담겼습니다.';
-
-    // 팝업창 띄우기
-    alert(popupContent);
-});
-    
-    // 장바구니 담기 버튼 클릭 시 이벤트 처리
-    document.querySelector('.add-to-cart-btn-float').addEventListener('click', function() {
-    // 장바구니에 담긴 상품 수량 가져오기
-    var currentQuantity = document.getElementById('current-quantity').innerText;
-
-    // 팝업창에 표시할 내용 설정
-    var popupContent = '장바구니에 {{ item.name }}이'+ currentQuantity + '개 담겼습니다.';
-
-    // 팝업창 띄우기
-    alert(popupContent);
-});
-*/
     // faq
     document.addEventListener('DOMContentLoaded', function() {
         const faqQuestions = document.querySelectorAll('.faq-question');
