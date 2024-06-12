@@ -10,21 +10,26 @@
             <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary mb-4">회원정보</a>
             <a href="{% url 'event:index' %}" class="btn btn-outline-secondary mb-4">나의 Franding</a>
             <a href="{% url 'subscribe:index' %}" class="btn btn-outline-secondary mb-4">구독</a>
-            <a href="{% url 'mypage:itemlike' %}" class="btn btn-outline-secondary mb-4">찜 목록</a>
+            <a href="{% url 'mypage:item_like_page' %}" class="btn btn-outline-secondary mb-4">찜 목록</a>
             <a href="{% url 'QnA:home' %}" class="btn btn-outline-secondary mb-4">Q&A</a>    
             {% if user.is_staff %}
                 <a href="{% url 'seller:seller_index' %}" class="btn btn-outline-secondary mb-4">판매자페이지</a>
             {% endif %}
         </div>
         <div class="col-10">
-            <h1>{{ user.username }}'s Wishlist</h1>
+            <h1>{{ user.username }}님의 찜 목록</h1>
             <ul>
-            {% for item in itemlike.items.all %}
+            {% for item_likes in liked_items %}
                 <li>
-                    <a href="{% url 'mypage:item_detail' item.id %}">{{ item.name }}</a>
+                    <a href="{% url 'item:detail' item.id %}">{{ item.name }}</a>
                     <button class="like-button" data-item-id="{{ item.id }}">
+                        {% if user.is_authenticated and item in user.liked_items.all %}
                         <i class="fas fa-heart text-danger"></i> <!-- 꽉 찬 하트 -->
+                        {% else %}
+                        <i class="far fa-heart text-danger"></i> <!-- 비어 있는 하트 -->
+                        {% endif %}
                     </button>
+                    좋아요 수: <span id="like-count-{{ item.id }}">{{ item.item_likes.count }}</span>
                 </li>
             {% endfor %}
             </ul>
@@ -32,17 +37,21 @@
     </div>
 </div>
 
+{% block extra-script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 document.querySelectorAll('.like-button').forEach(button => {
     button.addEventListener('click', function() {
         var itemId = this.getAttribute('data-item-id');
-        var url = "{% url 'mypage:add_to_itemlike' 0 %}".replace('0', itemId);
+        var url = "{% url 'mypage:toggle_like' 0 %}".replace('0', itemId);
         fetch(url, {
             method: 'POST',
             headers: {
                 'X-CSRFToken': '{{ csrf_token }}',
             },
         }).then(response => response.json()).then(data => {
+            var likeCountElement = document.getElementById('like-count-' + itemId);
+            likeCountElement.textContent = data.count;
             if (data.liked) {
                 this.innerHTML = '<i class="fas fa-heart text-danger"></i>';
             } else {
@@ -52,4 +61,5 @@ document.querySelectorAll('.like-button').forEach(button => {
     });
 });
 </script>
+{% endblock %}
 {% endblock %}

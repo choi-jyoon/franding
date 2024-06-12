@@ -6,8 +6,9 @@ from django.contrib.auth import logout as auth_logout
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator
 from QnA.models import Question
-from item.models import Itemlike, Item
+from item.models import Item
 from django.http import JsonResponse
+from django.db.models import Count
 
 
 
@@ -125,32 +126,22 @@ def user_delete(request):
     return redirect('home')
 
 @login_required
-def itemlike(request):
-    itemlike, created = Itemlike.objects.get_or_create(user=request.user)
-    return render(request, 'mypage/itemlike.html', {'itemlike': itemlike})
+def item_like_page(request):
+    user = request.user
+    liked_items = Item.objects.filter(item_likes__user=user).annotate(like_count=Count('item_likes')).order_by('-like_count')
+    context = {
+        'liked_items': liked_items
+    }
+    return render(request, 'mypage/itemlike.html', context)
 
 @login_required
-def add_to_itemlike(request, item_id):
+def toggle_like(request, item_id):
     item = get_object_or_404(Item, id=item_id)
-    itemlike, created = Itemlike.objects.get_or_create(user=request.user)
-    
-    if item in itemlike.items.all():
-        itemlike.items.remove(item)
+    user = request.user
+    like, created = Itemlike.objects.get_or_create(item=item, user=user)
+    if not created:
+        like.delete()
         liked = False
     else:
-        itemlike.items.add(item)
         liked = True
-    
-    like_count = Itemlike.objects.filter(items__id=item_id).count()
-    
-    return JsonResponse({'liked': liked, 'like_count': like_count})
-
-def item_detail(request, item_id):
-    item = get_object_or_404(Item, id=item_id)
-    like_count = Itemlike.objects.filter(items__id=item_id).count()
-    liked_items = []
-    if request.user.is_authenticated:
-        itemlike, created = Itemlike.objects.get_or_create(user=request.user)
-        liked_items = itemlike.items.all()
-    
-    return render(request, 'item_detail.html', {'item': item, 'liked_items': liked_items, 'like_count': like_count})
+    return JsonResponse({'liked': liked, 'count': item.item_likes.count()})
