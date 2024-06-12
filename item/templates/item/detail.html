@@ -331,6 +331,26 @@ hr {
     .nav{
         border-top:1px solid #ccc;
     }
+    .sort_cont
+    {
+        margin-left: 90%;
+    }
+    .sort_btn {
+        height: 35px;
+        width: 35px;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: auto;
+        margin-bottom: 10px;
+        
+        }
+
+    .sort_btn:hover {
+            background-color: #007bff;
+            color: white;
+    }
+    
 </style>
 {% endblock %}
 {% load static%}
@@ -394,9 +414,14 @@ hr {
         <hr>
         {% if review %}
         <form method="get" action="{% url 'item:detail' item.id%}">
-        <button type="submit" name="sort_by" value="-datetime">날짜순</button>
-        <button type="submit" name="sort_by" value="-star">평점순</button>
-        <button type="submit" name="sort_by" value="-likes">좋아요순</button>
+            <div class="sort_cont">
+                <button type="submit" name="sort_by" value="-datetime" class="sort_btn"><i
+                        class="{% if sort_by == '-datetime' %}bi-alarm-fill{% else %}bi-alarm{% endif %}"></i></button>
+                <button type="submit" name="sort_by" value="-star" class="sort_btn"><i
+                        class="{% if sort_by == '-star' %}bi bi-star-fill{% else %}bi bi-star{% endif %}"></i></button>
+                <button type="submit" name="sort_by" value="-likes" class="sort_btn"><i
+                        class="{% if sort_by == '-likes' %}bi bi-heart-fill{% else %}bi bi-heart{% endif %}"></i></button>
+            </div>
         </form>  
     {% for review in review %}
         <div class="review-card">
