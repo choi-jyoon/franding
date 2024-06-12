@@ -3,6 +3,7 @@ from .models import Keyword, Subscribe, SubscribeKeyword, SubscribePayInfo
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from collections import defaultdict, Counter
 from item.models import Item
 from mypage.models import UserAddInfo
@@ -158,7 +159,7 @@ def pay_success(request):
             payment_info.status = 'approved'  # 결제 완료 상태로 변경
             payment_info.approved_at = now  # 승인 시간 업데이트
             payment_info.last_payment_date = now
-            payment_info.next_payment_date = now + timedelta(minutes=2)
+            payment_info.next_payment_date = now + timedelta(days=30)
             if sid:
                 payment_info.sid = sid  # sid 값 저장
             payment_info.save()
@@ -206,10 +207,10 @@ def second_pay_process(request):
     
     if response.status_code == 200:
         # n회차 결제 성공 -> 구독 정보 업데이트
-        pay_info.next_payment_date = now + timedelta(minutes=2)  # 다음 결제 날짜를 2분 뒤로 설정
+        pay_info.next_payment_date = now + timedelta(days=30)  # 다음 결제 날짜를 30일 뒤로 설정
         pay_info.last_payment_date = now  # 마지막 결제일을 현재 시간으로 설정
         pay_info.save()
-        return index(request)
+        return JsonResponse({'status': 'success', 'message': '구독 갱신이 완료되었습니다.'})
     
     return render(request, 'payment/payfail.html')
 
