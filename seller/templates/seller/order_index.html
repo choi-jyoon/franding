@@ -43,10 +43,20 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px;
+        padding: 1rem;
         background-color: #f1f1f1;
-        border: 1px solid #ccc;
+        border-radius: 8px;
+        margin-bottom: 2rem;
     }
+
+    .toolbar select {
+        padding: 0.5rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        transition: border-color 0.3s;
+    }
+    
     .left-section {
         display: flex; /* 요소들을 한 줄에 나란히 배치 */
         align-items: center;
@@ -114,7 +124,7 @@
           <a class="nav-link" href="{% url 'seller:seller_index' %}">상품관리</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">고객관리</a>
+          <a class="nav-link" href="{% url 'seller:subscribe_index' %}">구독관리</a>
         </li>
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="{% url 'seller:seller_orderindex' %}">주문내역관리</a>
