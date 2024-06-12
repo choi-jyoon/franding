@@ -137,8 +137,20 @@
 .user-info {
     display: flex;
     flex-direction: column;
+    
 }
-
+.profile-img {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    border-radius: 40%; /* 원형으로 만들기 위해 추가 */
+    background-color: #e2e2e2;
+    border:2px solid #ccc;
+    margin-right: 10px; 
+}
+.profile{
+    display: flex;
+}
 .rating {
     display: flex;
 }
@@ -319,6 +331,26 @@ hr {
     .nav{
         border-top:1px solid #ccc;
     }
+    .sort_cont
+    {
+        margin-left: 90%;
+    }
+    .sort_btn {
+        height: 35px;
+        width: 35px;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: auto;
+        margin-bottom: 10px;
+        
+        }
+
+    .sort_btn:hover {
+            background-color: #007bff;
+            color: white;
+    }
+    
 </style>
 {% endblock %}
 {% load static%}
@@ -381,11 +413,24 @@ hr {
         <h2 class="center">Review</h2>
         <hr>
         {% if review %}
+        <form method="get" action="{% url 'item:detail' item.id%}">
+            <div class="sort_cont">
+                <button type="submit" name="sort_by" value="-datetime" class="sort_btn"><i
+                        class="{% if sort_by == '-datetime' %}bi-alarm-fill{% else %}bi-alarm{% endif %}"></i></button>
+                <button type="submit" name="sort_by" value="-star" class="sort_btn"><i
+                        class="{% if sort_by == '-star' %}bi bi-star-fill{% else %}bi bi-star{% endif %}"></i></button>
+                <button type="submit" name="sort_by" value="-likes" class="sort_btn"><i
+                        class="{% if sort_by == '-likes' %}bi bi-heart-fill{% else %}bi bi-heart{% endif %}"></i></button>
+            </div>
+        </form>  
     {% for review in review %}
         <div class="review-card">
             <div class="review-up">
                 <div class="user-info">
+                    <div class="profile">
+                    <img src="{{ review.user.useraddinfo.profile_img|default:'path/to/default/profile_img.png' }}" alt="Profile Image" class="profile-img">
                     <h5>{{ review.user }}</h5>
+                    </div>
                     <div class="rating" data-value="{{ review.star }}">
                         {% for i in '12345' %}
                             {% if forloop.counter <= review.star %}
@@ -431,23 +476,25 @@ hr {
     {% endfor %}
 {% endif %}
     </div>
+    <form method="get" action="{% url 'item:detail' item.id%}">
     <div class="pagination" >
         {% if review.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page={{ review.previous_page_number }}">이전</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ review.previous_page_number }}&sort_by={{ sort_by }}">이전</a></li>
         {% endif %}
 
         {% for page_num in review.paginator.page_range %}
         {% if review.number == page_num %}
-        <li class="page-item active"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+        <li class="page-item active"><a class="page-link"  href="?page={{ page_num }}&sort_by={{ sort_by }}">{{ page_num }}</a></li>
         {% else %}
-        <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+        <li class="page-item"><a class="page-link"   href="?page={{ page_num }}&sort_by={{ sort_by }}">{{ page_num }}</a></li>
         {% endif %}
         {% endfor %}
 
         {% if review.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{ review.next_page_number }}">다음</a></li>
+        <li class="page-item"><a class="page-link"   href="?page={{ review.next_page_number }}&sort_by={{ sort_by }}">다음</a></li>
         {% endif %}
     </div>
+</form> 
     <br>
     <!-- FAQ -->
     <nav class="nav justify-content-center">
@@ -646,31 +693,6 @@ window.addEventListener('click', function(event) {
         document.getElementById('add-to-cart-form').submit(); // 폼 제출
     }, 30000); // 2000밀리초 = 2초 
 });
-    // 장바구니 담기 버튼 클릭 시 이벤트 처리
-/*
-document.querySelector('.add-to-cart-btn').addEventListener('click', function() {
-    // 장바구니에 담긴 상품 수량 가져오기
-    var currentQuantity = document.getElementById('current-quantity').innerText;
-
-    // 팝업창에 표시할 내용 설정
-    var popupContent = '장바구니에 {{ item.name }}이'+ currentQuantity + '개 담겼습니다.';
-
-    // 팝업창 띄우기
-    alert(popupContent);
-});
-    
-    // 장바구니 담기 버튼 클릭 시 이벤트 처리
-    document.querySelector('.add-to-cart-btn-float').addEventListener('click', function() {
-    // 장바구니에 담긴 상품 수량 가져오기
-    var currentQuantity = document.getElementById('current-quantity').innerText;
-
-    // 팝업창에 표시할 내용 설정
-    var popupContent = '장바구니에 {{ item.name }}이'+ currentQuantity + '개 담겼습니다.';
-
-    // 팝업창 띄우기
-    alert(popupContent);
-});
-*/
     // faq
     document.addEventListener('DOMContentLoaded', function() {
         const faqQuestions = document.querySelectorAll('.faq-question');
