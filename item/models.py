@@ -48,6 +48,7 @@ class Item(models.Model):
     image = models.URLField(null=True)
     back_image = models.URLField(null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
+    like = models.ManyToManyField('self', related_name='liked_by', symmetrical=False)
     views = models.IntegerField(default=0)  # 조회수
 
     def __str__(self):
@@ -55,9 +56,5 @@ class Item(models.Model):
     
 
 class Itemlike(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    items = models.ManyToManyField(Item)
-    #item = models.ForeignKey(Item, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.user.username}'s itemlike"
+    like = models.ManyToManyField
+    user = models.ManyToManyField

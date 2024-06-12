@@ -61,7 +61,6 @@
        
     }
 
-
     .grid-item {
         align-items: center;
         width: 100%;
@@ -72,10 +71,9 @@
         padding: 5px;
     }
 
-
     .grid-item:hover {
         border: 2px solid #a8a7a7;
-  }
+    }
 
     .item {
         padding: 0%;
@@ -131,7 +129,7 @@
         color: #5B574F; /* 마우스 오버 시 페이지 버튼의 텍스트 색상 */
     }
 
-    /* 토글 버튼 스타일추후 변경 예정*/
+    /* 토글 버튼 스타일 */
     .toggle-btn {
         display: inline-block;
         width: 200px;
@@ -139,8 +137,7 @@
         cursor: pointer;
         border-radius: 15px 0px 0px 0px;
     }
-    .item-title
-    {
+    .item-title {
         font-size: 23px;
     }
     .title {
@@ -164,48 +161,43 @@
         cursor: pointer;
     }
 
+    .priceFilter.active {
+        outline: none;
+        border: 2px solid #5B574F;
+    }
+    .mb-5{
+        border-top:2px solid #b2b2b2;
+        border-bottom:2px solid #b2b2b2;
+    }
+    /* 애니메이션 */
+    .grid-item {
+        overflow: hidden;
+    }
 
+    .grid-item {
+        opacity: 0;
+        transform: translateY(-20px);
+        animation: fade-in-up 0.5s ease-out forwards;
+    }
 
-.priceFilter.active {
-    outline: none;
-    border: 2px solid #5B574F;
-}
-.mb-5{
-    border-top:2px solid #b2b2b2;
-    border-bottom:2px solid #b2b2b2;
-}
-/*애니메이션*/
-.grid-item {
-  overflow: hidden;
-}
-
-.grid-item{
-  opacity: 0;
-  transform: translateY(-20px);
-  animation: fade-in-up 0.5s ease-out forwards;
-}
-
-@keyframes fade-in-up {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-
+    @keyframes fade-in-up {
+        0% {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 
 </style>
 {% endblock %}
 {% block content %}
 <form action="{% url 'item:item_list' %}" method="get" id="container">
-<div class="sidebar">
-    <h2 class="title">Categoty</h2>
-    <br>
-    
+    <div class="sidebar">
+        <h2 class="title">Category</h2>
+        <br>
         <div {% if show_note is False%} hidden {% endif %}>
             <h4>
                 <span class="toggle-btn">Main Note</span>
@@ -213,50 +205,46 @@
             <div class="category1-container">
                 {% for category1 in cat1 %}
                 <div class="sidebar-tag">
-                <input type="checkbox" id="category1:{{ category1.id }}" {% if category1.id in selected_cat1%}checked{%endif %} name="cat1" value="{{ category1.id }}" onchange="this.form.submit()" >
-                <label for="category1:{{ category1.id }}">{{ category1.name }}</label><br>
+                    <input type="checkbox" id="category1:{{ category1.id }}" {% if category1.id in selected_cat1 %}checked{% endif %} name="cat1" value="{{ category1.id }}" onchange="this.form.submit()">
+                    <label for="category1:{{ category1.id }}">{{ category1.name }}</label><br>
                 </div>
                 {% endfor %}
             </div>
 
-
             <h4>
-
-                <span class="toggle-btn"> Note</span>
+                <span class="toggle-btn">Note</span>
             </h4>
             <div class="category2-container">
                 {% for category2 in cat2 %}
                 <div class="sidebar-tag">
-                <input type="checkbox" id="category2:{{ category2.id }}" {% if category2.id in selected_cat2%}checked{%endif %} name="cat2" value="{{ category2.id }}" onchange="this.form.submit()">
-                <label for="category2:{{ category2.id }}">{{ category2.name }}</label><br>
-                 </div>
+                    <input type="checkbox" id="category2:{{ category2.id }}" {% if category2.id in selected_cat2 %}checked{% endif %} name="cat2" value="{{ category2.id }}" onchange="this.form.submit()">
+                    <label for="category2:{{ category2.id }}">{{ category2.name }}</label><br>
+                </div>
                 {% endfor %}
             </div>
         </div>
 
         <h4>
-
             <span class="toggle-btn">Brand</span>
         </h4>
         <div class="brand-container">
             {% for brand in brand %}
             <div class="sidebar-tag">
-            <input type="checkbox" id="brand:{{ brand.id }}" {% if brand.id in selected_brand %}checked{% endif %} name="brand" value="{{ brand.id }}" onchange="this.form.submit()" >
-            <label for="brand:{{ brand.id }}">{{ brand.name }}</label><br>
+                <input type="checkbox" id="brand:{{ brand.id }}" {% if brand.id in selected_brand %}checked{% endif %} name="brand" value="{{ brand.id }}" onchange="this.form.submit()">
+                <label for="brand:{{ brand.id }}">{{ brand.name }}</label><br>
             </div>
             {% endfor %}
         </div>
 
         <div {% if show_type is False%} hidden {% endif %}>
             <h4>
-
                 <span class="toggle-btn">Type</span>
             </h4>
             <div class="type-container">
                 {% for type in item_type %}
                 <div class="sidebar-tag">
-                <input type="checkbox" id="type:{{ type.id }}" {% if type.id in selected_type %}checked{% endif %} name="item_type" value="{{ type.id }}" onchange="this.form.submit()">
-                <label for="type:{{ type.id }}">{{ type.name }}</label><br>
+                    <input type="checkbox" id="type:{{ type.id }}" {% if type.id in selected_type %}checked{% endif %} name="item_type" value="{{ type.id }}" onchange="this.form.submit()">
+                    <label for="type:{{ type.id }}">{{ type.name }}</label><br>
                 </div>
                 {% endfor %}
             </div>
@@ -264,9 +252,8 @@
         <hr>
         <div>
             <!-- 가격 필터링-->
-            
             <div class="d-flex justify-content-center">
-                <input type="hidden" id="price-hidden" name="price" value="{{request.GET.price}}">
+                <input type="hidden" id="price-hidden" name="price" value="{{ request.GET.price }}">
                 <button type="button" class="btn priceFilter" data-price="1" {% if request.GET.price == '1' %} class="active" {% endif %} name="price" value="1">0 ~ 70,000</button>
             </div>
             <div class="d-flex justify-content-center">
@@ -278,55 +265,58 @@
             <div class="d-flex justify-content-center">
                 <button type="button" class="btn priceFilter" data-price="4" {% if request.GET.price == '4' %}class="active"{% endif %} name="price" value="4">220,000 ~ 290,000</button>
             </div>
-            
         </div>
-
-    
-</div>
-<div class="item-list">
-    <div class="section-title">
-        <form method="get" action="{% url 'item:item_list' %}">
-            <button type="submit" class="btn priceFilter5" name="price" value="0">
-                <h1 class="list-title">List</h1>
-            </button>
-        </form>
     </div>
-    <div class="grid-container">
-        {% if items %}
-        {% for item in items %}
-        <a class="grid-item-contain" href="{% url 'item:detail' item.id %}" role="button">
-            <div class="grid-item">
-                <img src="{{ item.image }}" alt="{{ item.name }}" class="grid-img">
-                <h5 class="item item-title" bold>{{ item.name }}</h5>
-                <p class="item summary">{{ item.summary }}</p>
-            </div>
-        </a>
-        {% endfor %}
-        {% else %}
-        <p>.</p>
-        <h1>상품이 없습니다.</h1>
-        <p>.</p>
-        {% endif %}
-    </div>
-    <div class="pagination">
-
-        {% if items.has_previous %}
-        <li class="page-item"><button class="page-link" name="page" value="{{ items.previous_page_number }}">이전</button></li>
-        {% endif %}
-
-        {% for page_num in items.paginator.page_range %}
-        {% if items.number == page_num %}
-        <li class="page-item active"><button class="page-link" name="page" value="{{ page_num }}">{{ page_num }}</button></li>
-        {% else %}
-        <li class="page-item"><button class="page-link" name="page" value="{{ page_num }}">{{ page_num }}</button></li>
-        {% endif %}
-        {% endfor %}
-        {% if items.has_next %}
-            <li class="page-item"><button class="page-link" name="page" value="{{ items.next_page_number }}">다음</button>
-            </li>
+    <div class="item-list">
+        <div class="section-title">
+            <form method="get" action="{% url 'item:item_list' %}">
+                <button type="submit" class="btn priceFilter5" name="price" value="0">
+                    <h1 class="list-title">List</h1>
+                </button>
+            </form>
+        </div>
+        <div class="grid-container">
+            {% if items %}
+            {% for item in items %}
+            <a class="grid-item-contain" href="{% url 'item:detail' item.id %}" role="button">
+                <div class="grid-item">
+                    <img src="{{ item.image }}" alt="{{ item.name }}" class="grid-img">
+                    <h5 class="item item-title" bold>{{ item.name }}</h5>
+                    <p class="item summary">{{ item.summary }}</p>
+                    <button class="like-btn" data-item-id="{{ item.id }}">
+                        {% if user.is_authenticated and item in user.liked_items.all %}
+                            <i class="fas fa-heart text-danger"></i> <!-- 꽉 찬 하트 -->
+                        {% else %}
+                            <i class="far fa-heart text-danger"></i> <!-- 비어 있는 하트 -->
+                        {% endif %}
+                    </button>
+                    <p>좋아요 수: <span id="like-count-{{ item.id }}">{{ item.likes.count }}</span></p>
+                </div>
+            </a>
+            {% endfor %}
+            {% else %}
+            <p>.</p>
+            <h1>상품이 없습니다.</h1>
+            <p>.</p>
             {% endif %}
+        </div>
+        <div class="pagination">
+            {% if items.has_previous %}
+            <li class="page-item"><button class="page-link" name="page" value="{{ items.previous_page_number }}">이전</button></li>
+            {% endif %}
+
+            {% for page_num in items.paginator.page_range %}
+            {% if items.number == page_num %}
+            <li class="page-item active"><button class="page-link" name="page" value="{{ page_num }}">{{ page_num }}</button></li>
+            {% else %}
+            <li class="page-item"><button class="page-link" name="page" value="{{ page_num }}">{{ page_num }}</button></li>
+            {% endif %}
+            {% endfor %}
+            {% if items.has_next %}
+            <li class="page-item"><button class="page-link" name="page" value="{{ items.next_page_number }}">다음</button></li>
+            {% endif %}
+        </div>
     </div>
-</div>
 </form>
 {% endblock %}
 {% block extra-script %}
@@ -362,7 +352,7 @@
         // 초기 상태에 따라 토글 버튼의 배경색 설정
         btn.style.backgroundColor = toggleStates[title] ? '#FFFFFF' : '#FFFFFF';
         btn.style.color = toggleStates[title] ? '#5B574F' : '#5B574F';
-        btn.style.textDecoration = toggleStates[title] ?'underline':'none';
+        btn.style.textDecoration = toggleStates[title] ? 'underline' : 'none';
         btn.style.fontWeight = toggleStates[title] ? 'bold' : 'normal';
         btn.addEventListener('click', () => {
             // 클릭 이벤트 핸들러 내용은 그대로 유지
@@ -374,7 +364,6 @@
             btn.style.fontWeight = toggleStates[title] ? 'bold' : 'bold';
         });
         btn.addEventListener('mouseover', () => {
-
             btn.style.backgroundColor = '#5B574F';
             btn.style.color = '#FFFFFF';
             btn.style.fontWeight = 'normal';
@@ -383,46 +372,68 @@
         btn.addEventListener('mouseout', () => {
             btn.style.backgroundColor = '#FFFFFF';
             btn.style.color = '#5B574F';
-            btn.style.textDecoration =toggleStates[title] ? 'underline':'none';
+            btn.style.textDecoration = toggleStates[title] ? 'underline' : 'none';
             btn.style.fontWeight = toggleStates[title] ? 'bold' : 'normal';
         });
-
-
     });
-    
+
     document.addEventListener('DOMContentLoaded', function() {
-  var containers = document.querySelectorAll('.grid-item');
+        var containers = document.querySelectorAll('.grid-item');
 
-  containers.forEach(function(container, index) {
-    container.style.animationDelay = (index * 0.1) + 's';
-  });
-});
-
-document.addEventListener("DOMContentLoaded", function() {
-    // 모든 priceFilter 버튼을 선택
-    var priceButtons = document.querySelectorAll('.priceFilter');
-
-    priceButtons.forEach(function(button) {
-        // 각 버튼에 클릭 이벤트 리스너 추가
-        button.addEventListener('click', function() {
-            // 클릭된 버튼의 data-price 값을 가져옴
-            var priceValue = button.getAttribute('data-price');
-            // 현재 price-hidden input의 값 가져오기
-            var currentPriceValue = document.getElementById('price-hidden').value;
-
-            // 클릭된 버튼의 data-price 값과 현재 price-hidden 값이 같으면
-            if (priceValue === currentPriceValue) {
-                // price-hidden 의 값을 0으로 설정
-                document.getElementById('price-hidden').value = '0';
-            } else {
-                // 다르면 클릭된 버튼의 data-price 값을 price-hidden의 값으로 설정
-                document.getElementById('price-hidden').value = priceValue;
-            }
-            
-            // 폼 제출
-            document.getElementById('container').submit();
+        containers.forEach(function(container, index) {
+            container.style.animationDelay = (index * 0.1) + 's';
         });
     });
-});
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // 모든 priceFilter 버튼을 선택
+        var priceButtons = document.querySelectorAll('.priceFilter');
+
+        priceButtons.forEach(function(button) {
+            // 각 버튼에 클릭 이벤트 리스너 추가
+            button.addEventListener('click', function() {
+                // 클릭된 버튼의 data-price 값을 가져옴
+                var priceValue = button.getAttribute('data-price');
+                // 현재 price-hidden input의 값 가져오기
+                var currentPriceValue = document.getElementById('price-hidden').value;
+
+                // 클릭된 버튼의 data-price 값과 현재 price-hidden 값이 같으면
+                if (priceValue === currentPriceValue) {
+                    // price-hidden 의 값을 0으로 설정
+                    document.getElementById('price-hidden').value = '0';
+                } else {
+                    // 다르면 클릭된 버튼의 data-price 값을 price-hidden의 값으로 설정
+                    document.getElementById('price-hidden').value = priceValue;
+                }
+                
+                // 폼 제출
+                document.getElementById('container').submit();
+            });
+        });
+    });
+
+    $(document).ready(function() {
+        $('.like-btn').click(function() {
+            var button = $(this);
+            var itemId = button.data('item-id');
+            
+            $.ajax({
+                url: '{% url "item:toggle_like" 0 %}'.replace('0', itemId),
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    var likeCountElement = $('#like-count-' + itemId);
+                    likeCountElement.text(response.count);
+                    if (response.liked) {
+                        button.find('i').removeClass('far').addClass('fas');
+                    } else {
+                        button.find('i').removeClass('fas').addClass('far');
+                    }
+                }
+            });
+        });
+    });
 </script>
 {% endblock %}

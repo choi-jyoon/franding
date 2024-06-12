@@ -75,12 +75,8 @@
         align-items: center;
         justify-content: center;
         border-top: 1px solid #ccc;
-       
     }
-    .image-cont{
-        border-top: 1px solid #ccc;
-        
-    }
+
     .bottom-box {
         flex: 1;
         display: flex;
@@ -89,11 +85,6 @@
         align-items: center;
     }
 
-    /* .description {
-        margin-top: 50px;
-    }
-
-    /*플로팅 배너*/
     .floating-banner {
         position: fixed;
         top: 100px;
@@ -115,95 +106,99 @@
         align-items: center;
         justify-content: center;
     }
-/*review*/
-.review-card {
-    border: 1px solid #ddd;
-    padding: 15px 15px 0 15px;
-    margin-bottom: 20px;
-}
 
-.review-up {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-}
+    .review-card {
+        border: 1px solid #ddd;
+        padding: 15px 15px 0 15px;
+        margin-bottom: 20px;
+    }
 
-.user-info {
-    display: flex;
-    flex-direction: column;
-}
+    .review-up {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
 
-.rating {
-    display: flex;
-}
+    .user-info {
+        display: flex;
+        flex-direction: column;
+    }
 
-.rating span {
-    font-size: 20px;
-    color: gold;
-}
+    .rating {
+        display: flex;
+    }
 
-.like-con {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-}
+    .rating span {
+        font-size: 20px;
+        color: gold;
+    }
 
-.like-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-}
+    .like-con {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
 
-.like-btn i {
-    font-size: 20px;
-}
+    .like-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
 
-.like-btn {
-    color: red;
-}
+    .like-btn i {
+        font-size: 20px;
+    }
 
-.like {
-    margin: 0;
-    font-size: 14px;
-    text-align: center;
-}
+    .like-btn {
+        color: red;
+    }
 
-.review-down {
-    margin-top: 10px;
-}
+    .like {
+        margin: 0;
+        font-size: 14px;
+        text-align: center;
+    }
 
-hr {
-    border: 0;
-    height: 1px;
-    background: #ddd;
-    margin-top: 20px;
-}
-.reply-info {
-    border-top: 1px solid #ccc;
-    padding: 15px;
-    margin: 0;
-}
-.date{
-    font-size: 13px;
-    color: #888;
-    margin-bottom: 5px;
-}
-.pagination{
-    justify-content:center;
-    display: flex;
-    margin-top: 30px;
-    width: 100%;  
-    
-}
-.like-btn{
-    border: #fff;
-}
-.message
-{
-    color: #5B574F;
-}
-.pagination .page-item.active .page-link {
+    .review-down {
+        margin-top: 10px;
+    }
+
+    hr {
+        border: 0;
+        height: 1px;
+        background: #ddd;
+        margin-top: 20px;
+    }
+
+    .reply-info {
+        border-top: 1px solid #ccc;
+        padding: 15px;
+        margin: 0;
+    }
+
+    .date {
+        font-size: 13px;
+        color: #888;
+        margin-bottom: 5px;
+    }
+
+    .pagination {
+        justify-content: center;
+        display: flex;
+        margin-top: 30px;
+        width: 100%;  
+    }
+
+    .like-btn {
+        border: #fff;
+    }
+
+    .message {
+        color: #5B574F;
+    }
+
+    .pagination .page-item.active .page-link {
         background-color: #5B574F; /* 활성 페이지 버튼의 배경색 */
         border-color: #5B574F; /* 활성 페이지 버튼의 테두리 색상 */
         color: white;
@@ -254,18 +249,18 @@ hr {
         padding: 10px;
     }
 
-.close:hover,
-.close:focus {
-    color: #5B574F;
-  text-decoration: none;
-  cursor: pointer;
-}
-.back{
-    border: #5B574F;
-    width: 100%;
-}
+    .close:hover,
+    .close:focus {
+        color: #5B574F;
+        text-decoration: none;
+        cursor: pointer;
+    }
 
-    /* faq */
+    .back {
+        border: #5B574F;
+        width: 100%;
+    }
+
     #faq {
         background-color: #f9f9f9;
         padding: 20px;
@@ -307,11 +302,13 @@ hr {
         font-size: 17px;
         background-color: #fff;
     }    
-    .nav{
-        border-top:1px solid #ccc;
+
+    .nav {
+        border-top: 1px solid #ccc;
     }
 </style>
 {% endblock %}
+
 {% load static %}
 {% block content %}
 
@@ -342,16 +339,6 @@ hr {
                     <button class="btn btn-primary mt-3 add-to-cart-btn" type="button">장바구니 추가</button>
                 </form>
             </div>
-            <div class="right-box-item center">
-                <button id="like-button" data-item-id="{{ item.id }}">
-                    {% if is_liked %}
-                        <i class="fas fa-heart text-danger"></i> <!-- 꽉 찬 하트 -->
-                    {% else %}
-                        <i class="far fa-heart text-danger"></i> <!-- 비어 있는 하트 -->
-                    {% endif %}
-                </button>
-                <p>좋아요 수: <span id="like-count">{{ like_count }}</span></p>
-            </div>
         </div>
     </div>
 
@@ -362,90 +349,87 @@ hr {
     </nav>
 
     <div class="bottom-box" id="description">
-        <!-- 아이템 설명을 여기에 추가하세요 -->    
         <h2 class="description">상세 설명</h2>
         <p>{{ item.description|safe }}</p>
     </div>
-  
 
     <nav class="nav justify-content-center">
         <a class="nav-link active" aria-current="page" href="#description" style="color: gray;">상품상세정보</a>
         <a class="nav-link" href="#review">리뷰</a>
         <a class="nav-link" href="#FAQ" style="color: gray;">FAQ</a>
-    </nav><div id="review">
-        <!-- 리뷰 칸 입니다.-->
+    </nav>
+
+    <div id="review">
         <h2 class="center">Review</h2>
         <hr>
         {% if review %}
-    {% for review in review %}
-        <div class="review-card">
-            <div class="review-up">
-                <div class="user-info">
-                    <h5>{{ review.user }}</h5>
-                    <div class="rating" data-value="{{ review.star }}">
-                        {% for i in '12345' %}
-                            {% if forloop.counter <= review.star %}
-                                <span>&#9733;</span>
-                            {% else %}
-                                <span>&#9734;</span>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="like-con">
-                    <button class="like-btn" data-review-id="{{ review.id }}">
-                        {% if user in review.reviewlike_set.all %}
-                            <i class="bi bi-heart-fill liked"></i>
-                        {% else %}
-                            <i class="bi bi-heart"></i>
-                        {% endif %}
-                    </button>
-                    <p class="like">{{ review.likes_count }}</p>
-                </div>
-            </div>
-            <div class="review-down">
-                <p class="card-text">{{ review.content }}</p>
-                <p class="date">{{ review.datetime }}</p>
-            </div>
-            <br>
-            <!-- ReviewReply를 리뷰 아래에 표시 -->
-            {% if review.reviewreply_set.all %}
-                <div class="review-replies">
-                    {% for reply in review.reviewreply_set.all %}
-                        <div class="reply-card">
-                            <div class="reply-info">
-                                <h6>{{ reply.user }}</h6>
-                                <p class="reply-text">{{ reply.comment }}</p>
-                                <p class="date">{{ reply.datetime }}</p>
+            {% for review in review %}
+                <div class="review-card">
+                    <div class="review-up">
+                        <div class="user-info">
+                            <h5>{{ review.user }}</h5>
+                            <div class="rating" data-value="{{ review.star }}">
+                                {% for i in '12345' %}
+                                    {% if forloop.counter <= review.star %}
+                                        <span>&#9733;</span>
+                                    {% else %}
+                                        <span>&#9734;</span>
+                                    {% endif %}
+                                {% endfor %}
                             </div>
                         </div>
-                    {% endfor %}
+                        <div class="like-con">
+                            <button class="like-btn" data-review-id="{{ review.id }}">
+                                {% if user in review.reviewlike_set.all %}
+                                    <i class="bi bi-heart-fill liked"></i>
+                                {% else %}
+                                    <i class="bi bi-heart"></i>
+                                {% endif %}
+                            </button>
+                            <p class="like">{{ review.likes_count }}</p>
+                        </div>
+                    </div>
+                    <div class="review-down">
+                        <p class="card-text">{{ review.content }}</p>
+                        <p class="date">{{ review.datetime }}</p>
+                    </div>
+                    <br>
+                    {% if review.reviewreply_set.all %}
+                        <div class="review-replies">
+                            {% for reply in review.reviewreply_set.all %}
+                                <div class="reply-card">
+                                    <div class="reply-info">
+                                        <h6>{{ reply.user }}</h6>
+                                        <p class="reply-text">{{ reply.comment }}</p>
+                                        <p class="date">{{ reply.datetime }}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
-            {% endif %}
-
-        </div>
-    {% endfor %}
-{% endif %}
+            {% endfor %}
+        {% endif %}
     </div>
+
     <div class="pagination">
         {% if review.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page={{ review.previous_page_number }}">이전</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ review.previous_page_number }}">이전</a></li>
         {% endif %}
 
         {% for page_num in review.paginator.page_range %}
-        {% if review.number == page_num %}
-        <li class="page-item active"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
-        {% else %}
-        <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
-        {% endif %}
+            {% if review.number == page_num %}
+                <li class="page-item active"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+            {% endif %}
         {% endfor %}
 
         {% if review.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{ review.next_page_number }}">다음</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ review.next_page_number }}">다음</a></li>
         {% endif %}
     </div>
-    <br>
-    <!-- FAQ -->
+
     <nav class="nav justify-content-center">
         <a class="nav-link active" aria-current="page" href="#description" style="color: gray;">상품상세정보</a>
         <a class="nav-link" href="#review" style="color: gray;">리뷰</a>
@@ -456,12 +440,12 @@ hr {
         <section id="faq">
             <h2>자주 묻는 질문</h2>
             {% for faq in faqs %}
-            <div class="faq-item">
-                <button class="faq-question">{{ faq.question }}</button>
-                <div class="faq-answer">
-                    <p>{{ faq.answer }}</p>
+                <div class="faq-item">
+                    <button class="faq-question">{{ faq.question }}</button>
+                    <div class="faq-answer">
+                        <p>{{ faq.answer }}</p>
+                    </div>
                 </div>
-            </div>
             {% endfor %}
         </section>
         <button onclick="openInquiryForm('{{item.id}}')" style="
@@ -476,9 +460,9 @@ hr {
             margin: 4px 2px;
             cursor: pointer;
             border-radius: 12px;
-            ">1대1 문의하기</button>
-    </div>     
-    <!-- 플로팅배너-->
+        ">1대1 문의하기</button>
+    </div>
+
     <div id="floating-banner" class="floating-banner">
         <div class="banner-content">
             <h3>{{ item.name }}</h3>
@@ -489,7 +473,7 @@ hr {
                 <span class="mx-2" id="current-quantity-float">1</span>
                 <button class="btn btn-secondary btn-sm increase-btn-float">+</button>
             </div>
-            <form id="add-to-cart-form" action="{% url 'item:add' item.id %}" method="post">
+            <form id="add-to-cart-form-float" action="{% url 'item:add' item.id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" id="go-cart-float" name="go_cart" value="0">
                 <input type="hidden" id="current-quantity-hidden-float" value="1" name="current-amount">
@@ -498,14 +482,13 @@ hr {
         </div>
     </div>
 </div>
+
 <div id="myModal" class="modal">
     <div class="modal-content">
         <p id="modal-text"></p>
         <button class="close">장바구니 바로가기</button>
     </div>
 </div>
-
-
 
 {% endblock %}
 {% block extra-script %}
@@ -585,39 +568,15 @@ hr {
     });
 
     document.querySelector('.add-to-cart-btn-float').addEventListener('click', function(event) {
-    event.preventDefault(); // 기본 폼 제출 동작을 막습니다.
+        event.preventDefault(); // 기본 폼 제출 동작을 막습니다.
 
-    // 딜레이를 주기 위한 setTimeout 설정 (예: 2초 딜레이)
-    setTimeout(function() {
-        document.getElementById('add-to-cart-form').submit(); // 폼 제출
-    }, 30000); // 2000밀리초 = 2초 
-});
-    // 장바구니 담기 버튼 클릭 시 이벤트 처리
-/*
-document.querySelector('.add-to-cart-btn').addEventListener('click', function() {
-    // 장바구니에 담긴 상품 수량 가져오기
-    var currentQuantity = document.getElementById('current-quantity').innerText;
+        // 딜레이를 주기 위한 setTimeout 설정 (예: 2초 딜레이)
+        setTimeout(function() {
+            document.getElementById('add-to-cart-form').submit(); // 폼 제출
+        }, 2000); // 2000밀리초 = 2초 
+    });
 
-    // 팝업창에 표시할 내용 설정
-    var popupContent = '장바구니에 {{ item.name }}이'+ currentQuantity + '개 담겼습니다.';
-
-    // 팝업창 띄우기
-    alert(popupContent);
-});
-    
-    // 장바구니 담기 버튼 클릭 시 이벤트 처리
-    document.querySelector('.add-to-cart-btn-float').addEventListener('click', function() {
-    // 장바구니에 담긴 상품 수량 가져오기
-    var currentQuantity = document.getElementById('current-quantity').innerText;
-
-    // 팝업창에 표시할 내용 설정
-    var popupContent = '장바구니에 {{ item.name }}이'+ currentQuantity + '개 담겼습니다.';
-
-    // 팝업창 띄우기
-    alert(popupContent);
-});
-*/
-    // faq
+    // FAQ 토글
     document.addEventListener('DOMContentLoaded', function() {
         const faqQuestions = document.querySelectorAll('.faq-question');
 
@@ -633,66 +592,38 @@ document.querySelector('.add-to-cart-btn').addEventListener('click', function() 
                 }
             });
         });
-    });    
+    });
 
     // 1대1 문의하기
     function openInquiryForm(item_id) {
-        window.location.href = "{% url 'QnA:question_create' item.id %}";  // 여기에 실제 이동할 페이지의 URL을 설정해야 합니다.
+        window.location.href = "{% url 'QnA:question_create' item.id %}";
     }
 
     $(document).ready(function() {
-    // 페이지 로드 시 각 리뷰의 좋아요 상태 확인
-    $('.like-btn').each(function() {
-        var button = $(this);
-        var reviewId = button.data('review-id');
+        // 페이지 로드 시 각 리뷰의 좋아요 상태 확인
+        $('.like-btn').each(function() {
+            var button = $(this);
+            var reviewId = button.data('review-id');
 
-        $.ajax({
-            url: '/item/check_like_status/' + reviewId + '/',
-            type: 'GET',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            success: function(response) {
-            var icon = button.find('i');
-            if (response.liked) {
-                icon.removeClass('bi-heart').addClass('bi-heart-fill');
-            } else {
-                icon.removeClass('bi-heart-fill').addClass('bi-heart');
-            }
-        },
-            error: function(xhr, status, error) {
-                console.log('Error: ' + error);
-            }
+            $.ajax({
+                url: '/item/check_like_status/' + reviewId + '/',
+                type: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(response) {
+                    var icon = button.find('i');
+                    if (response.liked) {
+                        icon.removeClass('bi-heart').addClass('bi-heart-fill');
+                    } else {
+                        icon.removeClass('bi-heart-fill').addClass('bi-heart');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log('Error: ' + error);
+                }
+            });
         });
     });
-
-    // 좋아요 버튼 클릭 이벤트
-    $('.like-btn').click(function() {
-        var button = $(this);
-        var reviewId = button.data('review-id');
-        
-        $.ajax({
-            url: "{% url 'item:like_review' %}",
-            type: "POST",
-            data: {
-                'review_id': reviewId,
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
-            },
-            success: function(response) {
-            var icon = button.find('i');
-            if (response.liked) {
-                icon.removeClass('bi-heart').addClass('bi-heart-fill');
-            } else {
-                icon.removeClass('bi-heart-fill').addClass('bi-heart');
-            }
-            button.next('.like').text(response.likes_count);
-        },
-            error: function(response) {
-                alert('오류가 발생했습니다.');
-            }
-        });
-    });
-});
-    
 </script>
 {% endblock %}
