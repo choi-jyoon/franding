@@ -1,38 +1,59 @@
 from django.shortcuts import render, redirect
 from .models import Keyword, Subscribe, SubscribeKeyword, SubscribePayInfo
 from django.utils import timezone
+from datetime import timedelta
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from collections import defaultdict, Counter
 from item.models import Item
 from mypage.models import UserAddInfo
+from payment.models import Delivery
 import random
 import requests
 import os
 from dotenv import load_dotenv
+# from .tasks import process_recurring_payments
 
 load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY')
-# Create your views here.
 
 @login_required
-def index(request):
+def membership(request):
+    user_info = UserAddInfo.objects.get(user=request.user)
     
+    # 멤버십 없는 유저는 멤버십 신청화면으로 이동
+    if not user_info.membership:
+        if request.method == 'POST':
+            return redirect('subscribe:payment')
+        return render(request, 'subscribe/membership.html')
+    else:
+        return redirect('subscribe:index')
+    
+    
+@login_required
+def index(request):
     now = timezone.now()
     
+    # 구독 키워드 신청 
     if request.method == 'POST':
         selected_keywords = request.POST.get('selected_keywords')
-        keyword_id = selected_keywords.split(',') if selected_keywords else []
+        keyword_ids = selected_keywords.split(',') if selected_keywords else []
         
-        subscribe = Subscribe(user = request.user)
-        subscribe.save()
+        subscribe = Subscribe.objects.get_or_create(user = request.user, state=0, delivery__isnull = False)
         
-        for id in keyword_id:
-            subscribe_keyword = SubscribeKeyword(keyword = Keyword.objects.get(pk=id), subscribe=subscribe)
+        for id in keyword_ids:
+            subscribe_keyword = SubscribeKeyword(keyword = Keyword.objects.get(pk=id), subscribe=subscribe[0])
             subscribe_keyword.save()
-
-    keyword_objects = Keyword.objects.filter(month__year = now.year, month__month = now.month)
-    subscribe_objects = SubscribeKeyword.objects.filter(subscribe__user = request.user)
-    is_subscribed = request.user.subscribe_set.filter(datetime__year = now.year, datetime__month = now.month).exists()
+        
+        # 키워드 선택 후 subscribe 업데이트 
+        subscribe[0].state = 1
+        subscribe[0].save()
+        
+        return redirect('subscribe:subscribe_detail', pk= subscribe[0].id)
+    
+    keyword_objects = Keyword.objects.filter(month__year=now.year, month__month=now.month)
+    subscribe_objects = SubscribeKeyword.objects.filter(subscribe__user=request.user)
+    is_subscribed = request.user.subscribe_set.filter(datetime__year=now.year, datetime__month=now.month, state=1).exists()
     
     # subscribe ID를 키로, keyword 리스트를 값으로 가지는 딕셔너리
     subscriptions = defaultdict(list)
@@ -45,22 +66,12 @@ def index(request):
     context = {
         'keywords': keyword_objects,
         'date': now,
-        'subscribes' : subscriptions,
+        'subscribes': subscriptions,
         'is_subscribed': is_subscribed
     }
+    
     return render(request, 'subscribe/index.html', context)
 
-
-@login_required
-def membership(request):
-    user_info = UserAddInfo.objects.get(user = request.user)
-    
-    # 멤버십 없는 유저는 멤버십 신청화면으로 이동
-    if user_info.membership == False :
-        if request.method == 'POST':
-            return redirect('subscribe:payment')
-        return render(request, 'subscribe/membership.html')
-    return index(request)
 
 @login_required
 def first_pay_process(request):
@@ -69,6 +80,17 @@ def first_pay_process(request):
     current_domain = request.get_host()
     
     if request.method == 'POST':
+        
+        request.session['delivery_info'] = {
+            'receiver': request.POST.get('receiver'),
+            'receiver_postcode': request.POST.get('receiver_postcode'),
+            'receiver_address': request.POST.get('receiver_address'),
+            'receiver_detailAddress': request.POST.get('receiver_detailAddress'),
+            'receiver_extraAddress': request.POST.get('receiver_extraAddress'),
+            'receiver_phone': request.POST.get('receiver_phone'),
+            'receiver_email': request.POST.get('receiver_email')
+        }
+        
         # 실제 결제 요청 로직 구현
         
         url = "https://open-api.kakaopay.com/online/v1/payment/ready"
@@ -104,6 +126,7 @@ def first_pay_process(request):
             total_amount=15900,
             status='prepared'  # 결제 준비 상태로 저장
         )
+        
         return redirect(next_url)
     
     
@@ -130,7 +153,14 @@ def first_pay_process(request):
 @login_required
 def pay_success(request):
     # 결제 처리 로직
+    now = timezone.now()
     tid = request.session.get('tid')
+    
+    deliveryinfo_session = request.session.get('delivery_info')
+    
+    if not deliveryinfo_session:
+        return redirect('subscribe:index')
+    
     if tid:
         # 카카오페이 결제 승인 API 호출
         url = f'https://open-api.kakaopay.com/online/v1/payment/approve'
@@ -151,8 +181,10 @@ def pay_success(request):
         if response.status_code == 200:
             sid = response_data.get('sid')
             payment_info = SubscribePayInfo.objects.get(tid=tid, user=request.user)
-            payment_info.status = 'approved'  # 결제 완료 상태로 변경
-            payment_info.approved_at = timezone.now()  # 승인 시간 업데이트
+            payment_info.status = 'APPROVED'  # 결제 완료 상태로 변경
+            payment_info.approved_at = now  # 승인 시간 업데이트
+            payment_info.last_payment_date = now
+            payment_info.next_payment_date = now + timedelta(days=30)
             if sid:
                 payment_info.sid = sid  # sid 값 저장
             payment_info.save()
@@ -162,18 +194,41 @@ def pay_success(request):
             user_info.membership = True
             user_info.save()
             
+            # 배송 정보 생성
+            delivery_info = Delivery.objects.create(
+                receiver=deliveryinfo_session['receiver'],
+                receiver_postcode=deliveryinfo_session['receiver_postcode'],
+                receiver_address=deliveryinfo_session['receiver_address'],
+                receiver_detailAddress=deliveryinfo_session['receiver_detailAddress'],
+                receiver_extraAddress=deliveryinfo_session['receiver_extraAddress'],
+                receiver_phone=deliveryinfo_session['receiver_phone'],
+                receiver_email=deliveryinfo_session['receiver_email']
+            )
+            
+            # Subscribe 데이터 생성
+            subsctibe = Subscribe.objects.create(
+                user = request.user,
+                delivery = delivery_info
+            )
+            
             # 세션에서 tid 제거
             del request.session['tid']
+            # 세션에서 delivery_info 및 total_price 제거
+            if 'delivery_info' in request.session:
+                del request.session['delivery_info']
+            
+            # process_recurring_payments.delay(request.user.id)
             
             # index 함수 호출
-            return index(request)
+            return redirect('subscribe:index')
 
     return render(request, 'payment/payfail.html')
 
 @login_required
 def second_pay_process(request):
     # 2회차 이후 정기결제 로직 
-    pay_info = SubscribePayInfo.objects.get(user = request.user).order_by('-id').first()
+    now = timezone.now()
+    pay_info = SubscribePayInfo.objects.get(user=request.user, next_payment_date__lte=now, status='approved')
     
     # 정기 결제 처리 로직 구현
     
@@ -196,20 +251,11 @@ def second_pay_process(request):
     response_data = response.json()
     
     if response.status_code == 200:
-        # n회차 결제 성공 데이터 저장 
-        SubscribePayInfo.objects.create(
-            user=request.user,
-            tid=response_data.get('tid'),
-            cid="TCSUBSCRIP",
-            sid= response_data.get('sid'),
-            # aid= response_data.get('aid'),
-            payment_method_type ="MONEY",
-            item_name="franding membership",
-            quantity=1,
-            total_amount=15900,
-            status='approved' 
-        )
-        return index(request)
+        # n회차 결제 성공 -> 구독 정보 업데이트
+        pay_info.next_payment_date = now + timedelta(days=30)  # 다음 결제 날짜를 30일 뒤로 설정
+        pay_info.last_payment_date = now  # 마지막 결제일을 현재 시간으로 설정
+        pay_info.save()
+        return JsonResponse({'status': 'success', 'message': '구독 갱신이 완료되었습니다.'})
     
     return render(request, 'payment/payfail.html')
 
@@ -245,7 +291,7 @@ def pay_cancel(request):
         user_info.membership = False
         user_info.save()
         
-    return render(request, 'subscribe:membershipcancel.html')
+    return render(request, 'subscribe/membershipcancel.html')
 
 
 @login_required
@@ -284,4 +330,9 @@ def detail(request, pk):
 
 @login_required
 def membership_detail(request):
-    return render(request, 'subscribe/membership_detail.html')
+    # 멤버십 상세 페이지 
+    membership_info = SubscribePayInfo.objects.filter(user = request.user)
+    context = {
+        'memberships' : membership_info
+    }
+    return render(request, 'subscribe/membership_detail.html', context)
