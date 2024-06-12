@@ -4,7 +4,8 @@ from . import views
 app_name='subscribe'
 urlpatterns = [
 
-    path('', views.membership, name='index'),
+    path('', views.membership, name='membership'),
+    path('subscribe/', views.index, name='index'),
     path('<int:pk>/', views.detail, name='subscribe_detail'),
     path('pay/', views.first_pay_process, name='payment'),
     path('paysuccess/', views.pay_success, name='paysuccess'),

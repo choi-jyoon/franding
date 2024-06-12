@@ -33,14 +33,26 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <h3> 멤버십 관리하기 </h3>
-            <div class="membership-info">
-                <h4>멤버십 정보</h4>
-                <p>구독 시작 날짜: 2023년 5월 1일</p>
-                <p>다음 결제 예정일: 2023년 6월 1일</p>
-                <p>결제 수단: 신용카드 (1234)</p>
-            </div>
+            {% for membership in memberships %}
+                <div class="membership-info">
+                    <h4>멤버십 정보</h4>
+                    <p>구독 시작 날짜: {{membership.approved_at}}</p>
+                    <p>다음 결제 예정일: {{membership.next_payment_date}}</p>
+                    <p>결제 수단: 카카오페이</p>
+                    <p>상태 : {{membership.status}}</p>
+                </div>
+            {% endfor %}
             <div class="btn-container">
                 <a href="#" class="btn btn-primary" onclick="showChangePaymentPopup()">결제 수단 변경</a>
+                <div class="modal fade" id="changePaymentModal" tabindex="-1" role="dialog" aria-labelledby="changePaymentModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                아직 기능 준비 중입니다.
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <form id="cancelMembershipForm" action="{% url 'subscribe:paycancel' %}" method="post" >
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger" onclick="showCancelMembershipPopup(event)">멤버십 해지</button>
@@ -51,6 +63,13 @@
                     <button type="submit" class="btn btn-primary btn-lg">멤버십 갱신하기</a>
                     </div>
                 </form>
+                <div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-body" id="resultMessage"></div>
+                      </div>
+                    </div>
+                  </div>
             </div>
         </div>
     </div>
@@ -58,12 +77,17 @@
 {% endblock %}
 
 {% block extra-script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    function showChangePaymentPopup() {
+    {% comment %} function showChangePaymentPopup() {
         if (confirm('결제 수단을 변경하시겠습니까?')) {
             // 결제 수단 변경 로직 실행
             window.location.href = '#';
         }
+    } {% endcomment %}
+
+    function showChangePaymentPopup() {
+        $('#changePaymentModal').modal('show');
     }
 
     function showCancelMembershipPopup(event) {
@@ -75,5 +99,32 @@
             document.getElementById('cancelMembershipForm').submit();
         }
     }
+
+    $(document).ready(function() {
+        $('#membership-form').submit(function(event) {
+            event.preventDefault(); // 폼의 기본 전송을 막음
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: $(this).attr('method'),
+                data: $(this).serialize(),
+                success: function(response) {
+                    $('#resultMessage').text(response.message);
+                    $('#resultModal').modal('show');
+                    // 모달이 닫힐 때 페이지 리디렉션
+                    $('#resultModal').on('hidden.bs.modal', function () {
+                        if (response.status === 'success') {
+                            window.location.href = response.redirect_url;
+                        }
+                    });
+                },
+                error: function(xhr, status, error) {
+                    $('#resultMessage').text('서버 오류가 발생했습니다.');
+                    $('#resultModal').modal('show');
+                }
+            });
+        });
+    });
+
 </script>
 {% endblock %}

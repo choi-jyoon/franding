@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from cart.models import OrderCart, Order
 from .models import UserAddInfo
 from django.contrib.auth.decorators import login_required
@@ -6,6 +6,10 @@ from django.contrib.auth import logout as auth_logout
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator
 from QnA.models import Question
+from item.models import Item
+from django.http import JsonResponse
+from django.db.models import Count
+
 
 
 @login_required
@@ -120,3 +124,24 @@ def user_delete(request):
     request.user.delete()
     auth_logout(request)
     return redirect('home')
+
+@login_required
+def item_like_page(request):
+    user = request.user
+    liked_items = Item.objects.filter(item_likes__user=user).annotate(like_count=Count('item_likes')).order_by('-like_count')
+    context = {
+        'liked_items': liked_items
+    }
+    return render(request, 'mypage/itemlike.html', context)
+
+@login_required
+def toggle_like(request, item_id):
+    item = get_object_or_404(Item, id=item_id)
+    user = request.user
+    like, created = Itemlike.objects.get_or_create(item=item, user=user)
+    if not created:
+        like.delete()
+        liked = False
+    else:
+        liked = True
+    return JsonResponse({'liked': liked, 'count': item.item_likes.count()})
