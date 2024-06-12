@@ -302,17 +302,26 @@
             }
         }        
         
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     fetch('/cart/badge_count/', { // '/cart/badge_count/'는 badge_count 메서드의 URL입니다.
-        //         method: 'GET', // 또는 'POST' 등, 서버 설정에 따라 달라질 수 있습니다.
-        //         // 필요한 경우 headers와 body를 추가합니다.
-        //     })
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         document.getElementById('badgeCount').innerText = data.count; // 'count'는 서버에서 반환하는 JSON 객체의 키입니다.
-        //     })
-        //     .catch(error => console.error('Error:', error));
-        // });
+        document.addEventListener('DOMContentLoaded', function() {            
+            var storedBadgeCount = getCartItems();
+            if (storedBadgeCount) {
+                updateCartBadge(storedBadgeCount);
+            }
+        });
+        
+        // 로컬 스토리지에서 장바구니 데이터를 불러오기
+        function getCartItems() {
+            const storedBadgeCount = localStorage.getItem('cart_count');
+            return storedBadgeCount
+        }
+
+        // 장바구니 배지 업데이트 함수
+        function updateCartBadge(badge_count) {
+            const badge = document.getElementById('badgeCount');
+            badge.innerText = badge_count;
+        }
+
+
     </script>
 </body>
 

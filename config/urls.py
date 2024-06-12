@@ -22,8 +22,7 @@ from . import views
 # from cart.views import
 
 urlpatterns = [
-    path('', views.index, name='home'),
-    path('badge_count/', views.badge_count, name='badge_count'),
+    path('', views.index, name='home'),    
     path('admin/', admin.site.urls),
     path("item/", include("item.urls")),
     path('mypage/', include('mypage.urls')),

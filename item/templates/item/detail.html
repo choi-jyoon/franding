@@ -579,27 +579,11 @@ hr {
     modal.style.display = "block";
 });
 
-document.querySelector('.add-to-cart-btn-float').addEventListener('click', function() {
-    // 장바구니에 담긴 상품 수량 가져오기
-    var currentQuantity = document.getElementById('current-quantity').innerText;
-
-    // 팝업창에 표시할 내용 설정
-    var popupContent = '장바구니에 {{ item.name }}이 ' + currentQuantity + '개 담겼습니다.';
-
-    // 모달 창의 텍스트 설정
-    document.getElementById('modal-text').innerText = popupContent;
-
-    // 모달 창 띄우기
-    var modal = document.getElementById('myModal');
-    modal.style.display = "block";
-});
-
 // 모달 창 닫기 버튼 기능 추가
 document.querySelector('.close').addEventListener('click', function() {
     var modal = document.getElementById('myModal');
     modal.style.display = "none";
     document.getElementById('add-to-cart-form').submit();//<-장바구니로 이어지는 코드 작성 필요
-    updateCartCount();
 });
 
 // 모달 창 외부 클릭 시 닫기 기능 추가
@@ -609,27 +593,33 @@ window.addEventListener('click', function(event) {
         modal.style.display = "none";
         document.getElementById('go-cart').value = "1";
         document.getElementById('go-cart-float').value = "1";
-        document.getElementById('add-to-cart-form').submit(); // 폼 제출
-        updateCartCount();
-    }
-});
+        document.getElementById('add-to-cart-form').submit(); // 폼 제출       
+    }    
+});    
 
 
-    // 배지에 데이터 전송
-    // 장바구나 배지 증가, 감소
-    function updateCartCount() {
-        fetch('/cart/badge_count/', { // '/cart/badge_count/'는 badge_count 메서드의 URL입니다.
-            method: 'GET', // 또는 'POST' 등, 서버 설정에 따라 달라질 수 있습니다.
-            // 필요한 경우 headers와 body를 추가합니다.
-        })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('badgeCount').innerText = data.cart_count; // 'count'는 서버에서 반환하는 JSON 객체의 키입니다.
-        })
-        .catch(error => console.error('Error:', error));
-    }
+    $(document).ready(function() {
+        // 페이지 로드 시 각 리뷰의 좋아요 상태 확인
+        $('#add-to-cart-form').each(function() {        
 
-    
+            $.ajax({
+                url: '/cart/badge_count/',
+                type: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(response) {
+                // 예를 들어, response 객체 내의 'data' 값을 로컬 스토리지에 저장하고자 한다고 가정합니다.
+                console.log(response.cart_count);                
+                localStorage.setItem('cart_count', response.cart_count);
+            },
+                error: function(xhr, status, error) {
+                    console.log('Error: ' + error);
+                }
+            });
+        });
+    });
+
     //수량 조절
 
     // current-quantity 요소 가져오기
