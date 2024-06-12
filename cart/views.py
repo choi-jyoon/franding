@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 import json
 from rest_framework import viewsets
 from .serializers import CartSerializer
+from django.http import HttpResponse
 
 
 # 장바구니 페이지
@@ -103,6 +104,34 @@ def cart_delete(request):
             check_item.delete()
 
     return redirect('home')
+
+
+# def badge_count(request):
+#     # cart_count = Cart.calculate_user_cart_id_count(request.user)
+#     # 사용자 인증 확인
+#     if request.user.is_authenticated:
+#         cart_count = Cart.calculate_user_cart_id_count(request.user)
+#     else:
+#         cart_count = 0
+#     # context = {'cart_count': cart_count}
+#     # return render(request, 'base.html', context)
+#     return JsonResponse({'count': cart_count})
+#     # response = HttpResponse("Some response")
+#     # response.set_cookie('cart_count', cart_count)  # 쿠키에 cart_count 저장
+#     # return response
+
+
+def badge_count(request):
+    # 사용자 인증 확인
+    if request.user.is_authenticated:
+        cart_count = Cart.calculate_user_cart_id_count(request.user)
+    else:
+        cart_count = 0
+
+    # 세션에 cart_count 저장
+    request.session['cart_count'] = cart_count
+
+    return JsonResponse({'cart_count': cart_count})
 
 
 class CartViewSet(viewsets.ModelViewSet):

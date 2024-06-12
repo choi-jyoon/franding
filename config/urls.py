@@ -23,6 +23,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='home'),
+    path('badge_count/', views.badge_count, name='badge_count'),
     path('admin/', admin.site.urls),
     path("item/", include("item.urls")),
     path('mypage/', include('mypage.urls')),
@@ -39,5 +40,5 @@ urlpatterns = [
     path('accounts/register/done/', views.UserCreateDoneTV.as_view(), name='register_done'),
     path('seller/', include('seller.urls')),
     path('payment/', include('payment.urls')),
-    path('QnA/', include('QnA.urls')),
+    path('QnA/', include('QnA.urls')),    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

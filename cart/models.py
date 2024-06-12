@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from item.models import Item
 from payment.models import Delivery, UserCoupon
+from django.db.models import Count
 # Create your models here.
 
 # CartItem
@@ -16,6 +17,10 @@ class Cart(models.Model):
     
     def sub_total(self):
         return self.item.price * self.amount
+    
+    @classmethod
+    def calculate_user_cart_id_count(cls, user):
+        return cls.objects.filter(user=user, status=False).aggregate(id_count=Count('id'))['id_count'] or 0
     
 
 class Order(models.Model):

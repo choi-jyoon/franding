@@ -140,3 +140,17 @@ def searchItem(request):
 
 def about(request):
     return render(request, 'about.html')
+
+
+def badge_count(request):
+    # if request.user.is_authenticated:
+    #     cart_count = request.COOKIES.get('cart_count', 0)  # 쿠키에서 cart_count 읽기
+    # else:
+    #     cart_count = 0
+
+    # return render(request, 'base.html', {'cart_count': cart_count})
+    
+    # 세션에서 cart_count 가져오기
+    cart_count = request.session.get('cart_count', 0)
+    context = {'cart_count': cart_count}
+    return render(request, 'base.html', context)

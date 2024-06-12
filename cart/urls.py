@@ -29,5 +29,6 @@ urlpatterns = [
     path('detail/', views.cart_detail, name='cart_detail'),    
     path('accept_ajax/', views.accept_ajax, name='ajax'),    
     path('cart_delete/', views.cart_delete, name='cart_delete'),
+    path('badge_count/', views.badge_count, name='badge_count'),
     path('', include(router.urls)),
 ]
