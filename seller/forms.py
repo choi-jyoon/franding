@@ -1,6 +1,7 @@
 from django import forms
 from item.models import Item
 from review.models import ReviewReply
+from subscribe.models import Keyword
 
 class ItemForm(forms.ModelForm):
     
@@ -41,3 +42,20 @@ class ReviewReplyForm(forms.ModelForm):
     class Meta:
         model = ReviewReply
         fields = ['comment']
+        
+class KeywordForm(forms.ModelForm):
+    class Meta:
+        model = Keyword
+        fields = ['category1', 'category2', 'word', 'month']
+        widgets = {
+            'month': forms.DateInput(attrs={'type': 'date'}),
+        }
+        labels = {
+            'category1': '카테고리 1',
+            'category2': '카테고리 2',
+            'word': '키워드',
+            'month': '월',
+        }
+        help_texts = {
+            'word': '최대 150자까지 입력할 수 있습니다.',
+        }

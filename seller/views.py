@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ItemForm, ReviewReplyForm
+from .forms import ItemForm, ReviewReplyForm, KeywordForm
 from item.models import Item, Brand, ItemType, Size
 from review.models import Review, ReviewReply
 from cart.models import Order, OrderCart
+from subscribe.models import Keyword, Subscribe
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator
@@ -17,7 +18,7 @@ from django.db.models.functions import Coalesce, ExtractMonth, ExtractYear
 def seller_index(request):
     sort_option = request.GET.get('sort-options', 'newest')
     
-    # sort_option 값에 따라 쿼리셋을 정렬합니다.
+    # sort_option 값에 따라 쿼리셋을 정렬
     if sort_option == 'newest':
         items = Item.objects.order_by('-created_at') # 최신순
     elif sort_option == 'popularity':
@@ -51,7 +52,7 @@ def item_create(request):
         
         if form.is_valid():
             item = form.save(commit=False)
-            item.user = request.user  # 현재 로그인한 사용자를 상품의 소유자로 지정합니다.
+            item.user = request.user  # 현재 로그인한 사용자를 상품의 소유자로 지정
             
             # 파일 업로드가 있는지 확인
             if 'image' in request.FILES:
@@ -136,12 +137,13 @@ def add_review_reply(request, review_id):
             )
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-# 주문 내역 관리
+# 주문 내역 관리(주문내역, 주문상세, 배송상태 설정 등)
+@login_required
 def seller_orderindex(request):
     sort_option_month = request.GET.get('sort-options-month', 'all')
     sort_option_deliverystatus = request.GET.get('sort-options-deliverystatus', 'all')
     orders = Order.objects.order_by('-datetime')
-    
+    # 필터링 기준
     if sort_option_month != 'all' and sort_option_deliverystatus != 'all':
         year, month = map(int, sort_option_month.split('-'))
         orders = orders.filter(datetime__year=year, datetime__month=month, delivery_info__status=int(sort_option_deliverystatus))
@@ -167,16 +169,27 @@ def seller_orderindex(request):
         'sort_option_deliverystatus': sort_option_deliverystatus,
     }
     return render(request, 'seller/order_index.html', context)
-
-def update_delivery_status(request, pk):
-    if request.method == 'POST':
-        order = get_object_or_404(Order, id=pk)
-        new_status = request.POST.get('delivery_status')
-        if new_status is not None:
-            order.delivery_info.status = new_status
-            order.delivery_info.save()
-        return redirect('seller:seller_orderindex')
     
+@login_required
+def update_delivery_status(request, model_type, pk):
+    if request.method == 'POST':
+        if model_type == 'order':
+            order = get_object_or_404(Order, id=pk)
+            new_status = request.POST.get('delivery_status')
+            if new_status is not None:
+                order.delivery_info.status = new_status
+                order.delivery_info.save()
+            return redirect('seller:seller_orderindex')
+        elif model_type == 'subscribe':
+            subscribe = get_object_or_404(Subscribe, id=pk)
+            new_status = request.POST.get('delivery_status')
+            if new_status is not None:
+                subscribe.delivery.status = new_status
+                subscribe.delivery.save()
+            return redirect('seller:subscribe_index')
+
+
+@login_required    
 def order_detail(request, pk):
     order = Order.objects.get(pk=pk)
     ordercarts = OrderCart.objects.filter(order_id = pk)
@@ -185,3 +198,65 @@ def order_detail(request, pk):
         'ordercarts':ordercarts
     }
     return render(request, 'seller/order_detail.html', context)
+
+# 구독관리
+@login_required
+def subscribe_index(request, pk=None):
+    
+    # 구독 키워드 관리
+    sort_option_month = request.GET.get('sort-options-month', 'all')
+    keywords = Keyword.objects.order_by('-month')
+    # 필터링 기준 - 월 기준
+    if sort_option_month != 'all':
+        created_year, created_month = map(int, sort_option_month.split('-'))
+        keywords = keywords.filter(month__year=created_year, month__month=created_month)
+        
+    keyword_months_queryset = Keyword.objects.annotate(created_year=ExtractYear('month'),created_month=ExtractMonth('month')).values('created_year', 'created_month').distinct().order_by('-created_year', '-created_month')
+    keyword_months = [f"{entry['created_year']}-{entry['created_month']:02d}" for entry in keyword_months_queryset]
+    
+    if pk:
+        keyword = get_object_or_404(Keyword, pk=pk)
+    else:
+        keyword = None
+    
+    if request.method == 'POST':
+        form = KeywordForm(request.POST, instance=keyword)
+        if form.is_valid():
+            form.save()
+        return redirect('seller:subscribe_index')
+    else:
+        form = KeywordForm(instance=keyword)
+        
+    # 구독 고객 리스트 관리
+    sub_option_month = request.GET.get('sub-options-month', 'all')
+    sub_option_deliverystatus = request.GET.get('sub-options-deliverystatus', 'all')
+    subscribes = Subscribe.objects.order_by('-datetime')
+
+    # 필터링 기준(월,배송상태)
+    if sub_option_month != 'all' and sub_option_deliverystatus != 'all':
+        year, month = map(int, sub_option_month.split('-'))
+        subscribes = subscribes.filter(datetime__year=year, datetime__month=month, delivery__status=int(sub_option_deliverystatus))
+    elif sub_option_month != 'all':
+        year, month = map(int, sub_option_month.split('-'))
+        subscribes = subscribes.filter(datetime__year=year, datetime__month=month)
+    elif sub_option_deliverystatus != 'all':
+        subscribes = subscribes.filter(delivery__status=int(sub_option_deliverystatus))
+        
+    sub_months_queryset = Subscribe.objects.annotate(year=ExtractYear('datetime'),month=ExtractMonth('datetime')).values('year', 'month').distinct().order_by('-year', '-month')
+    sub_months = [f"{entry['year']}-{entry['month']:02d}" for entry in sub_months_queryset]
+    
+    paginator = Paginator(subscribes, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context={
+        'keywords':keywords,
+        'keyword_months':keyword_months,
+        'sort_option_month':sort_option_month,
+        'form':form,
+        'subscribes':page_obj,
+        'sub_months':sub_months,
+        'sub_option_month':sub_option_month,
+        'sub_option_deliverystatus':sub_option_deliverystatus,
+    }
+    return render(request, 'seller/subscribe_index.html', context)

@@ -1,0 +1,417 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block extra-style %}
+<style>
+    /* 현재 페이지 버튼 스타일 */
+    .current-page {
+        background-color: #333;
+        color: #ffffff;
+    }
+    
+    .pagination .page-item.active .page-link {
+        background-color: #5B574F; /* 활성 페이지 버튼의 배경색 */
+        border-color: #5B574F; /* 활성 페이지 버튼의 테두리 색상 */
+        color: white;
+    }
+
+    .pagination .page-link {
+        color: #5B574F; /* 페이지 버튼의 텍스트 색상 */
+    }
+
+    .pagination .page-link:hover {
+        color: #5B574F; /* 마우스 오버 시 페이지 버튼의 텍스트 색상 */
+    }
+
+    #seller-nav .nav {
+        display: flex;
+        justify-content: center;
+        border-bottom: 1px solid #ccc;
+    }
+    #seller-nav .nav-item {
+        flex: 1;
+        text-align: center;
+    }
+    #seller-nav .nav-link {
+        padding: 0.5rem 1rem;
+        color:#000;
+    }
+
+    .content-box {
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .center-text {
+        text-align: center;
+    }
+    
+    .sort-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between; /* 좌우로 요소를 배치 */
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .sort-box form {
+        display: flex;
+        align-items: center;
+    }
+    
+    #add-keyword-button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        border: 1px solid #5B574F;
+        background-color: white;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.3s, box-shadow 0.3s; /* 부드러운 전환 효과 추가 */
+    }
+    
+    #add-keyword-button:hover {
+        background-color: #5B574F; /* 호버할 때 배경색 */
+        color: white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* 호버할 때 그림자 효과 */
+    }
+    
+    .keywords-box {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center; /* 자식 요소들을 가운데 정렬 */
+    }
+    
+    .keyword-item {
+        padding: 20px;
+        border: 2px solid #5B574F;
+        border-radius: 10px;
+        background-color: white;
+        width: 200px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+    
+    .keyword-name {
+        font-weight: bold;
+        font-size: 1.2em;
+        margin-bottom: 10px;
+    }
+    
+    .keyword-categories {
+        margin: 10px 0;
+    }
+    
+    .category {
+        display: inline-block;
+        border: 1px solid #5B574F;
+        padding: 5px 10px;
+        margin: 5px 0;
+        border-radius: 5px;
+        background-color: white;
+        font-size: 0.9em;
+    }
+    
+    .keyword-month {
+        margin-top: 10px;
+        font-size: 0.9em;
+        color: #777;
+    }
+
+    .keyword-form {
+        text-align: left; /* 텍스트를 왼쪽으로 정렬 */
+        margin: 0 auto; /* 폼을 가운데로 정렬 */
+        width: 100%; /* 폼의 너비 지정 */
+    }
+
+    .keyword-form label, 
+    .keyword-form input[type="text"], 
+    .keyword-form select {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .keyword-form label {
+        width: 25%;
+        margin-right: 10px; /* 레이블과 입력 필드 사이 간격 조정 */
+    }
+
+    .keyword-form input[type="text"], 
+    .keyword-form select {
+        width: 65%; /* 입력 필드의 너비를 조정하여 버튼 공간 확보 */
+        margin-right: 5px; /* 입력 필드와 버튼 사이 간격 조정 */
+    }
+
+    /* 툴바 */
+    .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background-color: #f1f1f1;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+
+    .toolbar select {
+        padding: 0.5rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        transition: border-color 0.3s;
+    }
+    
+    .left-section {
+        display: flex; /* 요소들을 한 줄에 나란히 배치 */
+        align-items: center;
+    }
+
+    .left-section form {
+        margin-right: 20px; /* 폼 간의 여백 추가 */
+    }
+
+    /* 오더 */
+    .sub-card{
+        margin: 0 auto;
+        width: 80%;
+    }
+    .sub-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 18px;
+        text-align: center;
+    }
+    
+    .sub-table th, .sub-table td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        font-size: 15px;
+    }
+    
+    .sub-table th {
+        background-color: #f2f2f2;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="center-content">
+    <h1>판매자 페이지</h1>
+    <hr>
+    <br>
+    <ul class="nav nav-underline" id="seller-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'seller:seller_index' %}">상품관리</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{% url 'seller:subscribe_index' %}">구독관리</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'seller:seller_orderindex' %}">주문내역관리</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">환불관리</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'QnA:seller_questions' %}">Q&A</a>
+        </li>
+    </ul>
+    <br>
+    <br>
+    <div class="content-box">
+        <h2 class="center-text">
+            {% if sort_option_month != 'all' %}
+                {{sort_option_month}}월의 키워드
+            {% else %}
+                모든 키워드
+            {% endif %}
+        </h2>
+        <hr>
+        <div class="sort-box">
+            <form id="sort-form" method="get">
+                <label for="sort-options-month">날짜 :&nbsp;</label>
+                <select id="sort-options-month" name="sort-options-month" onchange="document.getElementById('sort-form').submit();">
+                    <option value="all" {% if sort_option_month == 'all' %}selected{% endif %}>전체 보기</option>
+                    {% for month in keyword_months %}
+                    <option value="{{ month }}" {% if sort_option_month == month %}selected{% endif %}>{{ month }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+            <button id="add-keyword-button" data-bs-toggle="modal" data-bs-target="#keywordModal" >키워드 추가</button>
+        </div>
+        <div class="keywords-box">
+            {% for keyword in keywords %}
+            <button type="button" class="keyword-item" data-id="{{ keyword.id }}" data-name="{{ keyword.word }}" data-category1="{{ keyword.category1.id }}" data-category2="{{ keyword.category2.id }}" data-month="{{ keyword.month|date:'Y-m-d' }}" data-bs-toggle="modal" data-bs-target="#keywordModal">
+                <div class="keyword-name">{{ keyword }}</div>
+                <hr>
+                <div class="keyword-categories">
+                    <span class="category">{{ keyword.category1 }}</span>
+                    <span class="category">{{ keyword.category2 }}</span>
+                </div>
+                <div class="keyword-month">{{ keyword.month }}</div>
+            </button>            
+            {% endfor %}
+        </div>
+    </div>
+    <br>
+    <br>
+
+    <!-- 구독 고객 관리 -->
+    <h2 class="center-text">구독 고객 리스트</h2>
+    <hr>
+    <div class="toolbar">
+        <div class="left-section">
+            <form id="sub-form" method="get">
+                <label for="sub-options-month">날짜 :&nbsp;</label>
+                <select id="sub-options-month" name="sub-options-month" onchange="document.getElementById('sub-form').submit();">
+                    <option value="all" {% if sub_option_month == 'all' %}selected{% endif %}>전체 보기</option>
+                    {% for month in sub_months %}
+                    <option value="{{ month }}" {% if sub_option_month == month %}selected{% endif %}>{{ month }}</option>
+                    {% endfor %}
+                </select>
+                <label for="sub-options-deliverystatus">배송 상태 :&nbsp;</label>
+                <select id="sub-options-deliverystatus" name="sub-options-deliverystatus" onchange="document.getElementById('sub-form').submit();">
+                    <option value="all" {% if sub_option_deliverystatus == 'all' %}selected{% endif %}>전체 보기</option>
+                    <option value="0" {% if sub_option_deliverystatus == '0' %}selected{% endif %}>배송 전</option>
+                    <option value="1" {% if sub_option_deliverystatus == '1' %}selected{% endif %}>배송 중</option>
+                    <option value="2" {% if sub_option_deliverystatus == '2' %}selected{% endif %}>배송 완료</option>
+                    <option value="3" {% if sub_option_deliverystatus == '3' %}selected{% endif %}>구매 확정</option>
+                    <option value="4" {% if sub_option_deliverystatus == '4' %}selected{% endif %}>환불 완료</option>
+                </select>
+            </form>          
+        </div>
+    </div>
+
+    <!-- 구독자 리스트 테이블 -->
+    <table class="sub-table">
+        <thead>
+            <tr>
+                <th>구독자</th>
+                <th>신청날짜</th>
+                <th>신청 키워드</th>
+                <th>선별상품</th>
+                <th>배송상태</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for subscribe in subscribes %}
+                <tr class="sub-card">
+                    <td>{{ subscribe.user }}</td>
+                    <td>{{ subscribe.datetime }}</td>
+                    <td>
+                        {% for subscribekeyword in subscribe.subscribekeyword_set.all %}
+                            {{ subscribekeyword.keyword.word}}{% if not forloop.last %}, {% endif %} <!-- 마지막 루프에는 쉼표 안 넣게 -->
+                        {% endfor %}
+                    </td>
+                    <td>{{ subscribe.item }}</td>
+                    <td>
+                        <form method="post" action="{% url 'seller:update_delivery_status' model_type='subscribe' pk=subscribe.id %}" id="delivery_status_form_{{ subscribe.id }}">
+                            {% csrf_token %}
+                            <select name="delivery_status" onchange="document.getElementById('delivery_status_form_{{ subscribe.id }}').submit();">
+                                <option value="0" {% if subscribe.delivery.status == 0 %}selected{% endif %}>배송 전</option>
+                                <option value="1" {% if subscribe.delivery.status == 1 %}selected{% endif %}>배송 중</option>
+                                <option value="2" {% if subscribe.delivery.status == 2 %}selected{% endif %}>배송 완료</option>
+                                <option value="3" {% if subscribe.delivery.status == 3 %}selected{% endif %}>구매 확정</option>
+                                <option value="4" {% if subscribe.delivery.status == 4 %}selected{% endif %}>환불 완료</option>
+                            </select>
+                        </form>   
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if subscribes.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ subscribes.previous_page_number }}&sub-options-month={{ sub_option_month }}&sub-options-deliverystatus={{ sub_option_deliverystatus }}">이전</a></li>
+            {% endif %}
+            {% for num in subscribes.paginator.page_range %}
+            {% if subscribes.number == num %}
+            <li class="page-item active"><a class="page-link" href="?page={{ num }}&sub-options-month={{ sub_option_month }}&sub-options-deliverystatus={{ sub_option_deliverystatus }}">{{ num }}</a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ num }}&sub-options-month={{ sub_option_month }}&sub-options-deliverystatus={{ sub_option_deliverystatus }}">{{ num }}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if subscribes.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ subscribes.next_page_number }}&sub-options-month={{ sub_option_month }}&sub-options-deliverystatus={{ sub_option_deliverystatus }}">다음</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+<!-- 키워드 업데이트 모달 -->
+<div class="modal fade" id="keywordModal" tabindex="-1" aria-labelledby="keywordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="keywordModalLabel">키워드</h5>
+            </div>
+            <div class="modal-body">
+                <form id="keywordForm" method="post" class="keyword-form">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="form-group">
+                            <hr>
+                            {{ field.label_tag }}{{ field }}
+                            <br>
+                            {% for error in field.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="submitKeywordForm()">저장하기</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra-script %}
+<script>
+    document.getElementById('add-keyword-button').addEventListener('click', function() {
+        // 모달 폼 초기화
+        document.getElementById('keywordForm').reset();
+        document.getElementById('keywordForm').action = "{% url 'seller:create_keyword' %}";
+        document.getElementById('keywordModalLabel').innerText = "키워드 추가";
+    });
+
+    document.querySelectorAll('.keyword-item').forEach(function(item) {
+        item.addEventListener('click', function() {
+            // 클릭한 키워드의 데이터 가져오기
+            const id = this.getAttribute('data-id');
+            const word = this.getAttribute('data-name');
+            const category1 = this.getAttribute('data-category1');
+            const category2 = this.getAttribute('data-category2');
+            const month = this.getAttribute('data-month');
+
+            // 폼 데이터 채우기
+            document.querySelector('input[name="word"]').value = word;
+            document.querySelector('select[name="category1"]').value = category1;
+            document.querySelector('select[name="category2"]').value = category2;
+            document.querySelector('input[name="month"]').value = month;
+
+            // 폼 액션 URL 업데이트
+            const updateUrl = "{% url 'seller:update_keyword' pk=0 %}".replace('0', id);
+            document.getElementById('keywordForm').action = updateUrl;
+            document.getElementById('keywordModalLabel').innerText = "키워드 수정";
+
+            // 모달 표시
+            var keywordModal = new bootstrap.Modal(document.getElementById('keywordModal'));
+            keywordModal.show();
+        });
+    });
+
+    function submitKeywordForm() {
+        document.getElementById('keywordForm').submit();
+    }
+</script>
+{% endblock %}
