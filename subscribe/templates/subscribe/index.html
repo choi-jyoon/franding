@@ -92,13 +92,6 @@
                 <p>이달의 키워드를 준비 중입니다.</p>
             </div>
             {% endif %}
-            <ul class="list-inline text-center">
-                {% for keyword in keywords %}
-                <li class="list-inline-item">
-                    <button type="button" class="btn btn-outline-secondary rounded-pill keyword-button" data-id="{{ keyword.id }}">{{ keyword.word }}</button>
-                </li>
-                {% endfor %}
-            </ul>
         </div>
         <input type="hidden" name="selected_keywords" id="selected-keywords" value="">
         <button type="submit" class="btn btn-primary" style="margin-top:30px;"{% if is_subscribed %} disabled {% endif %}>구독 신청</button>

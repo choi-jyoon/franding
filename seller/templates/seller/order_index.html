@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block extra-style %}
+<style>
+    /* 현재 페이지 버튼 스타일 */
+    .current-page {
+        background-color: #333;
+        color: #ffffff;
+    }
+    
+    .pagination .page-item.active .page-link {
+        background-color: #5B574F; /* 활성 페이지 버튼의 배경색 */
+        border-color: #5B574F; /* 활성 페이지 버튼의 테두리 색상 */
+        color: white;
+    }
+
+    .pagination .page-link {
+        color: #5B574F; /* 페이지 버튼의 텍스트 색상 */
+    }
+
+    .pagination .page-link:hover {
+        color: #5B574F; /* 마우스 오버 시 페이지 버튼의 텍스트 색상 */
+    }
+
+    #seller-nav .nav {
+        display: flex;
+        justify-content: center;
+        border-bottom: 1px solid #ccc;
+    }
+    #seller-nav .nav-item {
+        flex: 1;
+        text-align: center;
+    }
+    #seller-nav .nav-link {
+        padding: 0.5rem 1rem;
+        color:#000;
+    }
+
+    /* 툴바 */
+    .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        background-color: #f1f1f1;
+        border: 1px solid #ccc;
+    }
+    .left-section {
+        display: flex; /* 요소들을 한 줄에 나란히 배치 */
+        align-items: center;
+    }
+
+    .left-section form {
+        margin-right: 20px; /* 폼 간의 여백 추가 */
+    }
+    /* 오더 */
+    .order-card{
+        margin: 0 auto;
+        width: 80%;
+    }
+    .order-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 18px;
+        text-align: center;
+    }
+    
+    .order-table th, .order-table td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        font-size: 15px;
+    }
+    
+    .order-table th {
+        background-color: #f2f2f2;
+    }
+    
+    .rating span {
+        color: gold;
+    }
+    
+    .order-link-btn {
+        border: 2px solid #f2f2f2;
+        background-color: transparent;
+        cursor: pointer;
+        border-radius: 10px; /* 둥글게 만들기 */
+        padding: 4px 10px; /* 버튼 크기 조절 */
+        transition: background-color 0.3s, box-shadow 0.3s; /* 부드러운 전환 효과 */
+    }
+    
+    .order-link-btn:hover {
+        background-color: #f2f2f2;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 호버 시 그림자 추가 */
+    }
+
+    .order-link-btn:active {
+        background-color: #e0e0e0; /* 눌렸을 때 배경색 변경 */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 눌렸을 때 그림자 변경 */
+        transform: translateY(2px); /* 눌렸을 때 버튼 살짝 내려가기 */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="center-content">
+    <h1>판매자 페이지</h1>
+    <hr>
+    <br>
+    <ul class="nav nav-underline" id="seller-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'seller:seller_index' %}">상품관리</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">고객관리</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{% url 'seller:seller_orderindex' %}">주문내역관리</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">환불관리</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'QnA:seller_questions' %}">Q&A</a>
+        </li>
+    </ul>
+    <br>
+    <div class="toolbar">
+        <div class="left-section">
+            <form id="sort-form" method="get">
+                <label for="sort-options-month">날짜 :&nbsp;</label>
+                <select id="sort-options-month" name="sort-options-month" onchange="document.getElementById('sort-form').submit();">
+                    <option value="all" {% if sort_option_month == 'all' %}selected{% endif %}>전체 보기</option>
+                    {% for month in months %}
+                    <option value="{{ month }}" {% if sort_option_month == month %}selected{% endif %}>{{ month }}</option>
+                    {% endfor %}
+                </select>
+                <label for="sort-options-deliverystatus">배송 상태 :&nbsp;</label>
+                <select id="sort-options-deliverystatus" name="sort-options-deliverystatus" onchange="document.getElementById('sort-form').submit();">
+                    <option value="all" {% if sort_option_deliverystatus == 'all' %}selected{% endif %}>전체 보기</option>
+                    <option value="0" {% if sort_option_deliverystatus == '0' %}selected{% endif %}>배송 전</option>
+                    <option value="1" {% if sort_option_deliverystatus == '1' %}selected{% endif %}>배송 중</option>
+                    <option value="2" {% if sort_option_deliverystatus == '2' %}selected{% endif %}>배송 완료</option>
+                    <option value="3" {% if sort_option_deliverystatus == '3' %}selected{% endif %}>구매 확정</option>
+                    <option value="4" {% if sort_option_deliverystatus == '4' %}selected{% endif %}>환불 완료</option>
+                </select>
+            </form>          
+        </div>
+    </div>
+    <br>
+    <table class="order-table">
+        <thead>
+            <tr>
+                <th>사용자</th>
+                <th>날짜</th>
+                <th>주문번호</th>
+                <th>배송상태</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            {% if order.ordercart_set.all %}
+                <tr class="order-card">
+                    <td>{{ order.ordercart_set.all.0.cart.user }}</td> <!-- 첫 번째 OrderCart의 사용자 -->
+                    <td>{{ order.datetime }}</td>
+                    <td class="order-id-toggle" data-target="order-detail-{{ order.id }}" data-order-id="{{ order.id }}">
+                        <button class="order-link-btn" data-order-id="{{ order.id }}">{{ order.id }}</button>
+                    </td>
+                    <td>
+                        <form method="post" action="{% url 'seller:update_delivery_status' pk=order.id %}" id="delivery_status_form_{{ order.id }}">
+                            {% csrf_token %}
+                            <select name="delivery_status" onchange="document.getElementById('delivery_status_form_{{ order.id }}').submit();">
+                                <option value="0" {% if order.delivery_info.status == 0 %}selected{% endif %}>배송 전</option>
+                                <option value="1" {% if order.delivery_info.status == 1 %}selected{% endif %}>배송 중</option>
+                                <option value="2" {% if order.delivery_info.status == 2 %}selected{% endif %}>배송 완료</option>
+                                <option value="3" {% if order.delivery_info.status == 3 %}selected{% endif %}>구매 확정</option>
+                                <option value="4" {% if order.delivery_info.status == 4 %}selected{% endif %}>환불 완료</option>
+                            </select>
+                        </form>                        
+                    </td>
+                </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if orders.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ orders.previous_page_number }}&sort-options-month={{ sort_option_month }}&sort-options-deliverystatus={{ sort_option_deliverystatus }}">이전</a></li>
+            {% endif %}
+            {% for num in orders.paginator.page_range %}
+            {% if orders.number == num %}
+            <li class="page-item active"><a class="page-link" href="?page={{ num }}&sort-options-month={{ sort_option_month }}&sort-options-deliverystatus={{ sort_option_deliverystatus }}">{{ num }}</a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ num }}&sort-options-month={{ sort_option_month }}&sort-options-deliverystatus={{ sort_option_deliverystatus }}">{{ num }}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if orders.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ orders.next_page_number }}&sort-options-month={{ sort_option_month }}&sort-options-deliverystatus={{ sort_option_deliverystatus }}">다음</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endblock %}
+
+{% block extra-script %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var toggles = document.querySelectorAll(".order-id-toggle");
+        toggles.forEach(function(toggle) {
+            toggle.addEventListener("click", function(event) {
+                event.preventDefault(); // 링크 기본 동작 방지
+                var targetId = this.getAttribute("data-target");
+                var existingRow = document.getElementById(targetId);
+                var orderId = this.getAttribute("data-order-id");
+                var orderDetailUrlTemplate = "{% url 'seller:order_detail' pk=0 %}";
+                var orderDetailUrl = orderDetailUrlTemplate.replace('/0/', `/${orderId}/`);
+
+                if (existingRow) {
+                    existingRow.style.display = existingRow.style.display === "none" ? "table-row" : "none";
+                } else {
+                    fetch(orderDetailUrl)
+                        .then(response => response.text())
+                        .then(html => {
+                            var newRow = document.createElement('tr');
+                            newRow.id = targetId;
+                            newRow.innerHTML = `<td colspan="4">${html}</td>`; // 열 수에 맞춰 colspan 조정
+                            newRow.style.display = "table-row";
+                            this.closest('tr').after(newRow);
+                        })
+                        .catch(error => {
+                            console.error('Error fetching order details:', error);
+                        });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

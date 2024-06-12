@@ -118,7 +118,7 @@
 /*review*/
 .review-card {
     border: 1px solid #ddd;
-    padding: 15px;
+    padding: 15px 15px 0 15px;
     margin-bottom: 20px;
 }
 
@@ -179,7 +179,16 @@ hr {
     background: #ddd;
     margin-top: 20px;
 }
-
+.reply-info {
+    border-top: 1px solid #ccc;
+    padding: 15px;
+    margin: 0;
+}
+.date{
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 5px;
+}
 .pagination{
     justify-content:center;
     display: flex;
@@ -368,28 +377,27 @@ hr {
         <h2 class="center">Review</h2>
         <hr>
         {% if review %}
-        {% for review in review %}
-    
+    {% for review in review %}
         <div class="review-card">
             <div class="review-up">
                 <div class="user-info">
                     <h5>{{ review.user }}</h5>
                     <div class="rating" data-value="{{ review.star }}">
                         {% for i in '12345' %}
-                        {% if forloop.counter <= review.star %}
-                        <span>&#9733;</span>
-                        {% else %}
-                        <span>&#9734;</span>
-                        {% endif %}
+                            {% if forloop.counter <= review.star %}
+                                <span>&#9733;</span>
+                            {% else %}
+                                <span>&#9734;</span>
+                            {% endif %}
                         {% endfor %}
                     </div>
                 </div>
                 <div class="like-con">
                     <button class="like-btn" data-review-id="{{ review.id }}">
                         {% if user in review.reviewlike_set.all %}
-                        <i class="bi bi-heart-fill liked"></i>
+                            <i class="bi bi-heart-fill liked"></i>
                         {% else %}
-                        <i class="bi bi-heart"></i>
+                            <i class="bi bi-heart"></i>
                         {% endif %}
                     </button>
                     <p class="like">{{ review.likes_count }}</p>
@@ -397,15 +405,27 @@ hr {
             </div>
             <div class="review-down">
                 <p class="card-text">{{ review.content }}</p>
+                <p class="date">{{ review.datetime }}</p>
             </div>
             <br>
+            <!-- ReviewReply를 리뷰 아래에 표시 -->
+            {% if review.reviewreply_set.all %}
+                <div class="review-replies">
+                    {% for reply in review.reviewreply_set.all %}
+                        <div class="reply-card">
+                            <div class="reply-info">
+                                <h6>{{ reply.user }}</h6>
+                                <p class="reply-text">{{ reply.comment }}</p>
+                                <p class="date">{{ reply.datetime }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
         </div>
-        <br>        
-        {% endfor %}
-        
-        {% else %}
-        <p class="center message">{{ message }}</p>
-        {% endif %}
+    {% endfor %}
+{% endif %}
     </div>
     <div class="pagination">
         {% if review.has_previous %}

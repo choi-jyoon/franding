@@ -4,7 +4,7 @@ from django.views.generic import FormView
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_protect
 
-from django.db.models import Q,Count
+from django.db.models import Q,Count,Prefetch
 from .models import *
 from cart.models import Cart
 from review.models import *
@@ -104,8 +104,10 @@ def list_item(request):
 
 def detail_list_item(request,item_id):
     item=Item.objects.get(id=item_id)
-    review = Review.objects.filter(item=item_id).annotate(likes_count=Count('reviewlike')).order_by('-datetime')
-    paginator = Paginator(review, 3)
+    reviews = Review.objects.filter(item=item_id).annotate(likes_count=Count('reviewlike')).order_by('-datetime').prefetch_related(
+        Prefetch('reviewreply_set', queryset=ReviewReply.objects.order_by('-datetime'))
+    )
+    paginator = Paginator(reviews, 3)
     faqs = FAQ.objects.all()  
 
 

@@ -10,25 +10,25 @@ from django.core.paginator import Paginator
 
 # Create your views here.
 
-def question_list(request, item_id):
-    # questions = Question.objects.filter(item_id=item_id)
-    questions = Question.objects.all().order_by('-created_at')  # 모든 질문을 가져옵니다.
-    answers = Answer.objects.all().order_by('-created_at')
-    return render(request, 'QnA/question_list.html', {'questions': questions, 'answers': answers})
+# def question_list(request, item_id):
+#     # questions = Question.objects.filter(item_id=item_id)
+#     questions = Question.objects.all().order_by('-created_at')  # 모든 질문을 가져옵니다.
+#     answers = Answer.objects.all().order_by('-created_at')
+#     return render(request, 'QnA/question_list.html', {'questions': questions, 'answers': answers})
 
-def question_detail(request, question_id):
-    question = get_object_or_404(Question, id=question_id)
-    if request.method == 'GET':
-        form = AnswerForm(request.GET)
-        if form.is_valid():
-            answer = form.save(commit=False)
-            answer.user = request.user
-            answer.question = question
-            answer.save()
-            return redirect('QnA:question_detail', question_id=question.id)
-    else:
-        form = AnswerForm()
-    return render(request, 'QnA/question_detail.html', {'question': question, 'form': form})
+# def question_detail(request, question_id):
+#     question = get_object_or_404(Question, id=question_id)
+#     if request.method == 'GET':
+#         form = AnswerForm(request.GET)
+#         if form.is_valid():
+#             answer = form.save(commit=False)
+#             answer.user = request.user
+#             answer.question = question
+#             answer.save()
+#             return redirect('QnA:question_detail', question_id=question.id)
+#     else:
+#         form = AnswerForm()
+#     return render(request, 'QnA/question_detail.html', {'question': question, 'form': form})
 
 def question_create(request, item_id):
     if request.method == 'POST':
@@ -63,6 +63,7 @@ def answer_detail(request, question_id):
 
 
 def seller_questions(request):
+    # 작성일자에 따른 필터링
     period = request.GET.get('period', '3days')
     now = datetime.now()
 
@@ -75,13 +76,26 @@ def seller_questions(request):
     elif period == '3weeks':
         start_date = now - timedelta(weeks=3)
     else:
-        start_date = now - timedelta(days=3)  # default to 3 days
+        start_date = now - timedelta(days=9999)  # default to 3 days
 
-    questions_list = Question.objects.filter(created_at__gte=start_date).order_by('is_answered','-created_at')
-    paginator = Paginator(questions_list, 3)  # Show 5 questions per page.
+    questions_period_filter = Question.objects.filter(created_at__gte=start_date).order_by('is_answered','-created_at')
+
+    # 답변 여부에 따른 필터링
+    answered_filter = request.GET.get('answered')
+    if answered_filter == 'answered':
+        questions = questions_period_filter.filter(is_answered=True)
+    elif answered_filter == 'unanswered':
+        questions = questions_period_filter.filter(is_answered=False)
+    else:
+        questions = questions_period_filter
+
+    paginator = Paginator(questions, 6)  # Show 6 questions per page.
 
     page_number = request.GET.get('page')
     questions = paginator.get_page(page_number)
+
+    
+
 
     return render(request, 'QnA/seller_questions.html', {'questions': questions})
 
