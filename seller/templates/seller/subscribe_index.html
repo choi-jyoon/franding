@@ -147,6 +147,57 @@
         width: 65%; /* 입력 필드의 너비를 조정하여 버튼 공간 확보 */
         margin-right: 5px; /* 입력 필드와 버튼 사이 간격 조정 */
     }
+
+    /* 툴바 */
+    .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background-color: #f1f1f1;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+
+    .toolbar select {
+        padding: 0.5rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        transition: border-color 0.3s;
+    }
+    
+    .left-section {
+        display: flex; /* 요소들을 한 줄에 나란히 배치 */
+        align-items: center;
+    }
+
+    .left-section form {
+        margin-right: 20px; /* 폼 간의 여백 추가 */
+    }
+
+    /* 오더 */
+    .sub-card{
+        margin: 0 auto;
+        width: 80%;
+    }
+    .sub-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 18px;
+        text-align: center;
+    }
+    
+    .sub-table th, .sub-table td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        font-size: 15px;
+    }
+    
+    .sub-table th {
+        background-color: #f2f2f2;
+    }
 </style>
 {% endblock %}
 
@@ -188,7 +239,7 @@
                 <label for="sort-options-month">날짜 :&nbsp;</label>
                 <select id="sort-options-month" name="sort-options-month" onchange="document.getElementById('sort-form').submit();">
                     <option value="all" {% if sort_option_month == 'all' %}selected{% endif %}>전체 보기</option>
-                    {% for month in months %}
+                    {% for month in keyword_months %}
                     <option value="{{ month }}" {% if sort_option_month == month %}selected{% endif %}>{{ month }}</option>
                     {% endfor %}
                 </select>
@@ -211,8 +262,88 @@
     </div>
     <br>
     <br>
+
+    <!-- 구독 고객 관리 -->
     <h2 class="center-text">구독 고객 리스트</h2>
     <hr>
+    <div class="toolbar">
+        <div class="left-section">
+            <form id="sub-form" method="get">
+                <label for="sub-options-month">날짜 :&nbsp;</label>
+                <select id="sub-options-month" name="sub-options-month" onchange="document.getElementById('sub-form').submit();">
+                    <option value="all" {% if sub_option_month == 'all' %}selected{% endif %}>전체 보기</option>
+                    {% for month in sub_months %}
+                    <option value="{{ month }}" {% if sub_option_month == month %}selected{% endif %}>{{ month }}</option>
+                    {% endfor %}
+                </select>
+                <label for="sub-options-deliverystatus">배송 상태 :&nbsp;</label>
+                <select id="sub-options-deliverystatus" name="sub-options-deliverystatus" onchange="document.getElementById('sub-form').submit();">
+                    <option value="all" {% if sub_option_deliverystatus == 'all' %}selected{% endif %}>전체 보기</option>
+                    <option value="0" {% if sub_option_deliverystatus == '0' %}selected{% endif %}>배송 전</option>
+                    <option value="1" {% if sub_option_deliverystatus == '1' %}selected{% endif %}>배송 중</option>
+                    <option value="2" {% if sub_option_deliverystatus == '2' %}selected{% endif %}>배송 완료</option>
+                    <option value="3" {% if sub_option_deliverystatus == '3' %}selected{% endif %}>구매 확정</option>
+                    <option value="4" {% if sub_option_deliverystatus == '4' %}selected{% endif %}>환불 완료</option>
+                </select>
+            </form>          
+        </div>
+    </div>
+
+    <!-- 구독자 리스트 테이블 -->
+    <table class="sub-table">
+        <thead>
+            <tr>
+                <th>구독자</th>
+                <th>신청날짜</th>
+                <th>신청 키워드</th>
+                <th>선별상품</th>
+                <th>배송상태</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for subscribe in subscribes %}
+                <tr class="sub-card">
+                    <td>{{ subscribe.user }}</td>
+                    <td>{{ subscribe.datetime }}</td>
+                    <td>
+                        {% for subscribekeyword in subscribe.subscribekeyword_set.all %}
+                            {{ subscribekeyword.keyword.word}}{% if not forloop.last %}, {% endif %} <!-- 마지막 루프에는 쉼표 안 넣게 -->
+                        {% endfor %}
+                    </td>
+                    <td>{{ subscribe.item }}</td>
+                    <td>
+                        <form method="post" action="{% url 'seller:update_delivery_status' model_type='subscribe' pk=subscribe.id %}" id="delivery_status_form_{{ subscribe.id }}">
+                            {% csrf_token %}
+                            <select name="delivery_status" onchange="document.getElementById('delivery_status_form_{{ subscribe.id }}').submit();">
+                                <option value="0" {% if subscribe.delivery.status == 0 %}selected{% endif %}>배송 전</option>
+                                <option value="1" {% if subscribe.delivery.status == 1 %}selected{% endif %}>배송 중</option>
+                                <option value="2" {% if subscribe.delivery.status == 2 %}selected{% endif %}>배송 완료</option>
+                                <option value="3" {% if subscribe.delivery.status == 3 %}selected{% endif %}>구매 확정</option>
+                                <option value="4" {% if subscribe.delivery.status == 4 %}selected{% endif %}>환불 완료</option>
+                            </select>
+                        </form>   
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if subscribes.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ subscribes.previous_page_number }}&sub-options-month={{ sub_option_month }}&sub-options-deliverystatus={{ sub_option_deliverystatus }}">이전</a></li>
+            {% endif %}
+            {% for num in subscribes.paginator.page_range %}
+            {% if subscribes.number == num %}
+            <li class="page-item active"><a class="page-link" href="?page={{ num }}&sub-options-month={{ sub_option_month }}&sub-options-deliverystatus={{ sub_option_deliverystatus }}">{{ num }}</a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ num }}&sub-options-month={{ sub_option_month }}&sub-options-deliverystatus={{ sub_option_deliverystatus }}">{{ num }}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if subscribes.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ subscribes.next_page_number }}&sub-options-month={{ sub_option_month }}&sub-options-deliverystatus={{ sub_option_deliverystatus }}">다음</a></li>
+            {% endif %}
+        </ul>
+    </nav>
 </div>
 <!-- 키워드 업데이트 모달 -->
 <div class="modal fade" id="keywordModal" tabindex="-1" aria-labelledby="keywordModalLabel" aria-hidden="true">
