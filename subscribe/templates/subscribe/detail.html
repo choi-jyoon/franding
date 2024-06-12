@@ -76,14 +76,16 @@
             </div>
             <div class="date-card-item">
                 <p>진행 상황:</p>
-                <p class="item-card">{{ subscribe_object.get_state_display }}</p>
                 <div class="date-card-item">
-                    {% if subscribe_object.state == 0 %}
+                    {% if subscribe_object.delivery.status == 0 %}
                     <img src="https://imgur.com/NpJ5maX.gif" alt="향수 프랜딩 이미지" class="date-card-image">
-                    {% elif subscribe_object.state == 1 %}
+                    <p class="item-card">배송 준비 중</p>
+                    {% elif subscribe_object.delivery.status == 1 %}
                     <img src="https://imgur.com/6Uy7Ec6.gif" alt="향수 프랜딩 이미지" class="date-card-image">
+                    <p class="item-card">배송 중</p>
                     {% else %}
                     <img src="https://imgur.com/FxFDTKW.gif" alt="향수 프랜딩 이미지" class="date-card-image">
+                    <p class="item-card">배송 완료</p>
                     {% endif %}
                 </div>
             </div>
