@@ -33,12 +33,15 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <h3> 멤버십 관리하기 </h3>
-            <div class="membership-info">
-                <h4>멤버십 정보</h4>
-                <p>구독 시작 날짜: 2023년 5월 1일</p>
-                <p>다음 결제 예정일: 2023년 6월 1일</p>
-                <p>결제 수단: 신용카드 (1234)</p>
-            </div>
+            {% for membership in memberships %}
+                <div class="membership-info">
+                    <h4>멤버십 정보</h4>
+                    <p>구독 시작 날짜: {{membership.approved_at}}</p>
+                    <p>다음 결제 예정일: {{membership.next_payment_date}}</p>
+                    <p>결제 수단: 카카오페이</p>
+                    <p>상태 : {{membership.status}}</p>
+                </div>
+            {% endfor %}
             <div class="btn-container">
                 <a href="#" class="btn btn-primary" onclick="showChangePaymentPopup()">결제 수단 변경</a>
                 <form id="cancelMembershipForm" action="{% url 'subscribe:paycancel' %}" method="post" >

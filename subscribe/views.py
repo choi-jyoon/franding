@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Keyword, Subscribe, SubscribeKeyword, SubscribePayInfo
 from django.utils import timezone
+from datetime import timedelta
 from django.contrib.auth.decorators import login_required
 from collections import defaultdict, Counter
 from item.models import Item
@@ -9,6 +10,7 @@ import random
 import requests
 import os
 from dotenv import load_dotenv
+# from .tasks import process_recurring_payments
 
 load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY')
@@ -19,6 +21,7 @@ def index(request):
     
     now = timezone.now()
     
+    # 구독 키워드 신청 
     if request.method == 'POST':
         selected_keywords = request.POST.get('selected_keywords')
         keyword_id = selected_keywords.split(',') if selected_keywords else []
@@ -130,6 +133,7 @@ def first_pay_process(request):
 @login_required
 def pay_success(request):
     # 결제 처리 로직
+    now = timezone.now()
     tid = request.session.get('tid')
     if tid:
         # 카카오페이 결제 승인 API 호출
@@ -152,7 +156,9 @@ def pay_success(request):
             sid = response_data.get('sid')
             payment_info = SubscribePayInfo.objects.get(tid=tid, user=request.user)
             payment_info.status = 'approved'  # 결제 완료 상태로 변경
-            payment_info.approved_at = timezone.now()  # 승인 시간 업데이트
+            payment_info.approved_at = now  # 승인 시간 업데이트
+            payment_info.last_payment_date = now
+            payment_info.next_payment_date = now + timedelta(minutes=2)
             if sid:
                 payment_info.sid = sid  # sid 값 저장
             payment_info.save()
@@ -165,6 +171,8 @@ def pay_success(request):
             # 세션에서 tid 제거
             del request.session['tid']
             
+            # process_recurring_payments.delay(request.user.id)
+            
             # index 함수 호출
             return index(request)
 
@@ -173,7 +181,8 @@ def pay_success(request):
 @login_required
 def second_pay_process(request):
     # 2회차 이후 정기결제 로직 
-    pay_info = SubscribePayInfo.objects.get(user = request.user).order_by('-id').first()
+    now = timezone.now()
+    pay_info = SubscribePayInfo.objects.get(user=request.user, next_payment_date__lte=now, status='approved')
     
     # 정기 결제 처리 로직 구현
     
@@ -196,19 +205,10 @@ def second_pay_process(request):
     response_data = response.json()
     
     if response.status_code == 200:
-        # n회차 결제 성공 데이터 저장 
-        SubscribePayInfo.objects.create(
-            user=request.user,
-            tid=response_data.get('tid'),
-            cid="TCSUBSCRIP",
-            sid= response_data.get('sid'),
-            # aid= response_data.get('aid'),
-            payment_method_type ="MONEY",
-            item_name="franding membership",
-            quantity=1,
-            total_amount=15900,
-            status='approved' 
-        )
+        # n회차 결제 성공 -> 구독 정보 업데이트
+        pay_info.next_payment_date = now + timedelta(minutes=2)  # 다음 결제 날짜를 2분 뒤로 설정
+        pay_info.last_payment_date = now  # 마지막 결제일을 현재 시간으로 설정
+        pay_info.save()
         return index(request)
     
     return render(request, 'payment/payfail.html')
@@ -245,7 +245,7 @@ def pay_cancel(request):
         user_info.membership = False
         user_info.save()
         
-    return render(request, 'subscribe:membershipcancel.html')
+    return render(request, 'subscribe/membershipcancel.html')
 
 
 @login_required
@@ -284,4 +284,9 @@ def detail(request, pk):
 
 @login_required
 def membership_detail(request):
-    return render(request, 'subscribe/membership_detail.html')
+    # 멤버십 상세 페이지 
+    membership_info = SubscribePayInfo.objects.filter(user = request.user)
+    context = {
+        'memberships' : membership_info
+    }
+    return render(request, 'subscribe/membership_detail.html', context)
