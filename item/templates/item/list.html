@@ -412,28 +412,6 @@
         });
     });
 
-    $(document).ready(function() {
-        $('.like-btn').click(function() {
-            var button = $(this);
-            var itemId = button.data('item-id');
-            
-            $.ajax({
-                url: '{% url "item:toggle_like" 0 %}'.replace('0', itemId),
-                type: 'POST',
-                data: {
-                    'csrfmiddlewaretoken': '{{ csrf_token }}'
-                },
-                success: function(response) {
-                    var likeCountElement = $('#like-count-' + itemId);
-                    likeCountElement.text(response.count);
-                    if (response.liked) {
-                        button.find('i').removeClass('far').addClass('fas');
-                    } else {
-                        button.find('i').removeClass('fas').addClass('far');
-                    }
-                }
-            });
-        });
-    });
+    // 아이템 토클 라이크 위치
 </script>
 {% endblock %}
