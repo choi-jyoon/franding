@@ -16,5 +16,5 @@ urlpatterns = [
 
     # 찜 목록
     path('item_likes/', views.item_like_page, name='item_like_page'),
-    path('toggle_like/<int:item_id>/', views.toggle_like, name='toggle_like'),
+    # path('toggle_like/<int:item_id>/', views.toggle_like, name='toggle_like'),
 ]

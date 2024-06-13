@@ -134,14 +134,14 @@ def item_like_page(request):
     }
     return render(request, 'mypage/itemlike.html', context)
 
-@login_required
-def toggle_like(request, item_id):
-    item = get_object_or_404(Item, id=item_id)
-    user = request.user
-    like, created = Itemlike.objects.get_or_create(item=item, user=user)
-    if not created:
-        like.delete()
-        liked = False
-    else:
-        liked = True
-    return JsonResponse({'liked': liked, 'count': item.item_likes.count()})
+# @login_required
+# def toggle_like(request, item_id):
+#     item = get_object_or_404(Item, id=item_id)
+#     user = request.user
+#     like, created = Itemlike.objects.get_or_create(item=item, user=user)
+#     if not created:
+#         like.delete()
+#         liked = False
+#     else:
+#         liked = True
+#     return JsonResponse({'liked': liked, 'count': item.item_likes.count()})
