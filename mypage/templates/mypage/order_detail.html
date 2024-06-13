@@ -39,7 +39,7 @@
             <a href="{% url 'review:review_index' %}" class="btn btn-outline-secondary mb-4">작성 리뷰</a>
             <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary mb-4">회원정보</a>
             <a href="{% url 'event:index' %}" class="btn btn-outline-secondary mb-4">나의 franding</a>
-            <a href="{% url 'subscribe:index' %}" class="btn btn-outline-secondary mb-4">구독</a>
+            <a href="{% url 'subscribe:membership' %}" class="btn btn-outline-secondary mb-4">구독</a>
             <a href="{% url 'QnA:home' %}" class="btn btn-outline-secondary mb-4">Q&A</a>
             {% if user.is_staff %}
                 <a href="{% url 'seller:seller_index' %}" class="btn btn-outline-secondary mb-4">판매자페이지</a>
@@ -115,7 +115,7 @@
                         <th scope="col">용량</th>
                         <th scope="col">수량</th>
                         <th scope="col">가격</th>
-                        <th scope="col">리뷰</th>
+                        <th scope="col">구매확정/환불신청</th>
                     </tr>
                 </thead>
     
@@ -126,17 +126,46 @@
                         <td>{{ ordercart.cart.item.size.ml }}ml</td>
                         <td>{{ ordercart.cart.amount }}</td>
                         <td>{{ ordercart.cart.sub_total|intcomma }}  ₩</td>
-                        <td>
-                            {% if order.delivery_info.status == 2 %}
-                                {% if ordercart.is_review %}
-                                    <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Disabled popover">
-                                        <button class="btn btn-outline-secondary" type="button" disabled>리뷰쓰기</button>
-                                    </span>
-                                {% else %}
-                                    <a href="{% url 'review:create_review' ordercart.id %}" class="btn btn-outline-secondary">리뷰쓰기</a>
-                                {% endif %}
+                        {% comment %} <td> 
+                            {% if order.delivery_info.status == 2 %} 
+                            <a href="{% url 'review:create_review' ordercart.id %}" class="btn btn-outline-secondary">구매확정</a> 
+                            <a href="{% url 'review:create_review' ordercart.id %}" class="btn btn-outline-secondary">환불신청</a> 
+                            {% endif %} 
+                            {% if ordercart.is_review %} 
+                            <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Disabled popover"> 
+                                <button class="btn btn-outline-secondary" type="button" disabled>리뷰쓰기</button> 
+                                <a href="{% url 'review:create_review' ordercart.id %}" class="btn btn-outline-secondary">구매확정</a> 
+                                <a href="{% url 'review:create_review' ordercart.id %}" class="btn btn-outline-secondary">환불신청</a>
+                            </span>
+                            {% else %}
+                            <button class="btn btn-outline-secondary" type="button" disabled>리뷰쓰기</button>
                             {% endif %}
-                        </td>
+                        </td> {% endcomment %}
+                        <td>
+                            {% if ordercart.status == 0 %}
+                                <a href="#" class="btn btn-outline-secondary order-confirm-btn" data-ordercart-id="{{ ordercart.id }}">구매확정</a>
+                                <a href="{% url 'mypage:order_refund' ordercart.id %}" class="btn btn-outline-secondary refund-confirm-btn" data-ordercart-id="{{ ordercart.id }}">환불신청</a>
+                            {% endif %}
+                            
+                            {% if ordercart.status == 1 and not ordercart.is_review %}
+                                <a href="{% url 'review:create_review' ordercart.id %}" class="btn btn-outline-secondary">리뷰쓰기</a>
+                            {% elif ordercart.is_review and ordercart.status == 1 %}
+                                <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="이미 리뷰를 작성하셨습니다">
+                                    <button class="btn btn-outline-secondary" type="button" disabled>리뷰쓰기</button>
+                                </span>
+                            {% endif %}
+                            {% if ordercart.status == 2 %}
+                                <button class="btn btn-outline-secondary" type="button" disabled>환불신청완료</button>
+                                <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="주소입력 시 환불 신청이 완료됩니다">
+                                    <a href="{% url 'mypage:refund_confirm' ordercart.id %}" class="btn btn-outline-secondary" >주소입력</a>
+                                </span>
+                            {% elif ordercart.status == 3 %}
+                                <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="이미 환불이 완료된 상품입니다">
+                                    <button class="btn btn-outline-secondary" type="button" disabled>환불완료</button>
+                                </span>
+                            {% endif%}
+                            </td>
+                        
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -163,18 +192,107 @@
 {% block extra-script %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // 팝오버 대상 요소 선택
-        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-      
         // 팝오버 초기화
+        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
         var popoverList = popoverTriggerList.map(function(popoverTriggerEl) {
-          return new bootstrap.Popover(popoverTriggerEl, {
-            trigger: 'hover focus', // 트리거 이벤트 설정
-            placement: 'top', // 팝오버 위치 설정
-            content: '이미 리뷰를 작성하셨습니다' // 팝오버 내용 설정
-          });
+            return new bootstrap.Popover(popoverTriggerEl, {
+                trigger: 'hover focus', // 트리거 이벤트 설정
+                placement: 'top' // 팝오버 위치 설정
+            });
         });
-      });
-      
+
+        // 구매확정 버튼 클릭 이벤트 핸들러
+        var confirmButtons = document.querySelectorAll('.order-confirm-btn');
+        confirmButtons.forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                var ordercartId = this.getAttribute('data-ordercart-id');
+                
+                // 모달 동적 생성
+                var modalHtml = `
+                    <div class="modal fade" id="purchaseConfirmModal" tabindex="-1" aria-labelledby="purchaseConfirmModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="purchaseConfirmModalLabel">구매확정 확인</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    구매 확정 시 환불 신청이 불가합니다. 구매를 확정하시겠습니까?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                                    <button type="button" class="btn btn-primary" id="confirmPurchaseButton">확인</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // 모달을 body에 추가
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                
+                var modal = new bootstrap.Modal(document.getElementById('purchaseConfirmModal'));
+                modal.show();
+
+                var confirmPurchaseButton = document.getElementById('confirmPurchaseButton');
+                confirmPurchaseButton.onclick = function() {
+                    window.location.href = `{% url 'mypage:order_confirm' 0 %}`.replace('0', ordercartId);
+                };
+                
+                // 모달이 닫힐 때 자동으로 제거
+                document.getElementById('purchaseConfirmModal').addEventListener('hidden.bs.modal', function (event) {
+                    document.getElementById('purchaseConfirmModal').remove();
+                });
+            });
+        });
+
+        // 환불신청 버튼 클릭 이벤트 핸들러
+        var refundButtons = document.querySelectorAll('.refund-confirm-btn');
+        refundButtons.forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                var ordercartId = this.getAttribute('data-ordercart-id');
+                
+                // 모달 동적 생성
+                var modalHtml = `
+                    <div class="modal fade" id="refundConfirmModal" tabindex="-1" aria-labelledby="refundConfirmModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="refundConfirmModalLabel">환불신청 확인</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    환불 신청 시 환불 철회가 불가합니다. 환불을 신청하시겠습니까?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                                    <button type="button" class="btn btn-primary" id="confirmRefundButton">확인</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // 모달을 body에 추가
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                
+                var modal = new bootstrap.Modal(document.getElementById('refundConfirmModal'));
+                modal.show();
+
+                var confirmRefundButton = document.getElementById('confirmRefundButton');
+                confirmRefundButton.onclick = function() {
+                    window.location.href = `{% url 'mypage:order_refund' 0 %}`.replace('0', ordercartId);
+                };
+                
+                // 모달이 닫힐 때 자동으로 제거
+                document.getElementById('refundConfirmModal').addEventListener('hidden.bs.modal', function (event) {
+                    document.getElementById('refundConfirmModal').remove();
+                });
+            });
+        });
+
+    });
 </script>
 {% endblock %}

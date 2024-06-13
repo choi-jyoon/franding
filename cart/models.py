@@ -36,6 +36,7 @@ class OrderCart(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     is_review = models.BooleanField(default=False)  # 리뷰 작성 여부 확인 위함. 
+    status = models.IntegerField(default=0) # 0: 기본 상태 1: 구매확정 2: 환불신청 3:환불완료
 
     def __str__(self):
         return self.cart.item.name
@@ -45,3 +46,16 @@ class Refund(models.Model):
     refund_date = models.DateTimeField(auto_now_add=True)
     price = models.IntegerField()
     status = models.BooleanField(default=True)
+    
+class PayInfo(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    aid = models.CharField(max_length=50, null = True)
+    tid = models.CharField(max_length=50)
+    cid = models.CharField(max_length=50)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    payment_method_type = models.CharField(max_length=30)
+    total_amount = models.IntegerField()
+    status = models.CharField(max_length=20, default='prepared')  # 결제 상태 (예: prepared, completed, cancelled)
+    created_at = models.DateTimeField(auto_now_add=True)
+    approved_at = models.DateTimeField(auto_now_add=True)
+    canceled_at = models.DateTimeField(null= True)

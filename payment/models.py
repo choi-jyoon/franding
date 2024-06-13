@@ -2,8 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
 
-
-# Create your models here.
 class Delivery(models.Model):
     status= models.IntegerField(default=0)  # 상태: 배송 전(0), 배송 중(1) , 배송 완료(2)
     receiver = models.CharField(max_length=30)  #  받는사람
