@@ -6,6 +6,8 @@ from django.contrib.auth import logout as auth_logout
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator
 from QnA.models import Question
+from django.http import JsonResponse
+from payment.models import Delivery
 
 
 @login_required
@@ -29,6 +31,7 @@ def order_index(request):
         }
     return render(request, 'mypage/order_index.html', context)
 
+@login_required
 def order_detail(request, pk):
     order = Order.objects.get(pk=pk)
     ordercarts = OrderCart.objects.filter(order_id = pk)
@@ -37,6 +40,16 @@ def order_detail(request, pk):
         'ordercarts':ordercarts
     }
     return render(request, 'mypage/order_detail.html', context)
+
+@login_required
+def order_confirm(request, pk):
+    try:
+        ordercart = OrderCart.objects.get(id=pk)
+        ordercart.delivery_info.status = 3
+        ordercart.delivery_info.save()
+        return JsonResponse({'status': 'success'})
+    except OrderCart.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'OrderCart not found'}, status=404)
 
 @login_required
 def user_info(request):
