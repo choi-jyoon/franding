@@ -552,9 +552,8 @@ window.addEventListener('click', function(event) {
 });    
 
 
-    var form = document.getElementById('add-to-cart-form');
-    // $('#add-to-cart-form').each(function() {  
-    form.addEventListener('submit', function(event) {      
+    
+    $('#add-to-cart-form').each(function() {     
 
         $.ajax({
             url: '/cart/badge_count/',
@@ -566,12 +565,13 @@ window.addEventListener('click', function(event) {
             // 예를 들어, response 객체 내의 'data' 값을 로컬 스토리지에 저장하고자 한다고 가정합니다.
             console.log(response.cart_count);                
             localStorage.setItem('cart_count', response.cart_count);
-        },
+            },
             error: function(xhr, status, error) {
                 console.log('Error: ' + error);
             }
         });
     });
+    
     
 
     //수량 조절
