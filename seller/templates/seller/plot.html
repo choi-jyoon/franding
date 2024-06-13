@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Keyword Trends</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <h1>월별 구독자 수 추이</h1>
+    <div id="graph-div">
+        {{ graph_html|safe }}
+    </div>
+    <div>
+        <h1>월별 키워드 비중</h1>
+        <div>
+            {% for month in months %}
+                <button onclick="updateChart({{ data|safe }}, '{{ month }}')">{{ month }}</button>
+            {% endfor %}
+        </div>
+        <div id="chart-container">
+            {{ default_chart|safe }}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            function updateChart(data, month) {
+                const chartData = data[month];
+                const values = chartData.map(item => item.count);
+                const labels = chartData.map(item => item.keyword);
+
+                const plotData = [{
+                    values: values,
+                    labels: labels,
+                    type: 'pie',
+                    textposition: 'outside',
+                    textinfo: 'label+percent',
+                    textfont: {
+                        size: 16,
+                        color: "black"
+                    }
+                }];
+
+                const layout = {
+                    title: `${month} 키워드 비중`,
+                    template: 'plotly_white',
+                    width: 800,
+                    height: 500,
+                    font: {
+                        size: 16
+                    }
+                };
+
+                Plotly.newPlot('chart-container', plotData, layout);
+            }
+
+            // 전역 범위에 함수를 노출시켜 버튼 클릭 이벤트에서 접근할 수 있도록 합니다.
+            window.updateChart = updateChart;
+        });
+    </script>
+    </script>
+</body>
+</html>

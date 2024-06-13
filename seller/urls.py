@@ -19,4 +19,5 @@ urlpatterns = [
     path('subscribe_index/', views.subscribe_index, name='subscribe_index'),
     path('update_keyword/<int:pk>/', views.subscribe_index, name='update_keyword'),
     path('create_keyword/', views.subscribe_index, name='create_keyword'),
+    # path('plot_sub/', views.plot_subscription_trend, name='plot_sub'),
 ]
