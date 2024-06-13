@@ -166,9 +166,8 @@
         </thead>
         <tbody>
             {% for order in orders %}
-            {% if order.ordercart_set.all %}
                 <tr class="order-card">
-                    <td>{{ order.ordercart_set.all.0.cart.user }}</td> <!-- 첫 번째 OrderCart의 사용자 -->
+                    <td>{{ order.delivery_info.receiver }}</td> <!-- 첫 번째 OrderCart의 사용자 -->
                     <td>{{ order.datetime }}</td>
                     <td class="order-id-toggle" data-target="order-detail-{{ order.id }}" data-order-id="{{ order.id }}">
                         <button class="order-link-btn" data-order-id="{{ order.id }}">{{ order.id }}</button>
@@ -186,7 +185,6 @@
                         </form>                        
                     </td>
                 </tr>
-            {% endif %}
             {% endfor %}
         </tbody>
     </table>
