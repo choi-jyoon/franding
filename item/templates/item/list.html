@@ -410,19 +410,21 @@ document.addEventListener("DOMContentLoaded", function() {
             // 현재 price-hidden input의 값 가져오기
             var currentPriceValue = document.getElementById('price-hidden').value;
 
-            // 클릭된 버튼의 data-price 값과 현재 price-hidden 값이 같으면
-            if (priceValue === currentPriceValue) {
-                // price-hidden 의 값을 0으로 설정
-                document.getElementById('price-hidden').value = '0';
-            } else {
-                // 다르면 클릭된 버튼의 data-price 값을 price-hidden의 값으로 설정
-                document.getElementById('price-hidden').value = priceValue;
-            }
-            
-            // 폼 제출
-            document.getElementById('container').submit();
+                // 클릭된 버튼의 data-price 값과 현재 price-hidden 값이 같으면
+                if (priceValue === currentPriceValue) {
+                    // price-hidden 의 값을 0으로 설정
+                    document.getElementById('price-hidden').value = '0';
+                } else {
+                    // 다르면 클릭된 버튼의 data-price 값을 price-hidden의 값으로 설정
+                    document.getElementById('price-hidden').value = priceValue;
+                }
+                
+                // 폼 제출
+                document.getElementById('container').submit();
+            });
         });
     });
-});
+
+    // 아이템 토클 라이크 위치
 </script>
 {% endblock %}

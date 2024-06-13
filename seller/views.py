@@ -3,35 +3,40 @@ from .forms import ItemForm, ReviewReplyForm, KeywordForm
 from item.models import Item, Brand, ItemType, Size
 from review.models import Review, ReviewReply
 from cart.models import Order, OrderCart
-from subscribe.models import Keyword, Subscribe
+from subscribe.models import Keyword, Subscribe, SubscribeKeyword
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Avg, Value, IntegerField, Count, Q
 from django.db.models.functions import Coalesce, ExtractMonth, ExtractYear
-
+import plotly.express as px
+import pandas as pd
 
 
 # 상품관리(등록,수정,삭제 등등)
 @login_required
 def seller_index(request):
     sort_option = request.GET.get('sort-options', 'newest')
-    
+    # 기본 쿼리셋
+    items = Item.objects.select_related('brand').order_by('-created_at')
+
     # sort_option 값에 따라 쿼리셋을 정렬
     if sort_option == 'newest':
-        items = Item.objects.order_by('-created_at') # 최신순
+        items = items.order_by('-created_at')
     elif sort_option == 'popularity':
-        items = Item.objects.annotate(order_count=Count('cart', filter=Q(cart__status=True))).order_by('-order_count') # 인기순(주문 많은 순)
+        items = items.annotate(order_count=Count('cart', filter=Q(cart__status=True))).order_by('-order_count')
     elif sort_option == 'starHighToLow':
-        # 평점 높은 순(평점이 없는경우는 0으로 처리)
-        items = Item.objects.annotate(average_rating=Coalesce(Avg('review__star'), Value(0), output_field=IntegerField())).order_by('-average_rating')
+        items = items.annotate(average_rating=Coalesce(Avg('review__star'), Value(0), output_field=IntegerField())).order_by('-average_rating')
     elif sort_option == 'starLowToHigh':
-        items = Item.objects.annotate(average_rating=Avg('review__star')).order_by('average_rating') # 평점 낮은 순
+        items = items.annotate(average_rating=Coalesce(Avg('review__star'), Value(0), output_field=IntegerField())).order_by('average_rating')
     elif sort_option == 'inventoryLowToHigh':
-        items = Item.objects.order_by('inventory') # 재고 낮은 순
+        items = items.order_by('inventory')
     elif sort_option == 'inventoryHighToLow':
-        items = Item.objects.order_by('-inventory') # 재고 높은 순
+        items = items.order_by('-inventory')
+
+    # related_name을 사용하여 prefetch_related
+    items = items.prefetch_related('review_set')
         
     paginator = Paginator(items, 10)
     page_number = request.GET.get('page', 1)
@@ -42,7 +47,6 @@ def seller_index(request):
             'sort_option': sort_option
         }
     return render(request, 'seller/seller_index.html', context)
-
 
 
 @login_required
@@ -142,18 +146,13 @@ def add_review_reply(request, review_id):
 def seller_orderindex(request):
     sort_option_month = request.GET.get('sort-options-month', 'all')
     sort_option_deliverystatus = request.GET.get('sort-options-deliverystatus', 'all')
-    orders = Order.objects.order_by('-datetime')
+    orders = Order.objects.select_related('delivery_info').order_by('-datetime')
     # 필터링 기준
-    if sort_option_month != 'all' and sort_option_deliverystatus != 'all':
-        year, month = map(int, sort_option_month.split('-'))
-        orders = orders.filter(datetime__year=year, datetime__month=month, delivery_info__status=int(sort_option_deliverystatus))
-    elif sort_option_month != 'all':
+    if sort_option_month != 'all':
         year, month = map(int, sort_option_month.split('-'))
         orders = orders.filter(datetime__year=year, datetime__month=month)
-    elif sort_option_deliverystatus != 'all':
+    if sort_option_deliverystatus != 'all':
         orders = orders.filter(delivery_info__status=int(sort_option_deliverystatus))
-    else:
-        orders = Order.objects.order_by('-datetime')
         
     months_queryset = Order.objects.annotate(year=ExtractYear('datetime'),month=ExtractMonth('datetime')).values('year', 'month').distinct().order_by('-year', '-month')
     months = [f"{entry['year']}-{entry['month']:02d}" for entry in months_queryset]
@@ -202,10 +201,9 @@ def order_detail(request, pk):
 # 구독관리
 @login_required
 def subscribe_index(request, pk=None):
-    
     # 구독 키워드 관리
     sort_option_month = request.GET.get('sort-options-month', 'all')
-    keywords = Keyword.objects.order_by('-month')
+    keywords = Keyword.objects.select_related('category1', 'category2').order_by('-month')
     # 필터링 기준 - 월 기준
     if sort_option_month != 'all':
         created_year, created_month = map(int, sort_option_month.split('-'))
@@ -214,10 +212,7 @@ def subscribe_index(request, pk=None):
     keyword_months_queryset = Keyword.objects.annotate(created_year=ExtractYear('month'),created_month=ExtractMonth('month')).values('created_year', 'created_month').distinct().order_by('-created_year', '-created_month')
     keyword_months = [f"{entry['created_year']}-{entry['created_month']:02d}" for entry in keyword_months_queryset]
     
-    if pk:
-        keyword = get_object_or_404(Keyword, pk=pk)
-    else:
-        keyword = None
+    keyword = get_object_or_404(Keyword, pk=pk) if pk else None
     
     if request.method == 'POST':
         form = KeywordForm(request.POST, instance=keyword)
@@ -230,16 +225,13 @@ def subscribe_index(request, pk=None):
     # 구독 고객 리스트 관리
     sub_option_month = request.GET.get('sub-options-month', 'all')
     sub_option_deliverystatus = request.GET.get('sub-options-deliverystatus', 'all')
-    subscribes = Subscribe.objects.order_by('-datetime')
-
-    # 필터링 기준(월,배송상태)
-    if sub_option_month != 'all' and sub_option_deliverystatus != 'all':
-        year, month = map(int, sub_option_month.split('-'))
-        subscribes = subscribes.filter(datetime__year=year, datetime__month=month, delivery__status=int(sub_option_deliverystatus))
-    elif sub_option_month != 'all':
+    subscribes = Subscribe.objects.select_related('delivery').order_by('-datetime')
+    
+    # 필터링 기준(월, 배송상태)
+    if sub_option_month != 'all':
         year, month = map(int, sub_option_month.split('-'))
         subscribes = subscribes.filter(datetime__year=year, datetime__month=month)
-    elif sub_option_deliverystatus != 'all':
+    if sub_option_deliverystatus != 'all':
         subscribes = subscribes.filter(delivery__status=int(sub_option_deliverystatus))
         
     sub_months_queryset = Subscribe.objects.annotate(year=ExtractYear('datetime'),month=ExtractMonth('datetime')).values('year', 'month').distinct().order_by('-year', '-month')
@@ -260,3 +252,62 @@ def subscribe_index(request, pk=None):
         'sub_option_deliverystatus':sub_option_deliverystatus,
     }
     return render(request, 'seller/subscribe_index.html', context)
+
+# # 데이터 시각화
+# def plot_subscription_trend(request):
+#     # 월별 구독자 수 집계
+#     subscriptions = Subscribe.objects.all().extra(select={'month': "TO_CHAR(datetime, 'YYYY-MM')"}).values('month').annotate(count=Count('id')).order_by('month')
+#     # 데이터프레임으로 변환
+#     df = pd.DataFrame(subscriptions)
+#     # Plotly 그래프 생성
+#     fig = px.line(df, x='month', y='count', title='월별 구독자 수 추이', markers=True, labels={'month': '월', 'count': '구독자 수'})
+#     fig.update_layout(template='plotly_white', width=800,height=500, font_size=16,)
+#     fig.update_traces(line_color= '#5B574F', line_width= 4,)
+#     # 그래프를 HTML로 변환
+#     graph_html = fig.to_html(full_html=False)
+    
+#     # 월별 키워드 점유율
+#     data = get_monthly_keyword_distribution()
+#     months = list(data.keys())
+#     default_chart = generate_pie_chart(data, months[0])
+
+#     context={
+#         'graph_html': graph_html,
+#         'months':months,
+#         'default_chart':default_chart,
+#         'data':data,
+#     }
+#     return render(request, 'seller/plot.html', context)
+
+
+# def get_monthly_keyword_distribution():
+#     sub = SubscribeKeyword.objects.annotate(
+#         month=ExtractMonth('keyword__month'),
+#         year=ExtractYear('keyword__month')
+#     ).values('month', 'year', 'keyword__word').annotate(count=Count('id')).order_by('year', 'month', 'count')
+    
+#     data = {}
+#     for entry in sub:
+#         year_month = f"{entry['year']}-{entry['month']:02d}"
+#         if year_month not in data:
+#             data[year_month] = []
+#         data[year_month].append({
+#             'keyword': entry['keyword__word'],
+#             'count': entry['count']
+#         })
+    
+#     return data
+
+# def generate_pie_chart(data, month):
+#     df = pd.DataFrame(data[month])
+#     fig = px.pie(df, names='keyword', values='count', title=f"{month} 키워드 비중")
+    
+#     fig.update_layout(
+#         template='plotly_white',
+#         width=800,height=500,
+#         font_size=16,
+#     )
+    
+#     fig.update_traces(textposition='outside',textinfo='label+percent', textfont_size=16,textfont_color="black")
+    
+#     return fig.to_html(full_html=False)

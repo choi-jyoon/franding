@@ -301,6 +301,7 @@
                         xhr.setRequestHeader('X-CSRFToken', '{{csrf_token}}');
                     },
                     success: function (response) {
+                        del_badge_count();
                         location.reload();
                     },
                     error: function (xhr, status, error) {
@@ -308,36 +309,29 @@
                         console.log(error);
                     }
                 });
-            });
-        });
-
-        // $('#payment-button').click(function () {
-        //     var item_list = []
-        //     $('.item-checkbox:checked').each(function () {
-        //         var itemId = $(this).val();
-        //         item_list.push(itemId);
-
-        //         $.ajax({
-        //             url: '{% url "payment:payment_list" %}',
-        //             type: 'GET',
-        //             data: {
-        //                 'item_list': item_list
-        //             },
-        //             beforeSend: function (xhr) {
-        //                 xhr.setRequestHeader('X-CSRFToken', '{{csrf_token}}');
-        //             },
-        //             success: function (response) {
-        //                 console.log(response);
-        //             },
-        //             error: function (xhr, status, error) {
-        //                 // Code to run if the request fails
-        //                 console.log(error);
-        //             }
-        //         });
-        //     });
-        // });
+            });            
+        }); 
 
     });
+
+
+    function del_badge_count() {
+        $.ajax({
+            url: '/cart/badge_count/',
+            type: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function(response) {
+            // 예를 들어, response 객체 내의 'data' 값을 로컬 스토리지에 저장하고자 한다고 가정합니다.
+            console.log(response.cart_count);                
+            localStorage.setItem('cart_count', response.cart_count);
+            },
+            error: function(xhr, status, error) {
+                console.log('Error: ' + error);
+            }
+        });
+    }
 
     function getCsrfToken() {
         return document.getElementById('csrfToken').value;

@@ -101,9 +101,9 @@ def list_item(request):
         }
     return render(request, 'item/list.html', context)
 
-
-def detail_list_item(request,item_id):
-    item=Item.objects.get(id=item_id)
+def detail_list_item(request, item_id):
+    item = get_object_or_404(Item, id=item_id)
+    sort_by = request.GET.get('sort_by', '-datetime')
     reviews = Review.objects.filter(item=item_id).annotate(likes_count=Count('reviewlike')).order_by('-datetime').prefetch_related(
         Prefetch('reviewreply_set', queryset=ReviewReply.objects.order_by('-datetime'))
     )

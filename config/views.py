@@ -15,7 +15,7 @@ def index(request):
     objects = Item.objects.all().order_by('-id')
     
     context = {
-        'item_list' : objects
+        'item_list' : objects,
     }
     return render(request, 'home.html', context)
 

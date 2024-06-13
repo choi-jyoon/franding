@@ -497,7 +497,7 @@
                 {% csrf_token %}
                 <input type="hidden" id="go-cart-float" name="go_cart" value="0">
                 <input type="hidden" id="current-quantity-hidden-float" value="1" name="current-amount">
-                <button class="btn btn-primary mt-3 add-to-cart-btn-float" type="button">장바구니 추가</button>
+                <button class="btn btn-primary mt-3 add-to-cart-btn-float" type="button" id="addToCartButton">장바구니 추가</button>
             </form>
         </div>
     </div>
@@ -538,7 +538,6 @@ document.querySelector('.close').addEventListener('click', function() {
     var modal = document.getElementById('myModal');
     modal.style.display = "none";
     document.getElementById('add-to-cart-form').submit();//<-장바구니로 이어지는 코드 작성 필요
-
 });
 
 // 모달 창 외부 클릭 시 닫기 기능 추가
@@ -548,10 +547,33 @@ window.addEventListener('click', function(event) {
         modal.style.display = "none";
         document.getElementById('go-cart').value = "1";
         document.getElementById('go-cart-float').value = "1";
-        document.getElementById('add-to-cart-form').submit(); // 폼 제출
+        document.getElementById('add-to-cart-form').submit(); // 폼 제출       
+    }    
+});    
 
-    }
-});
+
+    
+    $('#add-to-cart-form').each(function() {     
+
+        $.ajax({
+            url: '/cart/badge_count/',
+            type: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function(response) {
+            // 예를 들어, response 객체 내의 'data' 값을 로컬 스토리지에 저장하고자 한다고 가정합니다.
+            console.log(response.cart_count);                
+            localStorage.setItem('cart_count', response.cart_count);
+            },
+            error: function(xhr, status, error) {
+                console.log('Error: ' + error);
+            }
+        });
+    });
+    
+    
+
     //수량 조절
 
     const currentQuantityElement = document.getElementById('current-quantity');

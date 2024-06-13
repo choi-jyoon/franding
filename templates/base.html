@@ -223,9 +223,13 @@
                             </form>
                     </li>
                     <!--장바구니-->
-                    <li class="nav-item me-3">
+                    <li class="nav-item me-3 position-relative">
+                        <span class="position-absolute top-0 start-100 translate-middle badge bg-danger rounded-circle" style="font-size: 15px; color: white;" id="badgeCount">
+                            {{ cart_count }}
+                            <span class="visually-hidden">new 알람</span>
+                        </span>
                         <a class="btn btn-secondary" id="button-addon2" href="{% url 'cart:cart_detail' %}"
-                            onclick="checkUserActiveStatus(event)">
+                            onclick="checkUserActiveStatus(event)">                            
                             <i class="bi bi-cart4"></i>
                         </a>
                     </li>
@@ -296,7 +300,28 @@
                 // 팝업 메시지 표시
                 alert("로그인이 필요합니다.");
             }
+        }        
+        
+        document.addEventListener('DOMContentLoaded', function() {            
+            var storedBadgeCount = getCartItems();
+            if (storedBadgeCount) {
+                updateCartBadge(storedBadgeCount);
+            }
+        });
+        
+        // 로컬 스토리지에서 장바구니 데이터를 불러오기
+        function getCartItems() {
+            const storedBadgeCount = localStorage.getItem('cart_count');
+            return storedBadgeCount
         }
+
+        // 장바구니 배지 업데이트 함수
+        function updateCartBadge(badge_count) {
+            const badge = document.getElementById('badgeCount');
+            badge.innerText = badge_count;
+            console.log('badge_count',badge_count);
+        }
+
 
     </script>
 </body>
