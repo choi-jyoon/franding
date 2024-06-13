@@ -69,11 +69,11 @@
                             <div class="row">
                                 <!-- 이미지 열 -->
                                 <div class="col-1">
-                                    <img src="{{ order.ordercart_set.first.cart.item.image }}" alt="{{ order.ordercart_set.first.cart.item.name }}" class="img-fluid">
+                                    <img src="{{ order.ordercart_set.all.0.cart.item.image }}" alt="{{ order.ordercart_set.all.0.cart.item.name }}" class="img-fluid">
                                 </div>
                                 <!-- 상품 정보 열 -->
                                 <div class="col-8">
-                                    <h5 class="card-title">주문상품 : {{ order.ordercart_set.first.cart.item.name }} 등</h5>
+                                    <h5 class="card-title">주문상품 : {{ order.ordercart_set.all.0.cart.item.name }} 등</h5>
                                     <p class="card-text"><strong>{{ order.total_price|intcomma }}  ₩</strong></p>
                                 </div>
                                 <!-- 버튼 열 -->

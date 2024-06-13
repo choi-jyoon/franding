@@ -7,7 +7,7 @@ from django.core.paginator import Paginator
 
 @login_required
 def my_review(request):
-    review_list = Review.objects.filter(user = request.user).order_by('-datetime')
+    review_list = Review.objects.filter(user = request.user).select_related('item').order_by('-datetime')
     paginator = Paginator(review_list, 4)  # 한 페이지당 4개의 주문을 보여줍니다.
     
     # URL의 'page' GET 파라미터로부터 페이지 번호를 가져옵니다. 기본값은 1입니다.
