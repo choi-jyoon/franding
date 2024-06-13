@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from cart.models import OrderCart, Order
+from cart.models import OrderCart, Order, PayInfo, Refund
 from .models import UserAddInfo
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
@@ -9,8 +9,13 @@ from QnA.models import Question
 from item.models import Item
 from django.http import JsonResponse
 from django.db.models import Count
+from django.utils import timezone
+import requests
+import os
+from dotenv import load_dotenv
 
-
+load_dotenv()
+admin_key = os.getenv('admin_key')
 
 @login_required
 def order_index(request):    
@@ -47,9 +52,57 @@ def order_detail(request, pk):
 def order_confirm(request, pk):
     try:
         ordercart = OrderCart.objects.get(id=pk)
-        ordercart.delivery_info.status = 3
-        ordercart.delivery_info.save()
-        return JsonResponse({'status': 'success'})
+        ordercart.status = 1
+        ordercart.save()
+        return redirect('mypage:order_detail', ordercart.order.id)
+    except OrderCart.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'OrderCart not found'}, status=404)
+    
+@login_required
+def order_refund(request, pk):
+    try:
+        ordercart = OrderCart.objects.get(id=pk)
+        ordercart.status = 2
+        ordercart.save()
+        # refund 로직 
+        user = request.user 
+        pay_info = PayInfo.objects.get(order = ordercart.order, status = "approved")
+        
+        tid = pay_info.tid 
+        
+        cancel_amount = ordercart.cart.item.price * ordercart.cart.amount
+        cancel_available_amount = ordercart.order.total_price - cancel_amount
+        # 결제 취소 요청 로직
+        URL = 'https://open-api.kakaopay.com/online/v1/payment/cancel'
+        headers = {
+            "Authorization": "KakaoAK " + admin_key,
+            "Content-type": "application/json",
+        }
+        params = {
+            "cid": "TC0ONETIME",    # 테스트용 코드
+            "tid": tid,  # 결제 요청시 세션에 저장한 tid
+            "cancel_amount": cancel_amount, # 취소 요청 금액
+            "cancel_tax_free_amount": 0,
+            "cancel_vat_amount": 0,
+            "cancel_available_amount": cancel_available_amount,     #남은 취소 가능 금액 
+        }
+
+        res = requests.post(URL, headers=headers, params=params)
+        res = res.json()
+        
+        pay_info.status = "cancelled"
+        pay_info.canceled_at = timezone.now()
+        pay_info.save()
+        
+        ordercart.status = 2 
+        ordercart.save()
+        
+        refund = Refund.objects.create(
+            ordercart = ordercart,
+            price = cancel_amount,
+        )
+            
+        return redirect('mypage:order_detail', ordercart.order.id)
     except OrderCart.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'OrderCart not found'}, status=404)
 
