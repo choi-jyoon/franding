@@ -107,25 +107,42 @@ def detail_list_item(request, item_id):
     reviews = Review.objects.filter(item=item_id).annotate(likes_count=Count('reviewlike')).order_by('-datetime').prefetch_related(
         Prefetch('reviewreply_set', queryset=ReviewReply.objects.order_by('-datetime'))
     )
+    if sort_by == '-datetime':
+        reviews = Review.objects.filter(item=item_id).annotate(likes_count=Count('reviewlike')).order_by('-datetime').prefetch_related(
+        Prefetch('reviewreply_set', queryset=ReviewReply.objects.order_by('-datetime')))
+    elif sort_by == '-star':
+        reviews = Review.objects.filter(item=item_id).annotate(likes_count=Count('reviewlike')).order_by('-star').prefetch_related(
+        Prefetch('reviewreply_set', queryset=ReviewReply.objects.order_by('-datetime')))
+    elif sort_by == '-likes':
+        # 리뷰를 좋아요 수 순으로 정렬
+        reviews = Review.objects.filter(item=item_id).annotate(likes_count=Count('reviewlike')).order_by('-likes_count').prefetch_related(
+            Prefetch('reviewreply_set', queryset=ReviewReply.objects.order_by('-datetime')))
     paginator = Paginator(reviews, 3)
     faqs = FAQ.objects.all()  
 
 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)    
     
     if page_obj:
         context = {
         "item":item,
         "review":page_obj,
         'faqs':faqs,
+        'sort_by':sort_by,
         }
     else:
         context = {
             "item":item,
             'message': '리뷰가 없습니다.',
             'faqs':faqs,
+            'sort_by':sort_by,
         }    
     return render(request,'item/detail.html',context) 
 @login_required

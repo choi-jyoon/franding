@@ -383,6 +383,16 @@
         <h2 class="center">Review</h2>
         <hr>
         {% if review %}
+            <form method="get" action="{% url 'item:detail' item.id%}">
+                <div class="sort_cont">
+                    <button type="submit" name="sort_by" value="-datetime" class="sort_btn"><i
+                            class="{% if sort_by == '-datetime' %}bi-alarm-fill{% else %}bi-alarm{% endif %}"></i></button>
+                    <button type="submit" name="sort_by" value="-star" class="sort_btn"><i
+                            class="{% if sort_by == '-star' %}bi bi-star-fill{% else %}bi bi-star{% endif %}"></i></button>
+                    <button type="submit" name="sort_by" value="-likes" class="sort_btn"><i
+                            class="{% if sort_by == '-likes' %}bi bi-heart-fill{% else %}bi bi-heart{% endif %}"></i></button>
+                </div>
+            </form>  
             {% for review in review %}
                 <div class="review-card">
                     <div class="review-up">
@@ -431,25 +441,25 @@
             {% endfor %}
         {% endif %}
     </div>
-
+    <form method="get" action="{% url 'item:detail' item.id%}">
     <div class="pagination">
         {% if review.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page={{ review.previous_page_number }}">이전</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ review.previous_page_number }}&sort_by={{ sort_by }}">이전</a></li>
         {% endif %}
 
         {% for page_num in review.paginator.page_range %}
             {% if review.number == page_num %}
-                <li class="page-item active"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+                <li class="page-item active"><a class="page-link" href="?page={{ page_num }}&sort_by={{ sort_by }}">{{ page_num }}</a></li>
             {% else %}
-                <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ page_num }}&sort_by={{ sort_by }}">{{ page_num }}</a></li>
             {% endif %}
         {% endfor %}
 
         {% if review.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{ review.next_page_number }}">다음</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ review.next_page_number }}&sort_by={{ sort_by }}">다음</a></li>
         {% endif %}
     </div>
-
+</form> 
     <nav class="nav justify-content-center">
         <a class="nav-link active" aria-current="page" href="#description" style="color: gray;">상품상세정보</a>
         <a class="nav-link" href="#review" style="color: gray;">리뷰</a>
