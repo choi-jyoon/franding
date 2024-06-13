@@ -1,7 +1,8 @@
 from django.urls import path
 from . import views
 
-app_name='mypage'
+app_name = 'mypage'
+
 urlpatterns = [
     # 주문내역
     path('', views.order_index, name='order_index'),

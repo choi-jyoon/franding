@@ -175,5 +175,3 @@ MEDIA_ROOT=BASE_DIR/'media'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 ALLOWED_HOSTS = ['testserver', 'localhost', '127.0.0.1', '[::1]']
-
-
