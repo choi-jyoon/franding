@@ -2,8 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
 
-
-# Create your models here.
 class Delivery(models.Model):
     status= models.IntegerField(default=0)  # 상태: 배송 전(0), 배송 중(1) , 배송 완료(2)
     receiver = models.CharField(max_length=30)  #  받는사람
@@ -27,3 +25,18 @@ class UserCoupon(models.Model):
     create_date = models.DateField(auto_now_add=True)
     is_used = models.BooleanField(default=False)
     
+class PayInfo(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    aid = models.CharField(max_length=50, null = True)
+    tid = models.CharField(max_length=50)
+    cid = models.CharField(max_length=50)
+    partner_order_id = models.CharField(max_length=150, null=True)
+    partner_user_id = models.CharField(max_length=150, null=True)
+    payment_method_type = models.CharField(max_length=30)
+    item_name = models.CharField(max_length=255)
+    quantity = models.IntegerField()
+    total_amount = models.IntegerField()
+    status = models.CharField(max_length=20, default='prepared')  # 결제 상태 (예: prepared, completed, cancelled)
+    created_at = models.DateTimeField(auto_now_add=True)
+    approved_at = models.DateTimeField(auto_now_add=True)
+    canceled_at = models.DateTimeField(null= True)

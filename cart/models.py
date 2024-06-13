@@ -31,6 +31,7 @@ class OrderCart(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     is_review = models.BooleanField(default=False)  # 리뷰 작성 여부 확인 위함. 
+    status = models.IntegerField(default=0) # 0: 기본 상태 1: 구매확정 2: 환불신청 3:환불완료
 
     def __str__(self):
         return self.cart.item.name
