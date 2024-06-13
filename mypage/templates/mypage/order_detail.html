@@ -155,9 +155,16 @@
                                 </span>
                             {% endif %}
                             {% if ordercart.status == 2 %}
-                                <button class="btn btn-outline-secondary" type="button" disabled>환불완료</button>
+                                <button class="btn btn-outline-secondary" type="button" disabled>환불신청완료</button>
+                                <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="주소입력 시 환불 신청이 완료됩니다">
+                                    <a href="{% url 'mypage:refund_confirm' ordercart.id %}" class="btn btn-outline-secondary" >주소입력</a>
+                                </span>
+                            {% elif ordercart.status == 3 %}
+                                <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="이미 환불이 완료된 상품입니다">
+                                    <button class="btn btn-outline-secondary" type="button" disabled>환불완료</button>
+                                </span>
                             {% endif%}
-                        </td>
+                            </td>
                         
                     </tr>
                     {% endfor %}
@@ -190,8 +197,7 @@
         var popoverList = popoverTriggerList.map(function(popoverTriggerEl) {
             return new bootstrap.Popover(popoverTriggerEl, {
                 trigger: 'hover focus', // 트리거 이벤트 설정
-                placement: 'top', // 팝오버 위치 설정
-                content: '이미 리뷰를 작성하셨습니다' // 팝오버 내용 설정
+                placement: 'top' // 팝오버 위치 설정
             });
         });
 

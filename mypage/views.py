@@ -59,6 +59,40 @@ def order_confirm(request, pk):
         return JsonResponse({'status': 'error', 'message': 'OrderCart not found'}, status=404)
     
 @login_required
+def refund_confirm(request, pk):
+    
+    refund_item = OrderCart.objects.get(id = pk)
+    total_price = refund_item.cart.item.price * refund_item.cart.amount
+    userinfo = UserAddInfo.objects.get(user=request.user)
+    
+    # 확인 버튼 클릭 시 환불 완료 상태로 변화
+    if request.method == 'POST':
+        refund_item.status = 3
+        refund_item.save()
+        return redirect('mypage:order_detail', refund_item.order.id)
+    
+    # 배송정보를 session에 저장
+    request.session['delivery_info'] = {
+        'receiver': request.POST.get('receiver'),
+        'receiver_postcode': request.POST.get('receiver_postcode'),
+        'receiver_address': request.POST.get('receiver_address'),
+        'receiver_detailAddress': request.POST.get('receiver_detailAddress'),
+        'receiver_extraAddress': request.POST.get('receiver_extraAddress'),
+        'receiver_phone': request.POST.get('receiver_phone'),
+        'receiver_email': request.POST.get('receiver_email')
+    }
+        
+    context = {
+        'item_list': [refund_item.cart],
+        'total_price': -total_price,
+        'shipping_fee' : 0,
+        'userinfo' : userinfo,
+        'refund_item': refund_item
+    }
+    
+    return render(request, 'mypage/refund_info.html', context)
+    
+@login_required
 def order_refund(request, pk):
     try:
         ordercart = OrderCart.objects.get(id=pk)

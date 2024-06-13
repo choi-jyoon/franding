@@ -9,6 +9,7 @@ urlpatterns = [
     path('order_detail/<int:pk>', views.order_detail, name='order_detail'),
     path('order_confirm/<int:pk>', views.order_confirm, name='order_confirm'),
     path('order_refund/<int:pk>', views.order_refund, name='order_refund'),
+    path('refund_confirm/<int:pk>', views.refund_confirm, name='refund_confirm'),
     
     
     # 회원정보
