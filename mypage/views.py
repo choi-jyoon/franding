@@ -14,8 +14,8 @@ from django.db.models import Count
 
 @login_required
 def order_index(request):    
-    orders = Order.objects.filter(ordercart__cart__user=request.user).order_by('-datetime').distinct()
-    # Paginator 객체 생성, 한 페이지당 4개의 주문을 보여주도록 설정
+    orders = Order.objects.filter(ordercart__cart__user=request.user).order_by('-datetime').distinct().prefetch_related('ordercart_set__cart__item')
+
     paginator = Paginator(orders, 4)  # 한 페이지당 4개의 주문을 보여줍니다.
     
     # URL의 'page' GET 파라미터로부터 페이지 번호를 가져옵니다. 기본값은 1입니다.
@@ -25,7 +25,7 @@ def order_index(request):
     
     if page_obj:
         context = {
-            'orders': page_obj,            
+            'orders': page_obj,          
         }
     else:
         context = {
