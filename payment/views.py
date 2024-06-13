@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from cart.models import Cart, Order, OrderCart
+from cart.models import Cart, Order, OrderCart, PayInfo
 from mypage.models import UserAddInfo
 from .models import Delivery
 import requests
@@ -188,6 +188,17 @@ def paysuccess(request):
         'cart_list':cart_list,
     }
     
+    # 결제 정보 PayInfo 에 저장
+    pay_info = PayInfo.objects.create(
+        user=request.user,
+        tid=request.session['tid'],
+        cid="TC0ONETIME",
+        payment_method_type ="MONEY",
+        order=order,
+        total_amount=total_price,
+        status='approved'  # 결제 준비 상태로 저장
+    )
+    
     # 세션에서 delivery_info 및 total_price 제거
     if 'delivery_info' in request.session:
         del request.session['delivery_info']
@@ -198,6 +209,7 @@ def paysuccess(request):
     
 def payfail(request):
     return render(request, 'payment/payfail.html')
+
 def paycancel(request):
     return render(request, 'payment/paycancel.html')
 
