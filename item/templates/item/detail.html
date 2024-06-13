@@ -614,14 +614,7 @@ window.addEventListener('click', function(event) {
         }
     });
 
-    document.querySelector('.add-to-cart-btn-float').addEventListener('click', function(event) {
-        event.preventDefault(); // 기본 폼 제출 동작을 막습니다.
 
-        // 딜레이를 주기 위한 setTimeout 설정 (예: 2초 딜레이)
-        setTimeout(function() {
-            document.getElementById('add-to-cart-form').submit(); // 폼 제출
-        }, 2000); // 2000밀리초 = 2초 
-    });
 
     // FAQ 토글
     document.addEventListener('DOMContentLoaded', function() {
@@ -641,36 +634,75 @@ window.addEventListener('click', function(event) {
         });
     });
 
+    function refreshCartBadge() {
+    const badgeCount = getCartItems();
+    if (badgeCount !== null) {
+        updateCartBadge(badgeCount);
+    } else {
+        console.warn('No cart count found in localStorage');
+    }
+}
     // 1대1 문의하기
     function openInquiryForm(item_id) {
         window.location.href = "{% url 'QnA:question_create' item.id %}";
     }
 
     $(document).ready(function() {
-        // 페이지 로드 시 각 리뷰의 좋아요 상태 확인
-        $('.like-btn').each(function() {
-            var button = $(this);
-            var reviewId = button.data('review-id');
+    // 페이지 로드 시 각 리뷰의 좋아요 상태 확인
+    $('.like-btn').each(function() {
+        var button = $(this);
+        var reviewId = button.data('review-id');
+        
+        $.ajax({
+            url: '/item/check_like_status/' + reviewId + '/',
+            type: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function(response) {
+            var icon = button.find('i');
+            if (response.liked) {
+                icon.removeClass('bi-heart').addClass('bi-heart-fill');
+            } else {
+                icon.removeClass('bi-heart-fill').addClass('bi-heart');
+            }
+            
+        },
+            error: function(xhr, status, error) {
+                console.log('Error: ' + error);
+            }
+            
+        });
+        
+    });
+    setTimeout(refreshCartBadge, 1000); // 2000ms = 2초
+    // 좋아요 버튼 클릭 이벤트
+    $('.like-btn').click(function() {
+        var button = $(this);
+        var reviewId = button.data('review-id');
 
-            $.ajax({
-                url: '/item/check_like_status/' + reviewId + '/',
-                type: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                success: function(response) {
-                    var icon = button.find('i');
-                    if (response.liked) {
-                        icon.removeClass('bi-heart').addClass('bi-heart-fill');
-                    } else {
-                        icon.removeClass('bi-heart-fill').addClass('bi-heart');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.log('Error: ' + error);
-                }
-            });
+        $.ajax({
+            url: "{% url 'item:like_review' %}",
+            type: "POST",
+            data: {
+                'review_id': reviewId,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+            var icon = button.find('i');
+            if (response.liked) {
+                icon.removeClass('bi-heart').addClass('bi-heart-fill');
+            } else {
+                icon.removeClass('bi-heart-fill').addClass('bi-heart');
+            }
+            button.next('.like').text(response.likes_count);
+        },
+            error: function(response) {
+                alert('오류가 발생했습니다.');
+            }
         });
     });
+});
 </script>
+
 {% endblock %}

@@ -282,8 +282,8 @@
 
     <script src="https://kit.fontawesome.com/c998a172fe.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
     {% block extra-script %}{% endblock %}
-
     <script>
 
         // 사용자의 활성 상태를 Django 템플릿에서 JavaScript 변수로 전달
@@ -303,10 +303,12 @@
         }        
         
         document.addEventListener('DOMContentLoaded', function() {            
-            var storedBadgeCount = getCartItems();
-            if (storedBadgeCount) {
-                updateCartBadge(storedBadgeCount);
-            }
+            const badgeCount = getCartItems();
+    if (badgeCount !== null) {
+        updateCartBadge(badgeCount);
+    } else {
+        console.warn('No cart count found in localStorage');
+    }
         });
         
         // 로컬 스토리지에서 장바구니 데이터를 불러오기
