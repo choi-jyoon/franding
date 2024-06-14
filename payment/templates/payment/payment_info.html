@@ -126,19 +126,19 @@
             </tbody>
         </table>
 
-
-        {% comment %} <div class="input-group" style='width: 30%;'>
+        <h3>쿠폰 및 할인</h3>
+        <div class="input-group" style='width: 30%;'>
             <select class="form-select" id="inputGroupSelect04" aria-label="Example select with button addon">
                 <option selected>쿠폰을 선택해주세요</option>
-                <option value="1">10% 할인권</option>
-                <option value="2">20% 할인권</option>
-                <option value="3">30% 할인권</option>
+                {% for coupon in coupons %}
+                <option value="{{coupon.id}}">{{coupon.coupon.name}}</option>
+                {% endfor %}
             </select>
-            <button class="btn btn-outline-secondary" type="button">적용</button>
-        </div> {% endcomment %}
+            <button class="btn btn-outline-secondary" type="button" id="applyCouponButton">적용</button>
+        </div>
+        <br>
 
-
-        <h3>총 합계 : {{total_price|intcomma}}</h3>
+        <h3>총 합계 : <span id="totalPrice">{{total_price|intcomma}}</h3></span>
 
 
         <div class="Payment">
@@ -252,6 +252,35 @@
     $('#errorModal').on('shown.bs.modal', function () {
       // '확인' 버튼에 포커스를 줍니다.
       $('#modalCloseButton').trigger('focus');
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $("#applyCouponButton").click(function() {
+            var couponId = $("#inputGroupSelect04").val();
+            var totalPrice = parseFloat("{{ total_price }}".replace(/,/g, '')); // 문자열을 float로 변환
+            if (couponId === "쿠폰을 선택해주세요") {
+                alert("쿠폰을 선택해주세요.");
+                return;
+            }
+
+            $.ajax({
+                url: "{% url 'payment:apply_coupon' %}", // 쿠폰 적용을 처리하는 URL
+                type: "POST",
+                data: {
+                    'coupon_id': couponId,
+                    'total_price':totalPrice,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    // 서버에서 반환된 새로운 총 합계를 페이지에 표시
+                    $("#totalPrice").text(response.new_total_price);
+                },
+                error: function(xhr, status, error) {
+                    alert("쿠폰 적용에 실패했습니다.");
+                }
+            });
+        });
     });
 </script>
 {% endblock %}
