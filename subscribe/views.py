@@ -27,7 +27,7 @@ def membership(request):
             return redirect('subscribe:payment')
         return render(request, 'subscribe/membership.html')
     else:
-        return redirect('subscribe:index')
+        return redirect('subscribe:subscribe')
     
     
 @login_required
@@ -220,7 +220,7 @@ def pay_success(request):
             # process_recurring_payments.delay(request.user.id)
             
             # index 함수 호출
-            return redirect('subscribe:index')
+            return redirect('subscribe:subscribe')
 
     return render(request, 'payment/payfail.html')
 
