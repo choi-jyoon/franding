@@ -1,8 +1,14 @@
 .env
 # cart env
+cart/best_item.ipynb
 cart/README.md
 payment/README.md
 franding_db.sqlite3
+test_search.py
+time_logger.py
+api_test.py
+franding_db_backup.sql
+best_item.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
