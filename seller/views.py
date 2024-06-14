@@ -19,7 +19,7 @@ import pandas as pd
 def seller_index(request):
     sort_option = request.GET.get('sort-options', 'newest')
     # 기본 쿼리셋
-    items = Item.objects.select_related('brand').order_by('-created_at')
+    items = Item.objects.select_related('brand').only('brand__name','inventory','image','name','price').order_by('-created_at')
 
     # sort_option 값에 따라 쿼리셋을 정렬
     if sort_option == 'newest':
@@ -78,7 +78,7 @@ def item_create(request):
 @login_required
 def item_detail(request, pk):
     item = get_object_or_404(Item, pk=pk)
-    reviews = Review.objects.filter(item=item).order_by('-datetime')
+    reviews = Review.objects.filter(item=item).select_related('user').prefetch_related('reviewreply_set').order_by('-datetime')
     average = reviews.aggregate(Avg('star'))['star__avg']
     
     if request.method == 'POST':
@@ -203,7 +203,7 @@ def order_detail(request, pk):
 def subscribe_index(request, pk=None):
     # 구독 키워드 관리
     sort_option_month = request.GET.get('sort-options-month', 'all')
-    keywords = Keyword.objects.select_related('category1', 'category2').order_by('-month')
+    keywords = Keyword.objects.select_related('category1', 'category2').only('id', 'word', 'month','category1__name','category2__name').order_by('-month')
     # 필터링 기준 - 월 기준
     if sort_option_month != 'all':
         created_year, created_month = map(int, sort_option_month.split('-'))
@@ -225,7 +225,8 @@ def subscribe_index(request, pk=None):
     # 구독 고객 리스트 관리
     sub_option_month = request.GET.get('sub-options-month', 'all')
     sub_option_deliverystatus = request.GET.get('sub-options-deliverystatus', 'all')
-    subscribes = Subscribe.objects.select_related('delivery').order_by('-datetime')
+    # subscribes = Subscribe.objects.select_related('delivery','user').order_by('-datetime')
+    subscribes = Subscribe.objects.select_related('delivery', 'user', 'item').only('user__username', 'datetime', 'item__name', 'delivery__status', 'id').prefetch_related('subscribekeyword_set__keyword').order_by('-datetime')
     
     # 필터링 기준(월, 배송상태)
     if sub_option_month != 'all':
@@ -252,6 +253,35 @@ def subscribe_index(request, pk=None):
         'sub_option_deliverystatus':sub_option_deliverystatus,
     }
     return render(request, 'seller/subscribe_index.html', context)
+
+# 환불관리
+@login_required
+def refund_index(request):
+    sort_option_month = request.GET.get('sort-options-month', 'all')
+    sort_option_refundstatus = request.GET.get('sort-options-refundstatus', 'all')
+    ordercarts = OrderCart.objects.filter(Q(status=2) | Q(status=3)).select_related('order', 'cart__user', 'cart__item').only('order__datetime', 'cart__user__username', 'cart__item__name','status').order_by('-order__datetime')
+
+    # 필터링 기준
+    if sort_option_month != 'all':
+        year, month = map(int, sort_option_month.split('-'))
+        ordercarts = ordercarts.filter(order__datetime__year=year, order__datetime__month=month)
+    if sort_option_refundstatus != 'all':
+        ordercarts = ordercarts.filter(status=int(sort_option_refundstatus))
+        
+    months_queryset = Order.objects.annotate(year=ExtractYear('datetime'),month=ExtractMonth('datetime')).values('year', 'month').distinct().order_by('-year', '-month')
+    months = [f"{entry['year']}-{entry['month']:02d}" for entry in months_queryset]
+    
+    paginator = Paginator(ordercarts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'ordercarts':page_obj,
+        'months':months,
+        'sort_option_month': sort_option_month,
+        'sort_option_refundstatus':sort_option_refundstatus
+    }
+    return render(request, 'seller/refund_index.html', context)
 
 # # 데이터 시각화
 # def plot_subscription_trend(request):

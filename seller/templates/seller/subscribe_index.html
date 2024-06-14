@@ -217,7 +217,7 @@
           <a class="nav-link" href="{% url 'seller:seller_orderindex' %}">주문내역관리</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">환불관리</a>
+          <a class="nav-link" href="{% url 'seller:refund_index' %}">환불관리</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{% url 'QnA:seller_questions' %}">Q&A</a>
@@ -252,8 +252,8 @@
                 <div class="keyword-name">{{ keyword }}</div>
                 <hr>
                 <div class="keyword-categories">
-                    <span class="category">{{ keyword.category1 }}</span>
-                    <span class="category">{{ keyword.category2 }}</span>
+                    <span class="category">{{ keyword.category1.name }}</span>
+                    <span class="category">{{ keyword.category2.name }}</span>
                 </div>
                 <div class="keyword-month">{{ keyword.month }}</div>
             </button>            
@@ -282,8 +282,6 @@
                     <option value="0" {% if sub_option_deliverystatus == '0' %}selected{% endif %}>배송 전</option>
                     <option value="1" {% if sub_option_deliverystatus == '1' %}selected{% endif %}>배송 중</option>
                     <option value="2" {% if sub_option_deliverystatus == '2' %}selected{% endif %}>배송 완료</option>
-                    <option value="3" {% if sub_option_deliverystatus == '3' %}selected{% endif %}>구매 확정</option>
-                    <option value="4" {% if sub_option_deliverystatus == '4' %}selected{% endif %}>환불 완료</option>
                 </select>
             </form>          
         </div>
@@ -318,8 +316,6 @@
                                 <option value="0" {% if subscribe.delivery.status == 0 %}selected{% endif %}>배송 전</option>
                                 <option value="1" {% if subscribe.delivery.status == 1 %}selected{% endif %}>배송 중</option>
                                 <option value="2" {% if subscribe.delivery.status == 2 %}selected{% endif %}>배송 완료</option>
-                                <option value="3" {% if subscribe.delivery.status == 3 %}selected{% endif %}>구매 확정</option>
-                                <option value="4" {% if subscribe.delivery.status == 4 %}selected{% endif %}>환불 완료</option>
                             </select>
                         </form>   
                     </td>

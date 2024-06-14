@@ -8,7 +8,7 @@ from django.core.paginator import Paginator
 from QnA.models import Question
 from item.models import Item
 from django.http import JsonResponse
-from django.db.models import Count
+from django.db.models import Count, Prefetch
 from django.utils import timezone
 import requests
 import os
@@ -19,8 +19,15 @@ admin_key = os.getenv('admin_key')
 
 @login_required
 def order_index(request):    
-    orders = Order.objects.filter(ordercart__cart__user=request.user).order_by('-datetime').distinct().prefetch_related('ordercart_set__cart__item')
-
+    # orders = Order.objects.filter(ordercart__cart__user=request.user).order_by('-datetime').distinct().prefetch_related('ordercart_set__cart__item')
+    orders = Order.objects.filter(ordercart__cart__user=request.user).order_by('-datetime').distinct().prefetch_related(
+        Prefetch(
+            'ordercart_set',
+            queryset=OrderCart.objects.only('id', 'cart__item__id', 'cart__item__name', 'cart__item__image')
+                .select_related('cart__item')
+        )
+    ).only('id', 'datetime', 'total_price')
+    
     paginator = Paginator(orders, 4)  # 한 페이지당 4개의 주문을 보여줍니다.
     
     # URL의 'page' GET 파라미터로부터 페이지 번호를 가져옵니다. 기본값은 1입니다.

@@ -87,7 +87,7 @@
                     <th scope="col">용량</th>
                     <th scope="col">수량</th>
                     <th scope="col">가격</th>
-                    <th scope="col">리뷰</th>
+                    <th scope="col">구매확정/환불신청</th>
                 </tr>
             </thead>
 
@@ -99,13 +99,21 @@
                     <td>{{ ordercart.cart.amount }}</td>
                     <td>{{ ordercart.cart.sub_total|intcomma }}  ₩</td>
                     <td>
-                        {% if order.delivery_info.status == 2 %}
-                            {% if ordercart.is_review %}
-                                <button class="btn btn-outline-secondary" type="button">리뷰보기</button>
-                            {% else %}
-                                리뷰작성전
-                            {% endif %}
+                        {% if ordercart.status == 0 %}
+                            구매확정전
                         {% endif %}
+                        
+                        {% if ordercart.status == 1 and not ordercart.is_review %}
+                            리뷰쓰기전
+                        {% elif ordercart.is_review and ordercart.status == 1 %}
+                            리뷰작성완료
+                        {% endif %}
+                        {% if ordercart.status == 2 %}
+                            환불신청
+                        {% elif ordercart.status == 3 %}
+                            환불완료
+                        {% endif %}
+
                     </td>
                 </tr>
                 {% endfor %}

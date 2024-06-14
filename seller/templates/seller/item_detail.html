@@ -212,7 +212,7 @@
     <tbody>
         {% for review in reviews %}
         <tr class="review-card">
-            <td>{{ review.user }}</td>
+            <td>{{ review.user.username }}</td>
             <td>
                 <div class="rating" data-value="{{ review.star }}">
                     {% for i in '12345' %}

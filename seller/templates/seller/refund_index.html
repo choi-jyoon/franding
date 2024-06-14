@@ -123,10 +123,10 @@
           <a class="nav-link" href="{% url 'seller:subscribe_index' %}">구독관리</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{% url 'seller:seller_orderindex' %}">주문내역관리</a>
+          <a class="nav-link" href="{% url 'seller:seller_orderindex' %}">주문내역관리</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'seller:refund_index' %}">환불관리</a>
+          <a class="nav-link active" aria-current="page" href="{% url 'seller:refund_index' %}">환불관리</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{% url 'QnA:seller_questions' %}">Q&A</a>
@@ -143,12 +143,11 @@
                     <option value="{{ month }}" {% if sort_option_month == month %}selected{% endif %}>{{ month }}</option>
                     {% endfor %}
                 </select>
-                <label for="sort-options-deliverystatus">배송 상태 :&nbsp;</label>
-                <select id="sort-options-deliverystatus" name="sort-options-deliverystatus" onchange="document.getElementById('sort-form').submit();">
-                    <option value="all" {% if sort_option_deliverystatus == 'all' %}selected{% endif %}>전체 보기</option>
-                    <option value="0" {% if sort_option_deliverystatus == '0' %}selected{% endif %}>배송 전</option>
-                    <option value="1" {% if sort_option_deliverystatus == '1' %}selected{% endif %}>배송 중</option>
-                    <option value="2" {% if sort_option_deliverystatus == '2' %}selected{% endif %}>배송 완료</option>
+                <label for="sort-options-refundstatus">환불 상태 :&nbsp;</label>
+                <select id="sort-options-refundstatus" name="sort-options-refundstatus" onchange="document.getElementById('sort-form').submit();">
+                    <option value="all" {% if sort_option_refundstatus == 'all' %}selected{% endif %}>전체 보기</option>
+                    <option value="2" {% if sort_option_refundstatus == '2' %}selected{% endif %}>환불 신청</option>
+                    <option value="3" {% if sort_option_refundstatus == '3' %}selected{% endif %}>환불 완료</option>
                 </select>
             </form>          
         </div>
@@ -158,46 +157,45 @@
             <tr>
                 <th>사용자</th>
                 <th>날짜</th>
-                <th>주문번호</th>
-                <th>배송상태</th>
+                <th>환불상품</th>
+                <th>환불상태</th>
+                <th>결제수단</th>
             </tr>
         </thead>
         <tbody>
-            {% for order in orders %}
+            {% for ordercart in ordercarts %}
                 <tr class="order-card">
-                    <td>{{ order.delivery_info.receiver }}</td> <!-- 첫 번째 OrderCart의 사용자 -->
-                    <td>{{ order.datetime }}</td>
-                    <td class="order-id-toggle" data-target="order-detail-{{ order.id }}" data-order-id="{{ order.id }}">
-                        <button class="order-link-btn" data-order-id="{{ order.id }}">{{ order.id }}</button>
+                    <td>{{ ordercart.cart.user }}</td>
+                    <td>{{ ordercart.order.datetime }}</td>
+                    <td class="order-id-toggle" data-target="order-detail-{{ ordercart.order.id }}" data-order-id="{{ ordercart.order.id }}">
+                        <button class="order-link-btn" data-order-id="{{ ordercart.order.id }}">{{ ordercart.cart.item.name }}</button>
                     </td>
                     <td>
-                        <form method="post" action="{% url 'seller:update_delivery_status' model_type='order' pk=order.id %}" id="delivery_status_form_{{ order.id }}">
-                            {% csrf_token %}
-                            <select name="delivery_status" onchange="document.getElementById('delivery_status_form_{{ order.id }}').submit();">
-                                <option value="0" {% if order.delivery_info.status == 0 %}selected{% endif %}>배송 전</option>
-                                <option value="1" {% if order.delivery_info.status == 1 %}selected{% endif %}>배송 중</option>
-                                <option value="2" {% if order.delivery_info.status == 2 %}selected{% endif %}>배송 완료</option>
-                            </select>
-                        </form>                        
+                        {% if ordercart.status == 2 %}
+                            환불신청
+                        {% elif ordercart.status == 3 %}
+                            환불완료
+                        {% endif %}
                     </td>
+                    <td>카카오페이</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">
-            {% if orders.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page={{ orders.previous_page_number }}&sort-options-month={{ sort_option_month }}&sort-options-deliverystatus={{ sort_option_deliverystatus }}">이전</a></li>
+            {% if ordercarts.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ ordercarts.previous_page_number }}&sort-options-month={{ sort_option_month }}&sort-options-refundstatus={{ sort_option_refundstatus }}">이전</a></li>
             {% endif %}
-            {% for num in orders.paginator.page_range %}
-            {% if orders.number == num %}
-            <li class="page-item active"><a class="page-link" href="?page={{ num }}&sort-options-month={{ sort_option_month }}&sort-options-deliverystatus={{ sort_option_deliverystatus }}">{{ num }}</a></li>
+            {% for num in ordercarts.paginator.page_range %}
+            {% if ordercarts.number == num %}
+            <li class="page-item active"><a class="page-link" href="?page={{ num }}&sort-options-month={{ sort_option_month }}&sort-options-refundstatus={{ sort_option_refundstatus }}">{{ num }}</a></li>
             {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{ num }}&sort-options-month={{ sort_option_month }}&sort-options-deliverystatus={{ sort_option_deliverystatus }}">{{ num }}</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ num }}&sort-options-month={{ sort_option_month }}&sort-options-refundstatus={{ sort_option_refundstatus }}">{{ num }}</a></li>
             {% endif %}
             {% endfor %}
-            {% if orders.has_next %}
-            <li class="page-item"><a class="page-link" href="?page={{ orders.next_page_number }}&sort-options-month={{ sort_option_month }}&sort-options-deliverystatus={{ sort_option_deliverystatus }}">다음</a></li>
+            {% if ordercarts.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ ordercarts.next_page_number }}&sort-options-month={{ sort_option_month }}&sort-options-refundstatus={{ sort_option_refundstatus }}">다음</a></li>
             {% endif %}
         </ul>
     </nav>
@@ -225,7 +223,7 @@
                         .then(html => {
                             var newRow = document.createElement('tr');
                             newRow.id = targetId;
-                            newRow.innerHTML = `<td colspan="4">${html}</td>`; // 열 수에 맞춰 colspan 조정
+                            newRow.innerHTML = `<td colspan="5">${html}</td>`; // 열 수에 맞춰 colspan 조정
                             newRow.style.display = "table-row";
                             this.closest('tr').after(newRow);
                         })
