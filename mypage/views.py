@@ -10,6 +10,7 @@ from item.models import Item
 from django.http import JsonResponse
 from django.db.models import Count
 from django.utils import timezone
+from payment.models import Delivery
 import requests
 import os
 from dotenv import load_dotenv
@@ -71,7 +72,7 @@ def refund_confirm(request, pk):
         refund_item.save()
         return redirect('mypage:order_detail', refund_item.order.id)
     
-    # 배송정보를 session에 저장
+    # 세션에 배송 정보 저장
     request.session['delivery_info'] = {
         'receiver': request.POST.get('receiver'),
         'receiver_postcode': request.POST.get('receiver_postcode'),
@@ -81,7 +82,22 @@ def refund_confirm(request, pk):
         'receiver_phone': request.POST.get('receiver_phone'),
         'receiver_email': request.POST.get('receiver_email')
     }
-        
+
+    # 세션에서 배송 정보 읽기
+    deliveryinfo_session = request.session.get('delivery_info')
+
+    # # 배송 정보 생성
+    # delivery_info = Delivery.objects.create(
+    #     status = 3,
+    #     receiver=deliveryinfo_session['receiver'],
+    #     receiver_postcode=deliveryinfo_session['receiver_postcode'],
+    #     receiver_address=deliveryinfo_session['receiver_address'],
+    #     receiver_detailAddress=deliveryinfo_session['receiver_detailAddress'],
+    #     receiver_extraAddress=deliveryinfo_session['receiver_extraAddress'],
+    #     receiver_phone=deliveryinfo_session['receiver_phone'],
+    #     receiver_email=deliveryinfo_session['receiver_email']
+    # )
+    
     context = {
         'item_list': [refund_item.cart],
         'total_price': -total_price,
@@ -89,7 +105,6 @@ def refund_confirm(request, pk):
         'userinfo' : userinfo,
         'refund_item': refund_item
     }
-    
     return render(request, 'mypage/refund_info.html', context)
     
 @login_required
@@ -124,13 +139,16 @@ def order_refund(request, pk):
         res = requests.post(URL, headers=headers, params=params)
         res = res.json()
         
+        # PayInfo 정보 업데이트
         pay_info.status = "cancelled"
         pay_info.canceled_at = timezone.now()
         pay_info.save()
         
+        # OrderCart 상태 업데이트
         ordercart.status = 2 
         ordercart.save()
         
+        # 환불 정보 생성
         refund = Refund.objects.create(
             ordercart = ordercart,
             price = cancel_amount,
