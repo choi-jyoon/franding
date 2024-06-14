@@ -142,28 +142,30 @@
                             {% endif %}
                         </td> {% endcomment %}
                         <td>
-                            {% if ordercart.status == 0 %}
-                                <a href="#" class="btn btn-outline-secondary order-confirm-btn" data-ordercart-id="{{ ordercart.id }}">구매확정</a>
-                                <a href="{% url 'mypage:order_refund' ordercart.id %}" class="btn btn-outline-secondary refund-confirm-btn" data-ordercart-id="{{ ordercart.id }}">환불신청</a>
+                            {% if ordercart.order.delivery_info.status == 2%}
+                                {% if ordercart.status == 0 %}
+                                    <a href="#" class="btn btn-outline-secondary order-confirm-btn" data-ordercart-id="{{ ordercart.id }}">구매확정</a>
+                                    <a href="{% url 'mypage:order_refund' ordercart.id %}" class="btn btn-outline-secondary refund-confirm-btn" data-ordercart-id="{{ ordercart.id }}">환불신청</a>
+                                {% endif %}
+                                
+                                {% if ordercart.status == 1 and not ordercart.is_review %}
+                                    <a href="{% url 'review:create_review' ordercart.id %}" class="btn btn-outline-secondary">리뷰쓰기</a>
+                                {% elif ordercart.is_review and ordercart.status == 1 %}
+                                    <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="이미 리뷰를 작성하셨습니다">
+                                        <button class="btn btn-outline-secondary" type="button" disabled>리뷰쓰기</button>
+                                    </span>
+                                {% endif %}
+                                {% if ordercart.status == 2 %}
+                                    <button class="btn btn-outline-secondary" type="button" disabled>환불신청완료</button>
+                                    <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="주소입력 시 환불 신청이 완료됩니다">
+                                        <a href="{% url 'mypage:refund_confirm' ordercart.id %}" class="btn btn-outline-secondary" >주소입력</a>
+                                    </span>
+                                {% elif ordercart.status == 3 %}
+                                    <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="이미 환불이 완료된 상품입니다">
+                                        <button class="btn btn-outline-secondary" type="button" disabled>환불완료</button>
+                                    </span>
+                                {% endif%}
                             {% endif %}
-                            
-                            {% if ordercart.status == 1 and not ordercart.is_review %}
-                                <a href="{% url 'review:create_review' ordercart.id %}" class="btn btn-outline-secondary">리뷰쓰기</a>
-                            {% elif ordercart.is_review and ordercart.status == 1 %}
-                                <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="이미 리뷰를 작성하셨습니다">
-                                    <button class="btn btn-outline-secondary" type="button" disabled>리뷰쓰기</button>
-                                </span>
-                            {% endif %}
-                            {% if ordercart.status == 2 %}
-                                <button class="btn btn-outline-secondary" type="button" disabled>환불신청완료</button>
-                                <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="주소입력 시 환불 신청이 완료됩니다">
-                                    <a href="{% url 'mypage:refund_confirm' ordercart.id %}" class="btn btn-outline-secondary" >주소입력</a>
-                                </span>
-                            {% elif ordercart.status == 3 %}
-                                <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="이미 환불이 완료된 상품입니다">
-                                    <button class="btn btn-outline-secondary" type="button" disabled>환불완료</button>
-                                </span>
-                            {% endif%}
                             </td>
                         
                     </tr>
