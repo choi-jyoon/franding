@@ -63,7 +63,7 @@
         align-items: center;
     }
     
-    #add-keyword-button {
+    #add-keyword-button, .recommend-keyword, .plot {
         padding: 10px 20px;
         border: none;
         border-radius: 5px;
@@ -75,10 +75,15 @@
         transition: background-color 0.3s, box-shadow 0.3s; /* 부드러운 전환 효과 추가 */
     }
     
-    #add-keyword-button:hover {
+    #add-keyword-button:hover, .recommend-keyword:hover, .plot:hover {
         background-color: #5B574F; /* 호버할 때 배경색 */
         color: white;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* 호버할 때 그림자 효과 */
+    }
+
+    .button-group {
+        display: flex;
+        gap: 10px; /* 버튼 사이 간격 추가 */
     }
     
     .keywords-box {
@@ -96,6 +101,10 @@
         width: 200px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         text-align: center;
+    }
+
+    .keyword-item:hover {
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
     }
     
     .keyword-name {
@@ -198,6 +207,11 @@
     .sub-table th {
         background-color: #f2f2f2;
     }
+
+    #plot {
+        max-width: 70%; /* 모달 최대 너비 조정 */
+        width: auto; /* 필요한 경우 너비 자동 조정 */
+    }
 </style>
 {% endblock %}
 
@@ -227,24 +241,27 @@
     <br>
     <div class="content-box">
         <h2 class="center-text">
-            {% if sort_option_month != 'all' %}
-                {{sort_option_month}}월의 키워드
-            {% else %}
-                모든 키워드
-            {% endif %}
+            {{sort_option_month}}월의 키워드
         </h2>
         <hr>
         <div class="sort-box">
             <form id="sort-form" method="get">
                 <label for="sort-options-month">날짜 :&nbsp;</label>
                 <select id="sort-options-month" name="sort-options-month" onchange="document.getElementById('sort-form').submit();">
-                    <option value="all" {% if sort_option_month == 'all' %}selected{% endif %}>전체 보기</option>
                     {% for month in keyword_months %}
                     <option value="{{ month }}" {% if sort_option_month == month %}selected{% endif %}>{{ month }}</option>
                     {% endfor %}
                 </select>
             </form>
-            <button id="add-keyword-button" data-bs-toggle="modal" data-bs-target="#keywordModal" >키워드 추가</button>
+            <div class="button-group">
+                <form method="post" action="{% url 'seller:recommend_keyword' %}">
+                    {% csrf_token %}
+                    <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="AI가 키워드를 3개씩 자동으로 생성해줍니다!">
+                        <button class="recommend-keyword" type="submit">키워드 자동 생성</button>
+                    </span>
+                </form>
+                <button id="add-keyword-button" data-bs-toggle="modal" data-bs-target="#keywordModal">키워드 추가</button>
+            </div>
         </div>
         <div class="keywords-box">
             {% for keyword in keywords %}
@@ -265,6 +282,7 @@
 
     <!-- 구독 고객 관리 -->
     <h2 class="center-text">구독 고객 리스트</h2>
+    <button class="plot" style="margin-left: auto; display: block;">구독자 분석하기</button>
     <hr>
     <div class="toolbar">
         <div class="left-section">
@@ -364,20 +382,52 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="submitKeywordForm()">저장하기</button>
+                <button type="button" class="btn btn-outline-secondary" onclick="submitKeywordForm()">저장하기</button>
+                <form id="deleteKeywordForm" method="post">
+                    {% csrf_token %}
+                    <button id="deleteKeywordButton" class="btn btn-outline-danger" type="submit" style="display: none;">키워드 삭제</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" id="plot">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">구독자 분석</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modalBodyContent">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 {% block extra-script %}
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 팝오버 초기화
+        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+        var popoverList = popoverTriggerList.map(function(popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl, {
+                trigger: 'hover focus', // 트리거 이벤트 설정
+                placement: 'top' // 팝오버 위치 설정
+            });
+        });
+    });
+
     document.getElementById('add-keyword-button').addEventListener('click', function() {
         // 모달 폼 초기화
         document.getElementById('keywordForm').reset();
         document.getElementById('keywordForm').action = "{% url 'seller:create_keyword' %}";
         document.getElementById('keywordModalLabel').innerText = "키워드 추가";
+        document.getElementById('deleteKeywordButton').style.display = "none"; // 키워드 추가일때는 안보이게
     });
 
     document.querySelectorAll('.keyword-item').forEach(function(item) {
@@ -400,6 +450,12 @@
             document.getElementById('keywordForm').action = updateUrl;
             document.getElementById('keywordModalLabel').innerText = "키워드 수정";
 
+            //삭제버튼 표시
+            // 삭제 버튼 설정
+            const deleteUrl = "{% url 'seller:delete_keyword' pk=0 %}".replace('0', id);
+            document.getElementById('deleteKeywordForm').action = deleteUrl;
+            document.getElementById('deleteKeywordButton').style.display = "block";
+
             // 모달 표시
             var keywordModal = new bootstrap.Modal(document.getElementById('keywordModal'));
             keywordModal.show();
@@ -409,5 +465,22 @@
     function submitKeywordForm() {
         document.getElementById('keywordForm').submit();
     }
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+        // Button click event to open modal and load external HTML
+        $('.plot').on('click', function() {
+            $('#myModal').modal('show');
+            $('#modalBodyContent').load("{% url 'seller:plot_sub' %}");
+        });
+
+        // 모달이 닫힐 때 이벤트 핸들러 해제 및 콘텐츠 초기화
+        $('#myModal').on('hidden.bs.modal', function () {
+            $('#modalBodyContent').empty(); // 콘텐츠 초기화
+        });
+    });
 </script>
 {% endblock %}
