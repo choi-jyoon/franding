@@ -199,8 +199,9 @@
 <br>
 <h1 style="text-align: center;">리뷰</h1>
 <br>
-<a href="#" class="btn btn-secondary" style="float: right;">리뷰 분석</a>
+<button id="reviewCountButton" style="float: right;" class="btn btn-secondary">리뷰 분석</button>
 <br>
+<div id="responseMessage" style="margin-top: 20px; color: rgb(129, 129, 129);"></div>
 <table class="review-table">
     <thead>
         <tr>
@@ -362,5 +363,20 @@
             });
         });
     });
+    $(document).ready(function() {
+            $('#reviewCountButton').click(function() {
+                $.ajax({
+                    url: '{% url "seller:review_analysis" item.pk %}',
+                    method: 'GET',
+                    success: function(response) {
+                        $('#responseMessage').text(response.message);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                        $('#responseMessage').text('오류가 발생했습니다.');
+                    }
+                });
+            });
+        });
 </script>
 {% endblock %}
