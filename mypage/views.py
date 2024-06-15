@@ -10,7 +10,7 @@ from item.models import Item
 from django.http import JsonResponse
 from django.db.models import Count, Prefetch
 from django.utils import timezone
-from payment.models import Delivery
+from payment.models import Delivery, Coupon, UserCoupon
 import requests
 import os
 from dotenv import load_dotenv
@@ -248,3 +248,11 @@ def user_delete(request):
     request.user.delete()
     auth_logout(request)
     return redirect('home')
+
+@login_required
+def user_coupon(request):
+    coupons = UserCoupon.objects.filter(user = request.user)
+    context = {
+        'coupons' : coupons,
+    }
+    return render(request, 'mypage/user_coupon.html', context)

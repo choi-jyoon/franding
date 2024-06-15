@@ -12,8 +12,20 @@ from django.db.models import Avg, Value, IntegerField, Count, Q
 from django.db.models.functions import Coalesce, ExtractMonth, ExtractYear
 import plotly.express as px
 import pandas as pd
+from django.views.decorators.http import require_GET
+from django.conf import settings
+from langchain_community.utilities import SQLDatabase
+from django.http import JsonResponse
+from langchain_openai import ChatOpenAI
+from langchain.chains import create_sql_query_chain
+from operator import itemgetter
+from langchain_community.tools.sql_database.tool import QuerySQLDataBaseTool
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import PromptTemplate
+from langchain_core.runnables import RunnablePassthrough
+import os
 
-
+from dotenv import load_dotenv
 # 상품관리(등록,수정,삭제 등등)
 @login_required
 def seller_index(request):
@@ -283,6 +295,61 @@ def refund_index(request):
     }
     return render(request, 'seller/refund_index.html', context)
 
+def get_postgresql_uri():
+    db_settings = settings.DATABASES['default']
+    username = db_settings['USER']
+    password = db_settings['PASSWORD']
+    host = db_settings['HOST']
+    port = db_settings['PORT']
+    database = db_settings['NAME']
+    
+    pg_uri = f"postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}"
+    return pg_uri
+
+load_dotenv()
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
+
+@login_required
+def review_analysis(request, pk):
+    item = get_object_or_404(Item, pk=pk)
+    reviews = Review.objects.filter(item=item)
+    
+    # 데이터베이스 설정
+    pg_uri = get_postgresql_uri()
+    db = SQLDatabase.from_uri(pg_uri)
+    
+    # LLM 설정
+    llm = ChatOpenAI(openai_api_key=OPENAI_API_KEY, temperature=0)
+    
+    # SQL 쿼리 및 체인 설정
+    execute_query = QuerySQLDataBaseTool(db=db)
+    write_query = create_sql_query_chain(llm, db)
+    
+    answer_prompt = PromptTemplate.from_template(
+        """주어진 유저 질문에 대해서, corresponding SQL query, and SQL result, answer the user question.
+        Question: {question}
+        SQL Query: {query}
+        SQL Result: {result}
+        Answer: """
+    )
+    
+    parser = StrOutputParser()
+    
+    answer = answer_prompt | llm | parser
+    
+    chain = (
+        RunnablePassthrough.assign(query=write_query).assign(
+            result=itemgetter("query") | execute_query
+        )
+        | answer
+    )
+    
+    question = f"item id가{pk}인 리뷰들은 한개의 향수에 대해서 고객들이 남긴리뷰야 니가 판매자라고했을때 이리뷰들의 내용을 한줄로 정리하고 향수의 문제점이있다면 무엇인지 말해줘"
+    response = chain.invoke({"question": question})
+    
+
+    return JsonResponse({"message": f"{response}"})
 # # 데이터 시각화
 # def plot_subscription_trend(request):
 #     # 월별 구독자 수 집계

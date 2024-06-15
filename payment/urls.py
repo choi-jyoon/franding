@@ -10,4 +10,5 @@ urlpatterns = [
     path('paysuccess/', views.paysuccess, name='paysuccess'),
     path('payfail/', views.payfail, name='payfail'),
     path('paycancel/', views.paycancel, name='paycancel'),    
+    path('apply_coupon/', views.apply_coupon, name='apply_coupon'),
 ]

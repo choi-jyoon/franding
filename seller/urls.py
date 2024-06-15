@@ -22,4 +22,5 @@ urlpatterns = [
     # path('plot_sub/', views.plot_subscription_trend, name='plot_sub'),
     # 환불관리
     path('refund_index/', views.refund_index, name='refund_index'),
+    path('review_analysis/<int:pk>/', views.review_analysis, name='review_analysis'),
 ]
