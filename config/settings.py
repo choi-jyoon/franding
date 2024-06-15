@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'payment',
     'event',
     'subscribe',
+    'guide',
     #allauth
     'allauth',
     'allauth.account',
