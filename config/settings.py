@@ -110,7 +110,7 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': DB_PASSWORD,
         'HOST': 'hanslab.org',  # 또는 PostgreSQL 서버의 IP 주소
-        'PORT': '25432',       # PostgreSQL의 기본 포트 번호
+        'PORT': '35432',       # PostgreSQL의 기본 포트 번호
     }
 }
 
