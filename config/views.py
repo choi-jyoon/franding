@@ -9,6 +9,7 @@ from django.core.paginator import Paginator
 from .forms import UserAddInfoForm, UserCreateForm, CustomAuthenticationForm
 from django.contrib import messages  
 from mypage.models import UserAddInfo
+from payment.models import Coupon, UserCoupon
 # Create your views here.
 
 def index(request):
@@ -57,6 +58,14 @@ def register(request):
             add_info.detailAddress = request.POST.get('detailAddress')  
             add_info.extraAddress = request.POST.get('extraAddress')    
             add_info.save()
+            
+            # 회원가입 쿠폰 지급 
+            coupons = Coupon.objects.filter(Q(name__icontains='회원가입'))
+            for coupon in coupons : 
+                user_coupon = UserCoupon.objects.create(
+                    user = user,
+                    coupon = coupon
+                )
 
             return redirect('register_done')
         else:

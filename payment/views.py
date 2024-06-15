@@ -1,13 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from cart.models import Cart, Order, OrderCart, PayInfo
 from mypage.models import UserAddInfo
-from .models import Delivery
+from .models import Delivery, UserCoupon
 import requests
 import os
 from dotenv import load_dotenv
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 load_dotenv()
 admin_key = os.getenv('admin_key')
@@ -20,7 +20,7 @@ def payment_list(request, total_price=0):
     total_amount = 0
     check_item_list = []
 
-    
+    coupons = UserCoupon.objects.filter(user = user, is_used = False)
 
     if request.method == 'GET': # True
         if 'check-item' not in request.GET:
@@ -54,8 +54,8 @@ def payment_list(request, total_price=0):
         
         check_item_list.append(check_item)
         total_price += (check_item.item.price * check_item.amount)
+            
         
-    
         # 잠깐 주석처리
         cnt += 1
         # total_price += (check_item.item.price * check_item.amount)  # 총 가격
@@ -72,6 +72,17 @@ def payment_list(request, total_price=0):
         shipping_fee = 0    
                           
            
+    # 세션에서 total_price를 초기화 (결제 페이지에 처음 들어왔을 때만)
+    if 'initial_visit' not in request.session:
+        request.session['total_price'] = 0
+        request.session['initial_visit'] = True
+    else:
+        if 'total_price' in request.session:
+            total_price = request.session['total_price']
+        # 두 번째 방문 시 'initial_visit'을 삭제
+        del request.session['initial_visit']
+            
+            
     if request.method == "POST": # False
         # 배송정보를 session에 저장
         request.session['delivery_info'] = {
@@ -106,13 +117,17 @@ def payment_list(request, total_price=0):
         res = requests.post(URL, data=data, headers=headers)
         request.session['tid'] = res.json()['tid']      # 결제 승인시 사용할 tid를 세션에 저장
         next_url = res.json()['next_redirect_pc_url']   # 결제 페이지로 넘어갈 url을 저장
+        
+        request.session['initial_visit'] = True
+        del request.session['initial_visit'] 
         return redirect(next_url)
     
     context = {
             'item_list': check_item_list,
             'total_price': total_price,
             'shipping_fee' : shipping_fee,
-            'userinfo' : userinfo
+            'userinfo' : userinfo,
+            'coupons': coupons,
     }
     
     return render(request, template_name, context)
@@ -123,6 +138,12 @@ def paysuccess(request):
     cart_list = []
     deliveryinfo_session = request.session.get('delivery_info')
     total_price = request.session.get('total_price')
+    user_coupon_id = request.session.get('user_coupon_id')
+    
+    if user_coupon_id:
+        user_coupon = UserCoupon.objects.get(id=user_coupon_id)
+        user_coupon.is_used = True
+        user_coupon.save()
     
     if not deliveryinfo_session or not total_price:
         return redirect('mypage:order_index')
@@ -204,6 +225,8 @@ def paysuccess(request):
         del request.session['delivery_info']
     if 'total_price' in request.session:
         del request.session['total_price']
+    if 'initial_visit' in request.session:
+        del request.session['initail_visit']
         
     return render(request, 'payment/paysuccess.html', context)
     
@@ -211,5 +234,24 @@ def payfail(request):
     return render(request, 'payment/payfail.html')
 
 def paycancel(request):
+    if 'total_price' in request.session:
+        del request.session['total_price']
+    if 'initial_visit' in request.session:
+        del request.session['initail_visit']
     return render(request, 'payment/paycancel.html')
 
+def apply_coupon(request):
+    if request.method == 'POST':
+        try:
+            user_coupon_id = request.POST.get('coupon_id')
+            request.session['user_coupon_id'] = user_coupon_id
+            user_coupon = get_object_or_404(UserCoupon, id=user_coupon_id)
+            total_price = float(request.POST.get('total_price'))  # 문자열을 float로 변환
+            
+            discount_amount = user_coupon.coupon.discount_rate * 0.01 * total_price
+            new_total_price = int(total_price - discount_amount)  # 정수로 변환
+            request.session['total_price'] = new_total_price  # 세션에 저장
+            return JsonResponse({'new_total_price': new_total_price})
+        except Exception as e:
+            print(f"Error: {e}")
+            return JsonResponse({'error': str(e)}, status=400)

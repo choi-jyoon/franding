@@ -52,3 +52,11 @@ class Item(models.Model):
 
     def __str__(self):
         return self.name
+    
+class ItemViewCount(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    date = models.DateField()
+    count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = ('item', 'date')
