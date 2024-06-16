@@ -33,7 +33,7 @@ urlpatterns = [
     path('about/',views.about, name='about' ),
     path('search/', views.searchItem, name='search' ),
     path('accounts/', include('django.contrib.auth.urls')),
-    # path('accounts/', include('allauth.urls')),
+    path('accounts/', include('allauth.urls')),
     path('accounts/register/', views.register, name='register'),
     path('login/', views.custom_login, name='login'),
     path('accounts/register/done/', views.UserCreateDoneTV.as_view(), name='register_done'),
