@@ -109,36 +109,36 @@ def answer_question(request, question_id):
 
 
 # QnA 데이터 리스트 만들기
-def item_id_list(Questions, attributes):
-    """item_id 전체 조회"""
+def question_attributes_list(Questions, attributes):
+    """question field 전체 조회"""
 
     Question_list = []
-    for item in Questions:
+    for ques in Questions:
         if attributes == 'id':
-            Question_list.append(item.id)
-        elif attributes == 'name':
-            Question_list.append(item.name)
-        elif attributes == 'summary':
-            Question_list.append(item.summary)
-        elif attributes == 'description':
-            Question_list.append(item.description)
+            Question_list.append(ques.id)
+        elif attributes == 'title':
+            Question_list.append(ques.title)
+        elif attributes == 'content':
+            Question_list.append(ques.content)
+        elif attributes == 'created_at':
+            Question_list.append(ques.created_at)
 
     return Question_list
 
 
 # QnA 데이트 프레임 만들기
 def QnA_dataFrame():
-    items = Question.objects.all()  # Query all qna from the database
-    item_id = item_id_list(items, attributes='id')
-    name = item_id_list(items, attributes='name')
-    summary = item_id_list(items, attributes='summary')
-    description = item_id_list(items, attributes='description')
+    questions = Question.objects.all()  # Query all qna from the database
+    id = question_attributes_list(questions, attributes='id')
+    title = question_attributes_list(questions, attributes='title')
+    content = question_attributes_list(questions, attributes='content')
+    created_at = question_attributes_list(questions, attributes='created_at')
 
     data = {
-        'item_id': item_id,
-        'name': name,
-        'summary': summary,
-        'description': description,
+        'id': id,
+        'title': title,
+        'content': content,
+        'created_at': created_at,
     }
 
     df = pd.DataFrame(data)
@@ -146,6 +146,7 @@ def QnA_dataFrame():
     return df
 
 
-def item_csv_file_save():
+# 검색에 사용할 question csv 파일 생성
+def question_csv_file_save():
     df = QnA_dataFrame()
     df.to_csv('QnA.csv', index=False)
