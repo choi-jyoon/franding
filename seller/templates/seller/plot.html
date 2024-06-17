@@ -38,7 +38,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <div id="content">
         <button onclick="generatePDF()" class="btn btn-outline-dark" style="margin-left: auto; display: block;"><i class="bi bi-download" style="font-size: 1.2em;"></i></button>
-        <h1>월별 구독자 수 추이</h1>
+        <h1>{{title1}}</h1>
         <br>
         <div id="graph-div">
             {{ graph_html|safe }}
@@ -46,11 +46,11 @@
         <br>
         <hr>
         <br>
-        <h1>월별 키워드 비중</h1>
+        <h1>{{title2}}</h1>
         <br>
         <div>
             {% for month in months %}
-                <button class="btn btn-outline-dark" onclick="updateChart({{ data|safe }}, '{{ month }}')">{{ month }}</button>
+                <button class="btn btn-outline-dark" onclick="updateChart('{{ month }}')">{{ month }}</button>
             {% endfor %}
         </div>
         <div id="chart-container">
@@ -59,8 +59,10 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            function updateChart(data, month) {
+        function initializeChartFunctions() {
+            const data = JSON.parse('{{ data|escapejs }}');
+
+            function updateChart(month) {
                 const chartData = data[month];
                 const values = chartData.map(item => item.count);
                 const labels = chartData.map(item => item.keyword);
@@ -80,10 +82,10 @@
                 const layout = {
                     title: `${month} 키워드 비중`,
                     template: 'plotly_white',
-                    width: 800,
+                    width: 1000,
                     height: 500,
                     font: {
-                        size: 16
+                        size: 12
                     }
                 };
 
@@ -92,7 +94,8 @@
 
             // 전역 범위에 함수를 노출시켜 버튼 클릭 이벤트에서 접근할 수 있도록 합니다.
             window.updateChart = updateChart;
-        });
+        }
+        document.addEventListener('DOMContentLoaded', initializeChartFunctions);
 
         async function generatePDF() {
             const { jsPDF } = window.jspdf;
@@ -107,7 +110,7 @@
                 const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
                 doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                doc.save('구독자_분석.pdf');
+                doc.save('분석자료.pdf');
             });
         }
     </script>
