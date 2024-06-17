@@ -107,6 +107,28 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 눌렸을 때 그림자 변경 */
         transform: translateY(2px); /* 눌렸을 때 버튼 살짝 내려가기 */
     }
+
+    .plot {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        border: 1px solid #5B574F;
+        background-color: white;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.3s, box-shadow 0.3s; /* 부드러운 전환 효과 추가 */
+    }
+    
+    .plot:hover {
+        background-color: #5B574F; /* 호버할 때 배경색 */
+        color: white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* 호버할 때 그림자 효과 */
+    }
+    #plot {
+        max-width: 80%; /* 모달 최대 너비 조정 */
+        width: auto; /* 필요한 경우 너비 자동 조정 */
+    }
 </style>
 {% endblock %}
 
@@ -152,6 +174,7 @@
                 </select>
             </form>          
         </div>
+        <button class="plot" style="margin-left: auto; display: block;">주문내역 분석하기</button>
     </div>
     <table class="order-table">
         <thead>
@@ -202,6 +225,22 @@
         </ul>
     </nav>
 </div>
+
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" id="plot">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">주문내역 분석</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modalBodyContent">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra-script %}
@@ -236,5 +275,62 @@
             });
         });
     });
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+        // Button click event to open modal and load external HTML
+        $('.plot').on('click', function() {
+            $('#myModal').modal('show');
+            $('#modalBodyContent').load("{% url 'seller:order_analysis' %}", function() {
+                // 모달 콘텐츠가 로드된 후 실행할 코드
+                initializeChartFunctions();
+            });
+        });
+
+        // 모달이 닫힐 때 이벤트 핸들러 해제 및 콘텐츠 초기화
+        $('#myModal').on('hidden.bs.modal', function () {
+            $('#modalBodyContent').empty(); // 콘텐츠 초기화
+        });
+    });
+
+    function initializeChartFunctions() {
+        const data = JSON.parse('{{ data|escapejs }}');
+
+        function updateChart(month) {
+            const chartData = data[month];
+            const values = chartData.map(item => item.count);
+            const labels = chartData.map(item => item.keyword);
+
+            const plotData = [{
+                values: values,
+                labels: labels,
+                type: 'pie',
+                textposition: 'outside',
+                textinfo: 'label+percent',
+                textfont: {
+                    size: 16,
+                    color: "black"
+                }
+            }];
+
+            const layout = {
+                title: `${month} 상품 비중`,
+                template: 'plotly_white',
+                width: 1000,
+                height: 500,
+                font: {
+                    size: 12
+                }
+            };
+
+            Plotly.newPlot('chart-container', plotData, layout);
+        }
+
+        // 전역 범위에 함수를 노출시켜 버튼 클릭 이벤트에서 접근할 수 있도록 합니다.
+        window.updateChart = updateChart;
+    }
 </script>
 {% endblock %}
