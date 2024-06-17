@@ -17,6 +17,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 DB_PASSWORD = os.getenv('DB_PASSWORD')
+GOOGLE_CLIEND_ID = os.getenv('GOOGLE_CLIENT_ID')
+GOOGLE_KEY = os.getenv('GOOGLE_KEY')
+KAKAO_CLIENT_ID = os.getenv('KAKAO_CLIENT_ID')
+KAKAO_KEY = os.getenv('KAKAO_KEY')
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,7 +37,6 @@ SECRET_KEY = 'django-insecure-*vp_8&e63t5yoa15dp))q58_shk_i*3z1v1a29v&eygbhdjp^#
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -56,6 +60,7 @@ INSTALLED_APPS = [
     'payment',
     'event',
     'subscribe',
+    'guide',
     #allauth
     'allauth',
     'allauth.account',
@@ -63,6 +68,8 @@ INSTALLED_APPS = [
     #provider
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.kakao',
+    'allauth.socialaccount.providers.naver',
+    
     # 'rest_framework',
     'QnA',
     'debug_toolbar',
@@ -168,10 +175,14 @@ AUTHENTICATION_BACKENDS = (
 
 SITE_ID = 1
 
+SOCIALACCOUNT_LOGIN_ON_GET = True
 LOGIN_REDIRECT_URL='/'
-LOGOUT_REDIRECT_URL='/'
-# ACCOUNT_LOGOUT_REDIRECT_URL = reverse_lazy('accountapp:login')
+# LOGOUT_REDIRECT_URL='/'
+ACCOUNT_LOGOUT_REDIRECT_URL = reverse_lazy('accountapp:login')
+ACCOUNT_LOGOUT_ON_GET = True
 # ACCOUNT_LOGOUT_ON_GET = True
+# SOCIALACCOUNT_ADAPTER = 'config.adapters.YourSocialAccountAdapter'
+
 
 MEDIA_URL='/media/'
 MEDIA_ROOT=BASE_DIR/'media'
@@ -199,3 +210,36 @@ REST_FRAMEWORK = {
 }
 
 
+# 소셜 로그인을 위한 키와 시크릿 설정
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': GOOGLE_CLIEND_ID, 
+            'secret': GOOGLE_KEY, 
+            'key': ''
+        },
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    },
+    'kakao': {
+        'APP': {
+            'client_id': KAKAO_CLIENT_ID,
+            'secret': KAKAO_KEY, 
+            'key': ''
+        }
+    }
+}
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = '1447wjddbs@gmail.com'
+# EMAIL_HOST_PASSWORD = 'digo oqma cdgv aivv'
+# DEFAULT_FROM_EMAIL = '1447wjddbs@gmail.com'

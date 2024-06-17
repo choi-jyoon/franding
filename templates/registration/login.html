@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
 {% load static %}
+{% load socialaccount %}
+{% providers_media_js %}
 
 {% block title %}Login{% endblock %}
 
@@ -48,13 +50,30 @@
     .loginform-group .form-group button[type="submit"]:hover {
         background-color: #453e37;
     }
+    .social-login-btn {
+        display: inline-block;
+        margin: 0 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        overflow: hidden;
+        transition: transform 0.3s;
+    }
     
+    .social-login-btn img {
+        display: block;
+        width: 100px; /* 너비를 100픽셀로 고정 */
+        height: auto;
+    }
+    
+    .social-login-btn:hover {
+        transform: scale(1.05);
+        border-color: #bbb;
+    }
       
 </style>
 {% endblock%}
 
 {% block content %}
-
 
 {% if form.error %}
 <div class="alert alert-danger">
@@ -76,7 +95,17 @@
             <input type="hidden" name="next" value="{{ next }}" />
         </div>
     </div>
-
+    <div class="login-links text-center mt-3">
+        <a href="#" class="social-login-btn disabled">
+            <img src="{% static 'img/kakao-logo.png' %}" alt="Kakao Logo">
+        </a>
+        <a href="{% provider_login_url 'naver' %}" class="social-login-btn">
+            <img src="{% static 'img/naver-logo.png' %}" alt="Naver Logo">
+        </a>
+        <a href="{% provider_login_url 'google' %}" class="social-login-btn">
+            <img src="{% static 'img/google-logo.png' %}" alt="Google Logo">
+        </a>
+    </div>
 </form>
 
 <div class="login-links text-center mt-3">
@@ -85,3 +114,17 @@
     <a href="{% url 'register' %}">회원가입</a>
 </div>
 {% endblock %}
+
+{% block extra-script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var kakaoLoginBtn = document.querySelector('.social-login-btn.disabled');
+        if (kakaoLoginBtn) {
+            kakaoLoginBtn.addEventListener('click', function (event) {
+                event.preventDefault();
+                alert('카카오 로그인은 현재 사용할 수 없습니다.');
+            });
+        }
+    });
+</script>
+{% endblock%}

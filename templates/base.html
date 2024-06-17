@@ -195,7 +195,18 @@
                         <a class="nav-link" href="{% url 'event:index' %}">Franding</a>
                     </li>
                     <li class="nav-item" style="margin-right: 20px;">
-                        <a class="nav-link" href="{% url 'subscribe:membership' %}">Membership</a>
+                        <a class="nav-link" href="{% url 'subscribe:index' %}">Membership</a>
+                    </li>
+                    <li class="nav-item" style="margin-right: 20px;">
+                        <a class="nav-link" href="{% url 'guide:guide_list' %}">Guide</a>
+                        {% comment %}
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'guide:Pleasant' %}">Pleasant</a></li>
+                            <li><a class="dropdown-item" href="{% url 'guide:Description' %}">Description</a></li>
+                            <li><a class="dropdown-item" href="{% url 'guide:Tale' %}">Tale</a></li>
+                            <li><a class="dropdown-item" href="{% url 'guide:Tip' %}">Tip</a></li>
+                        </ul>
+                        {% endcomment %}
                     </li>
                     <li class="nav-item" style="margin-right: 20px;">
                         <a class="nav-link" href="{% url 'about' %}">About</a>

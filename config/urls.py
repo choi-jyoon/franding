@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from django.contrib.auth import views as auth_views
 from . import views
 # from cart.views import
 
@@ -33,13 +34,21 @@ urlpatterns = [
     path('about/',views.about, name='about' ),
     path('search/', views.searchItem, name='search' ),
     path('accounts/', include('django.contrib.auth.urls')),
-    # path('accounts/', include('allauth.urls')),
+    path('accounts/', include('allauth.urls')),
     path('accounts/register/', views.register, name='register'),
     path('login/', views.custom_login, name='login'),
     path('accounts/register/done/', views.UserCreateDoneTV.as_view(), name='register_done'),
     path('seller/', include('seller.urls')),
     path('payment/', include('payment.urls')),
     path('QnA/', include('QnA.urls')),    
+    path('guide/', include('guide.urls')),
+    
+    # path('password_reset/', views.UserPasswordResetView.as_view(), name="password_reset"),
+    # path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(), name="password_reset_done"),
+    # path('password_reset_confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
+    # path('password_reset_complete/', auth_views.PasswordResetCompleteView.as_view(), name="password_reset_complete"),
+    # path('find-username/', views.find_username, name='find_username'),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
