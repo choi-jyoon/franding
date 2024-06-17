@@ -72,12 +72,12 @@ INSTALLED_APPS = [
     
     # 'rest_framework',
     'QnA',
-    'debug_toolbar',
+    # 'debug_toolbar',
     'django_filters',
 ]
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
