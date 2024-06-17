@@ -21,6 +21,8 @@ GOOGLE_CLIEND_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_KEY = os.getenv('GOOGLE_KEY')
 KAKAO_CLIENT_ID = os.getenv('KAKAO_CLIENT_ID')
 KAKAO_KEY = os.getenv('KAKAO_KEY')
+EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -173,8 +175,9 @@ AUTHENTICATION_BACKENDS = (
 SITE_ID = 1
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
-LOGIN_REDIRECT_URL='/'
+LOGIN_REDIRECT_URL='mypage:add_user_info'
 # LOGOUT_REDIRECT_URL='/'
+LOGOUT_REDIRECT_URL = 'login'
 ACCOUNT_LOGOUT_REDIRECT_URL = reverse_lazy('accountapp:login')
 ACCOUNT_LOGOUT_ON_GET = True
 # ACCOUNT_LOGOUT_ON_GET = True
@@ -226,6 +229,6 @@ SOCIALACCOUNT_PROVIDERS = {
 # EMAIL_HOST = 'smtp.gmail.com'
 # EMAIL_PORT = 587
 # EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = '1447wjddbs@gmail.com'
-# EMAIL_HOST_PASSWORD = 'digo oqma cdgv aivv'
-# DEFAULT_FROM_EMAIL = '1447wjddbs@gmail.com'
+# EMAIL_HOST_USER = 'franding3@gmail.com'
+# EMAIL_HOST_PASSWORD = EMAIL_PASSWORD
+# DEFAULT_FROM_EMAIL = 'franding3@gmail.com'

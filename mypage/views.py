@@ -11,6 +11,7 @@ from django.http import JsonResponse
 from django.db.models import Count, Prefetch
 from django.utils import timezone
 from payment.models import Delivery, Coupon, UserCoupon
+from django.db.models import Q
 import requests
 import os
 from dotenv import load_dotenv
@@ -182,29 +183,46 @@ def user_info(request):
 @login_required
 def add_user_info(request):
     user=request.user
-    # get
-    if request.method=='GET':
-        return render(request, 'mypage/add_user_info.html')
-    # post
-    elif request.method=='POST':
-        # 폼에서 전달되는 각 값을 뽑아와서 DB에 저장
-        user = request.user
-        user_address = request.POST['address']
-        user_phone = request.POST['phone']
+    
+    try:
+        user_add_info = UserAddInfo.objects.filter(user=user).first()
+    except UserAddInfo.DoesNotExist:
+        user_add_info = None
+    
+    if user_add_info != None: 
         
-        # 파일 업로드가 있는지 확인
-        if 'file' in request.FILES:
-            # 이미지 저장 및 url 설정 내용
-            fs = FileSystemStorage()
-            uploaded_file = request.FILES['file']
-            name = fs.save(uploaded_file.name, uploaded_file)
-            url = fs.url(name)
-        else:
-            url = None  # 파일이 없을 경우 None으로 설정
-        
-        UserAddInfo.objects.create(user=user, address=user_address, phone=user_phone, profile_img = url)
-
         return redirect('mypage:user_info')
+    else:
+        # get
+        if request.method=='GET':
+            return render(request, 'mypage/add_user_info.html')
+        # post
+        elif request.method=='POST':
+            # 폼에서 전달되는 각 값을 뽑아와서 DB에 저장
+            user = request.user
+            user_address = request.POST['address']
+            user_phone = request.POST['phone']
+            
+            # 파일 업로드가 있는지 확인
+            if 'file' in request.FILES:
+                # 이미지 저장 및 url 설정 내용
+                fs = FileSystemStorage()
+                uploaded_file = request.FILES['file']
+                name = fs.save(uploaded_file.name, uploaded_file)
+                url = fs.url(name)
+            else:
+                url = None  # 파일이 없을 경우 None으로 설정
+            
+            UserAddInfo.objects.create(user=user, address=user_address, phone=user_phone, profile_img = url)
+            # 회원가입 쿠폰 지급 
+            coupons = Coupon.objects.filter(Q(name__icontains='회원가입'))
+            for coupon in coupons : 
+                user_coupon = UserCoupon.objects.create(
+                    user = user,
+                    coupon = coupon
+                )
+
+            return redirect('mypage:user_info')
     
 @login_required
 def update_user_info(request):

@@ -19,7 +19,11 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 @login_required
 def membership(request):
-    user_info = UserAddInfo.objects.get(user=request.user)
+    user_info = UserAddInfo.objects.filter(user=request.user).first()
+    
+    # user_info가 없으면 mypage로 이동
+    if not user_info:
+        return redirect('mypage:add_user_info')
     
     # 멤버십 없는 유저는 멤버십 신청화면으로 이동
     if not user_info.membership:
