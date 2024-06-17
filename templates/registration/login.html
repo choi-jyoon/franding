@@ -26,62 +26,99 @@
     }
     
     .loginform-group input[type="text"],
-    .loginform-group input[type="password"] {
-        flex-grow: 1;
-        height: 40px;
-        padding: 0.5rem;
-        border: 1px solid #ced4da;
-        border-radius: 4px;
-        margin-right: 1rem;
-    }
-    
-    .form-group button[type="submit"] {
-        height: 40px;
-        padding: 0 1.5rem;
-        background-color: #5B574F;
-        font-weight: bold;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-    
-    .loginform-group .form-group button[type="submit"]:hover {
-        background-color: #453e37;
-    }
-    .social-login-btn {
-        display: inline-block;
-        margin: 0 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        overflow: hidden;
-        transition: transform 0.3s;
-    }
-    
-    .social-login-btn img {
-        display: block;
-        width: 100px; /* 너비를 100픽셀로 고정 */
-        height: auto;
-    }
-    
-    .social-login-btn:hover {
-        transform: scale(1.05);
-        border-color: #bbb;
-    }
+.loginform-group input[type="password"] {
+    flex-grow: 1;
+    height: 40px;
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    margin-right: 1rem;
+}
+
+.form-group button[type="submit"] {
+    height: 40px;
+    padding: 0 1.5rem;
+    background-color: #5B574F;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.loginform-group .form-group button[type="submit"]:hover {
+    background-color: #453e37;
+}
+
+.social-login-btn {
+    align-items: center;
+    justify-content: center;
+    margin: 0 3px;
+    overflow: hidden;
+    transition: transform 0.3s;
+}
+
+.social-login-btn img {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+}
+.social-login-btn:hover {
+    transform: scale(1.05);
+    border-color: #bbb;
+}
       
 </style>
 {% endblock%}
 
 {% block content %}
 
-{% if form.error %}
-<div class="alert alert-danger">
-    <div>다시 확인해 주세요</div>
-    {{form.errors}}
-</div>
-
+{% if messages %}
+    <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="messageModalLabel">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="messages">
+                        {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endif %}
+
+{% if form.errors %}
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <div>다시 확인해 주세요</div>
+                    {{form.errors}}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <form action="." method="post" class="login" style="padding-left: 20px;">
     {% csrf_token %}
     <h3 style="text-align:center;">Login</h3>
@@ -95,22 +132,24 @@
             <input type="hidden" name="next" value="{{ next }}" />
         </div>
     </div>
-    <div class="login-links text-center mt-3">
-        <a href="#" class="social-login-btn disabled">
-            <img src="{% static 'img/kakao-logo.png' %}" alt="Kakao Logo">
-        </a>
-        <a href="{% provider_login_url 'naver' %}" class="social-login-btn">
-            <img src="{% static 'img/naver-logo.png' %}" alt="Naver Logo">
-        </a>
-        <a href="{% provider_login_url 'google' %}" class="social-login-btn">
-            <img src="{% static 'img/google-logo.png' %}" alt="Google Logo">
-        </a>
+    <div class="form-group" style="margin-top: 10px; padding-top:10px;">
+        <div class="login-links text-center mt-3">
+            <a href="#" class="social-login-btn disabled">
+                <img src="{% static 'img/kakao-logo.png' %}" alt="Kakao Logo">
+            </a>
+            <a href="{% provider_login_url 'naver' %}" class="social-login-btn">
+                <img src="{% static 'img/naver-logo.png' %}" alt="Naver Logo">
+            </a>
+            <a href="{% provider_login_url 'google' %}" class="social-login-btn">
+                <img src="{% static 'img/google-logo.png' %}" alt="Google Logo">
+            </a>
+        </div>
     </div>
 </form>
 
 <div class="login-links text-center mt-3">
-    <a href="#">아이디 찾기</a> |
-    <a href="#">비밀번호 찾기</a> |
+    <a href="{% url 'find_username' %}">아이디 찾기</a> |
+    <a href="{% url 'password_reset' %}">비밀번호 찾기</a> |
     <a href="{% url 'register' %}">회원가입</a>
 </div>
 {% endblock %}
@@ -125,6 +164,14 @@
                 alert('카카오 로그인은 현재 사용할 수 없습니다.');
             });
         }
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if messages %}
+            var messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+            messageModal.show();
+        {% endif %}
     });
 </script>
 {% endblock%}
