@@ -9,6 +9,7 @@ time_logger.py
 api_test.py
 franding_db_backup.sql
 best_item.py
+items.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

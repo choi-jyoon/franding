@@ -7,29 +7,14 @@ from .models import FAQ
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
 from django.core.paginator import Paginator
+# from time_logger import time_logger
+import pandas as pd
+
 
 # Create your views here.
 
-# def question_list(request, item_id):
-#     # questions = Question.objects.filter(item_id=item_id)
-#     questions = Question.objects.all().order_by('-created_at')  # 모든 질문을 가져옵니다.
-#     answers = Answer.objects.all().order_by('-created_at')
-#     return render(request, 'QnA/question_list.html', {'questions': questions, 'answers': answers})
-
-# def question_detail(request, question_id):
-#     question = get_object_or_404(Question, id=question_id)
-#     if request.method == 'GET':
-#         form = AnswerForm(request.GET)
-#         if form.is_valid():
-#             answer = form.save(commit=False)
-#             answer.user = request.user
-#             answer.question = question
-#             answer.save()
-#             return redirect('QnA:question_detail', question_id=question.id)
-#     else:
-#         form = AnswerForm()
-#     return render(request, 'QnA/question_detail.html', {'question': question, 'form': form})
-
+# 3.6959502696990967초
+# @time_logger(category='question_create')
 def question_create(request, item_id):
     if request.method == 'POST':
         form = QuestionForm(request.POST)
@@ -46,6 +31,8 @@ def question_create(request, item_id):
     return render(request, 'QnA/question_form.html', {'form': form})
 
 
+#0.8915925025939941초
+# @time_logger(category='home')
 def home(request):
     questions_list = Question.objects.filter(user_id=request.user).order_by('-created_at')  # 모든 질문을 가져옵니다.
     paginator = Paginator(questions_list, 3)  # Show 5 questions per page.
@@ -56,12 +43,16 @@ def home(request):
     return render(request, 'QnA/home.html', {'questions': questions})
 
 
+#1.6454458236694336초
+# @time_logger(category='answer_detail')
 def answer_detail(request, question_id):
     question = get_object_or_404(Question, id=question_id)
     answers = Answer.objects.filter(question=question)  # question_id를 기반으로 답변을 가져옵니다.
     return render(request, 'QnA/answer_detail.html', {'answers': answers, 'question': question})
 
 
+# 3.2776596546173096, 0.7485513687133789초
+# @time_logger(category='seller_questions')
 def seller_questions(request):
     # 작성일자에 따른 필터링
     period = request.GET.get('period', '3days')
@@ -94,12 +85,11 @@ def seller_questions(request):
     page_number = request.GET.get('page')
     questions = paginator.get_page(page_number)
 
-    
-
-
     return render(request, 'QnA/seller_questions.html', {'questions': questions})
 
 
+# 2.2899374961853027, 0.4439544677734375,초
+# @time_logger(category='answer_question')
 def answer_question(request, question_id):
     question = get_object_or_404(Question, id=question_id)
     # answers = get_object_or_404(Answer, id=question_id)
@@ -116,3 +106,46 @@ def answer_question(request, question_id):
             return redirect('QnA:seller_questions')
     form = AnswerForm()
     return render(request, 'QnA/seller_answer_form.html', {'form': form, 'question' : question, 'answers': answers})
+
+
+# QnA 데이터 리스트 만들기
+def item_id_list(Questions, attributes):
+    """item_id 전체 조회"""
+
+    Question_list = []
+    for item in Questions:
+        if attributes == 'id':
+            Question_list.append(item.id)
+        elif attributes == 'name':
+            Question_list.append(item.name)
+        elif attributes == 'summary':
+            Question_list.append(item.summary)
+        elif attributes == 'description':
+            Question_list.append(item.description)
+
+    return Question_list
+
+
+# QnA 데이트 프레임 만들기
+def QnA_dataFrame():
+    items = Question.objects.all()  # Query all qna from the database
+    item_id = item_id_list(items, attributes='id')
+    name = item_id_list(items, attributes='name')
+    summary = item_id_list(items, attributes='summary')
+    description = item_id_list(items, attributes='description')
+
+    data = {
+        'item_id': item_id,
+        'name': name,
+        'summary': summary,
+        'description': description,
+    }
+
+    df = pd.DataFrame(data)
+
+    return df
+
+
+def item_csv_file_save():
+    df = QnA_dataFrame()
+    df.to_csv('QnA.csv', index=False)

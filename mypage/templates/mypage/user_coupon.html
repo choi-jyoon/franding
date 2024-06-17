@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% load humanize %}
+
+{% block title %} MyPage {% endblock %}
+
+{% block extra-style %}
+<style>
+    /* 화면 전체를 사용하기 위한 스타일 */
+    html, body {
+        height: 100%;
+        margin: 0;
+    }
+    /* 내비게이션 바를 제외한 전체 화면을 채우는 컨테이너 */
+    .container-fluid {
+        height: calc(100% - 56px); /* 내비게이션 바 높이만큼 제외 */
+    }
+    /* 높이 100% 설정 */
+    .full-height {
+        height: 100%;
+    }
+    .coupon-title {
+        margin-bottom: 20px; /* 하단 마진을 20px로 설정 */
+    }
+    .pagination .page-item.active .page-link {
+        background-color: #5B574F; /* 활성 페이지 버튼의 배경색 */
+        border-color: #5B574F; /* 활성 페이지 버튼의 테두리 색상 */
+        color: white;
+    }
+
+    .pagination .page-link {
+        color: #5B574F; /* 페이지 버튼의 텍스트 색상 */
+    }
+
+    .pagination .page-link:hover {
+        color: #5B574F; /* 마우스 오버 시 페이지 버튼의 텍스트 색상 */
+    }
+    .coupon-card {
+        border: 1px dashed #ccc;
+        border-radius: 10px;
+        padding: 40px;
+        margin: 10px 0;
+        background-color: #f9f9f9;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        position: relative;
+        perspective: 1000px;
+    }
+    
+    .coupon-card .card-body {
+        transition: transform 0.6s;
+        transform-style: preserve-3d;
+        position: relative;
+    }
+    
+    .coupon-card.used {
+        background-color: #e0e0e0;
+        color: #a0a0a0;
+    }
+    
+    .coupon-card .card-back {
+        transform: rotateY(180deg);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        margin-top: 0;
+        backface-visibility: hidden;
+        background-color: #f9f9f9;
+        border-radius: 10px; /* 카드 모서리 둥글게 */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center; /* 텍스트 중앙 정렬 */
+    }
+    
+    .coupon-card .card-back .card-text {
+        font-size: 9px;
+        line-height: 1.5;
+    }
+    .coupon-card .card-front {
+        backface-visibility: hidden;
+    }
+    .coupon-card.flip .card-body {
+        transform: rotateY(180deg);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row full-height">
+            <div class="col-2 d-flex flex-column p-3 bg-light full-height">
+                <!-- 버튼들 -->
+                <a href="{% url 'mypage:order_index' %}" class="btn btn-outline-secondary mb-4">주문 내역</a>
+                <a href="{% url 'review:review_index' %}" class="btn btn-outline-secondary mb-4">작성 리뷰</a>
+                <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary mb-4">회원정보</a>
+                <a href="{% url 'event:index' %}" class="btn btn-outline-secondary mb-4">나의 Franding</a>
+                <a href="{% url 'subscribe:index' %}" class="btn btn-outline-secondary mb-4">구독</a>
+                <a href="{% url 'QnA:home' %}" class="btn btn-outline-secondary mb-4">Q&A</a>
+                <a href="{% url 'mypage:user_coupon' %}" class="btn btn-outline-secondary mb-4">내 쿠폰</a>
+
+                {% if user.is_staff %}
+                    <a href="{% url 'seller:seller_index' %}" class="btn btn-outline-secondary mb-4">판매자페이지</a>
+                {% endif %}
+            </div>
+            <div class="col-10" id="content-display">
+                <!-- 쿠폰내역 -->
+                <h3 class="coupon-title">"{{user.first_name}}"님의 쿠폰</h3>
+                <hr class="mt-4 border-t-2 border-gray-500 md:mt-6">
+                
+                <div class="container mt-5">
+                    {% if coupons %}
+                    <div class="row">
+                        {% for coupon in coupons %}
+                        <div class="col-md-4">
+                            <div class="coupon-card {% if coupon.is_used %}used{% endif %}" onclick="this.classList.toggle('flip')">
+                                <div class="card-body">
+                                    <div class="card-front">
+                                        <h5 class="card-title">{{ coupon.coupon.name }}</h5>
+                                        <p class="card-text discount-rate"><strong>{{ coupon.coupon.discount_rate }}% 할인</strong></p>
+                                        <p class="card-text">사용기한: <strong>{{ coupon.create_date }}로부터 {{ coupon.coupon.date_of_use }}일</strong></p>
+                                    </div>
+                                    <div class="card-back">
+                                        <p class="card-text">회원가입 후 첫 구매에 한해 사용 가능합니다.
+                                            쿠폰 발급일로부터 30일 이내에 사용해야 합니다.
+                                            일부 상품은 할인 적용이 불가능할 수 있습니다.
+                                            다른 할인 쿠폰이나 프로모션과 중복 사용이 불가능합니다.
+                                            쿠폰을 사용한 주문을 취소하거나 반품하는 경우, 쿠폰은 재발급되지 않으며 할인 금액은 환불되지 않습니다.
+                                            쿠폰은 양도할 수 없으며, 현금으로 교환할 수 없습니다.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p>사용 가능한 쿠폰이 없습니다.</p>
+                    {% endif %}
+                </div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if coupons.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page={{ coupons.previous_page_number }}">이전</a></li>
+                        {% endif %}
+                        {% for num in coupons.paginator.page_range %}
+                        {% if coupons.number == num %}
+                        <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                        {% if coupons.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ coupons.next_page_number }}">다음</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>                
+            </div>
+        </div>
+    </div>
+{% endblock %}

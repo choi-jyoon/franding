@@ -10,6 +10,7 @@ from item.models import Item
 from django.http import JsonResponse
 from django.db.models import Count, Prefetch
 from django.utils import timezone
+from payment.models import Delivery, Coupon, UserCoupon
 import requests
 import os
 from dotenv import load_dotenv
@@ -76,19 +77,35 @@ def refund_confirm(request, pk):
     if request.method == 'POST':
         refund_item.status = 3
         refund_item.save()
+    
+        # 세션에 배송 정보 저장
+        request.session['delivery_info'] = {
+            'receiver': request.POST.get('receiver'),
+            'receiver_postcode': request.POST.get('receiver_postcode'),
+            'receiver_address': request.POST.get('receiver_address'),
+            'receiver_detailAddress': request.POST.get('receiver_detailAddress'),
+            'receiver_extraAddress': request.POST.get('receiver_extraAddress'),
+            'receiver_phone': request.POST.get('receiver_phone'),
+            'receiver_email': request.POST.get('receiver_email')
+        }
+
+        # 세션에서 배송 정보 읽기
+        deliveryinfo_session = request.session.get('delivery_info')
+
+        # 배송 정보 생성
+        delivery_info = Delivery.objects.create(
+            status = 3,
+            receiver=deliveryinfo_session['receiver'],
+            receiver_postcode=deliveryinfo_session['receiver_postcode'],
+            receiver_address=deliveryinfo_session['receiver_address'],
+            receiver_detailAddress=deliveryinfo_session['receiver_detailAddress'],
+            receiver_extraAddress=deliveryinfo_session['receiver_extraAddress'],
+            receiver_phone=deliveryinfo_session['receiver_phone'],
+            receiver_email=deliveryinfo_session['receiver_email']
+        )
+        
         return redirect('mypage:order_detail', refund_item.order.id)
     
-    # 배송정보를 session에 저장
-    request.session['delivery_info'] = {
-        'receiver': request.POST.get('receiver'),
-        'receiver_postcode': request.POST.get('receiver_postcode'),
-        'receiver_address': request.POST.get('receiver_address'),
-        'receiver_detailAddress': request.POST.get('receiver_detailAddress'),
-        'receiver_extraAddress': request.POST.get('receiver_extraAddress'),
-        'receiver_phone': request.POST.get('receiver_phone'),
-        'receiver_email': request.POST.get('receiver_email')
-    }
-        
     context = {
         'item_list': [refund_item.cart],
         'total_price': -total_price,
@@ -96,7 +113,6 @@ def refund_confirm(request, pk):
         'userinfo' : userinfo,
         'refund_item': refund_item
     }
-    
     return render(request, 'mypage/refund_info.html', context)
     
 @login_required
@@ -107,7 +123,7 @@ def order_refund(request, pk):
         ordercart.save()
         # refund 로직 
         user = request.user 
-        pay_info = PayInfo.objects.get(order = ordercart.order, status = "approved")
+        pay_info = PayInfo.objects.get(order = ordercart.order)
         
         tid = pay_info.tid 
         
@@ -131,13 +147,16 @@ def order_refund(request, pk):
         res = requests.post(URL, headers=headers, params=params)
         res = res.json()
         
+        # PayInfo 정보 업데이트
         pay_info.status = "cancelled"
         pay_info.canceled_at = timezone.now()
         pay_info.save()
         
+        # OrderCart 상태 업데이트
         ordercart.status = 2 
         ordercart.save()
         
+        # 환불 정보 생성
         refund = Refund.objects.create(
             ordercart = ordercart,
             price = cancel_amount,
@@ -229,3 +248,11 @@ def user_delete(request):
     request.user.delete()
     auth_logout(request)
     return redirect('home')
+
+@login_required
+def user_coupon(request):
+    coupons = UserCoupon.objects.filter(user = request.user)
+    context = {
+        'coupons' : coupons,
+    }
+    return render(request, 'mypage/user_coupon.html', context)

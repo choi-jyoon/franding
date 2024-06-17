@@ -261,10 +261,19 @@
 
         {% endif %}
     </div>
-
-
-    
-    {{ best_items}}
+    <div class="best-item">
+        <h3>이 달의 추천 상품</h3>
+        {% for product in best_items %}
+        <div class="best-item-list">
+            <a href="{% url 'item:detail' product.id %}">
+                <img src="{{ product.image }}" alt="{{ product.name }}" class="best-item-image">
+            </a>
+            <ul><a href="{% url 'item:detail' product.id %}">{{ product }}</a></ul>
+            <ul>{{ product.summary }}</ul>
+            <ul>{{ product.price|intcomma }}원</ul>
+        </div>
+        {% endfor %}
+    </div>    
 </div>
 {% endblock %}
 
