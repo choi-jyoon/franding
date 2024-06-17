@@ -1,7 +1,7 @@
 <h1>검색</h1>
 
 {% for q_ques in search_question_list %}
-    {{ q_ques.title }}
+    {{ q_ques.title }}<br>
     {{ q_ques.content }}<br>
-    {{ q_ques.created_dt }}<br><br>
+    {{ q_ques.created_at }}<br><br>
 {% endfor %}

@@ -59,7 +59,7 @@ def init_vector_store(data_file, sbert):
 # @app.post("/search/")
 def search_question(query):
     vector_store = init_vector_store(load_data, init_model)
-    results = vector_store.similarity_search(query=query, k=3)  # 상위 3개 결과 반환
+    results = vector_store.similarity_search(query=query, k=10)  # 상위 3개 결과 반환
     return {"query": query, "results": results}
 
 # print(search_question())
