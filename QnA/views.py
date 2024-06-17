@@ -54,7 +54,8 @@ def answer_detail(request, question_id):
 
 # 3.2776596546173096, 0.7485513687133789초
 # @time_logger(category='seller_questions')
-def seller_questions(request):
+def seller_questions(request):    
+
     # 작성일자에 따른 필터링
     period = request.GET.get('period', '3days')
     now = datetime.now()
@@ -107,6 +108,7 @@ def answer_question(request, question_id):
             return redirect('QnA:seller_questions')
     form = AnswerForm()
     return render(request, 'QnA/seller_answer_form.html', {'form': form, 'question' : question, 'answers': answers})
+
 
 
 # QnA 데이터 리스트 만들기
@@ -167,32 +169,45 @@ def search_db_attr(search_db_answer):
 
 # ,앞부분까지 쪼개기
 def split_title(result_list):
-    title = []
+    """ search_db_attr """
+
+    rt_list_id = []
     for result in result_list:
         s_result = result.split(',')[0]
-        title.append(s_result)
+        int_s_result = int(s_result)
+        rt_list_id.append(int_s_result)
 
-    return title
+    return rt_list_id
 
 # split_title(search_db_attr(search_question()))
 
 
 # search_db llm모델 답변 읽어서 데이터베이스에 있는 질문 제목이랑 비교해서 질문 id반환 
-def search_best_item():
-    sh_question = search_question()
+def f_search_question(query):
+    """ 검색하려면 이거 호출하면 됨 """
+
+    sh_question = search_question(query)
+    sh_attr = search_db_attr(sh_question)
     all_questions = Question.objects.all()
     search_question_list = []
 
     for ques in all_questions:
-        filter_title = ques.title
-        for s_db_attr in search_db_attr(sh_question):
-            if filter_title in s_db_attr:
+        filter_id = ques.id
+        for s_db_attr in split_title(sh_attr):
+            if filter_id == s_db_attr:
                 search_question_list.append(ques)
 
     return search_question_list
 
 # search_best_item()
 
+# 검색
+def qna_search(request):    
 
+    search_word = request.POST.get('search')
+
+    q_search = f_search_question(search_word)
+
+    return render(request, 'QnA/qna_search.html', {'search_question_list': q_search})
 
     

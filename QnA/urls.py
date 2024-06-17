@@ -9,4 +9,5 @@ urlpatterns = [
     path('seller_questions/', views.seller_questions, name='seller_questions'),
     path('answer_question/<int:question_id>/', views.answer_question, name='answer_question'),
     path('<int:item_id>/new/', views.question_create, name='question_create'),
+    path('search_qna/', views.qna_search, name='search_qna'),
 ]

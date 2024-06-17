@@ -49,17 +49,17 @@ def init_vector_store(data_file, sbert):
     return vector_store
 
 
-def query(search="6월 5일"):
-    return search
+# def query(search="6월 5일"):
+#     return search
 
 
 # fastapi 등록
 # app = FastAPI()
 
 # @app.post("/search/")
-def search_question(query=query):
+def search_question(query):
     vector_store = init_vector_store(load_data, init_model)
-    results = vector_store.similarity_search(query=query(), k=3)  # 상위 3개 결과 반환
+    results = vector_store.similarity_search(query=query, k=3)  # 상위 3개 결과 반환
     return {"query": query, "results": results}
 
 # print(search_question())
