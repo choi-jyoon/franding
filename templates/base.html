@@ -199,14 +199,12 @@
                     </li>
                     <li class="nav-item" style="margin-right: 20px;">
                         <a class="nav-link" href="{% url 'guide:guide_list' %}">Guide</a>
-                        {% comment %}
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="{% url 'guide:Pleasant' %}">Pleasant</a></li>
-                            <li><a class="dropdown-item" href="{% url 'guide:Description' %}">Description</a></li>
-                            <li><a class="dropdown-item" href="{% url 'guide:Tale' %}">Tale</a></li>
-                            <li><a class="dropdown-item" href="{% url 'guide:Tip' %}">Tip</a></li>
-                        </ul>
-                        {% endcomment %}
+                            <li><a class="dropdown-item" href="{% url 'guide:description' %}">Description</a></li>
+                            <li><a class="dropdown-item" href="{% url 'guide:tale' %}">Tale</a></li>                        
+                            <li><a class="dropdown-item" href="{% url 'guide:pleasant' %}">Pleasant</a></li>                            
+                            <li><a class="dropdown-item" href="{% url 'guide:tip' %}">Tip</a></li>
+                        </ul>                        
                     </li>
                     <li class="nav-item" style="margin-right: 20px;">
                         <a class="nav-link" href="{% url 'about' %}">About</a>
@@ -293,7 +291,7 @@
 
     <script src="https://kit.fontawesome.com/c998a172fe.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     {% block extra-script %}{% endblock %}
     <script>
 

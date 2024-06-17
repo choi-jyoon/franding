@@ -209,7 +209,7 @@
     }
 
     #plot {
-        max-width: 70%; /* 모달 최대 너비 조정 */
+        max-width: 80%; /* 모달 최대 너비 조정 */
         width: auto; /* 필요한 경우 너비 자동 조정 */
     }
 </style>
@@ -406,7 +406,7 @@
         </div>
       </div>
     </div>
-  </div>
+</div>
 {% endblock %}
 
 {% block extra-script %}
@@ -474,7 +474,10 @@
         // Button click event to open modal and load external HTML
         $('.plot').on('click', function() {
             $('#myModal').modal('show');
-            $('#modalBodyContent').load("{% url 'seller:plot_sub' %}");
+            $('#modalBodyContent').load("{% url 'seller:plot_sub' %}", function() {
+                // 모달 콘텐츠가 로드된 후 실행할 코드
+                initializeChartFunctions();
+            });
         });
 
         // 모달이 닫힐 때 이벤트 핸들러 해제 및 콘텐츠 초기화
@@ -482,5 +485,42 @@
             $('#modalBodyContent').empty(); // 콘텐츠 초기화
         });
     });
+
+    function initializeChartFunctions() {
+        const data = JSON.parse('{{ data|escapejs }}');
+
+        function updateChart(month) {
+            const chartData = data[month];
+            const values = chartData.map(item => item.count);
+            const labels = chartData.map(item => item.keyword);
+
+            const plotData = [{
+                values: values,
+                labels: labels,
+                type: 'pie',
+                textposition: 'outside',
+                textinfo: 'label+percent',
+                textfont: {
+                    size: 16,
+                    color: "black"
+                }
+            }];
+
+            const layout = {
+                title: `${month} 키워드 비중`,
+                template: 'plotly_white',
+                width: 1000,
+                height: 500,
+                font: {
+                    size: 12
+                }
+            };
+
+            Plotly.newPlot('chart-container', plotData, layout);
+        }
+
+        // 전역 범위에 함수를 노출시켜 버튼 클릭 이벤트에서 접근할 수 있도록 합니다.
+        window.updateChart = updateChart;
+    }
 </script>
 {% endblock %}

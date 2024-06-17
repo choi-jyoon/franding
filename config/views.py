@@ -1,15 +1,21 @@
+from django.utils import timezone
+from datetime import timedelta
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.models import User
+from django.contrib.auth.views import PasswordResetView
 from django.views.generic import CreateView, TemplateView
 from django.urls import reverse_lazy
 from item.models import Item
 from django.db.models import Q
 from django.core.paginator import Paginator
-from .forms import UserAddInfoForm, UserCreateForm, CustomAuthenticationForm
+from .forms import UserAddInfoForm, UserCreateForm, CustomAuthenticationForm, FindUsernameForm
 from django.contrib import messages  
 from mypage.models import UserAddInfo
 from payment.models import Coupon, UserCoupon
+from django.core.mail import send_mail
+from django.conf import settings
+from django.http import HttpResponse
 # Create your views here.
 
 def index(request):
@@ -149,3 +155,34 @@ def searchItem(request):
 
 def about(request):
     return render(request, 'about.html')
+
+def find_username(request):
+    if request.method == 'POST':
+        form = FindUsernameForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            try:
+                user = User.objects.get(email=email)
+                send_mail(
+                    '아이디 찾기 결과',
+                    f'회원님의 아이디는 {user.username}입니다.',
+                    settings.DEFAULT_FROM_EMAIL,
+                    [email],
+                    fail_silently=False,
+                )
+                messages.success(request, '아이디가 이메일로 전송되었습니다.')
+                return redirect('login')
+            except User.DoesNotExist:
+                form.add_error('email', '해당 이메일로 등록된 사용자가 없습니다.')
+    else:
+        form = FindUsernameForm()
+
+    return render(request, 'registration/find_username.html', {'form': form})
+
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'registration/password_reset_form.html'
+    email_template_name = 'registration/password_reset_email.html'
+    
+    def form_valid(self, form):
+        return super().form_valid(form)

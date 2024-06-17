@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block extra-style %}
+<style>
+  .container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .findid .id-form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .findid label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+
+  .findid input[type="email"] {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+
+  .findid button {
+    display: block;
+    width: 100%;
+    height: 40px;
+    padding: 0 1.5rem;
+    background-color: #5B574F;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .findid button:hover {
+    background-color: #453e37;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+{% if form.errors %}
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <div>다시 확인해 주세요</div>
+                    {{form.errors}}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="container">
+  <h2>아이디 찾기</h2>
+  <form method="post" class="findid">
+    {% csrf_token %}
+    <div class="id-form-group">
+      <label for="{{ form.email.id_for_label }}">이메일</label>
+      {{ form.email }}
+    </div>
+    <button type="submit">아이디 찾기</button>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra-script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if form.errors %}
+            var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+            errorModal.show();
+        {% endif %}
+    });
+    
+</script>
+{% endblock %}

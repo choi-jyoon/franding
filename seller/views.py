@@ -9,10 +9,9 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.paginator import Paginator
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Avg, Value, IntegerField, Count, Q
-from django.db.models.functions import Coalesce, ExtractMonth, ExtractYear
+from django.db.models.functions import Coalesce, ExtractMonth, ExtractYear, TruncMonth
 import plotly.express as px
-import pandas as pd
-from django.views.decorators.http import require_GET
+import plotly.graph_objs as go
 from django.conf import settings
 from langchain_community.utilities import SQLDatabase
 from django.http import JsonResponse
@@ -24,6 +23,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 import os
+import json
 
 from dotenv import load_dotenv
 # 상품관리(등록,수정,삭제 등등)
@@ -362,12 +362,10 @@ def review_analysis(request, pk):
 # 데이터 시각화
 def plot_subscription_trend(request):
     # 월별 구독자 수 집계
-    subscriptions = Subscribe.objects.all().extra(select={'month': "TO_CHAR(datetime, 'YYYY-MM')"}).values('month').annotate(count=Count('id')).order_by('month')
-    # 데이터프레임으로 변환
-    df = pd.DataFrame(subscriptions)
+    subscriptions = Subscribe.objects.annotate(month=TruncMonth('datetime')).values('month').annotate(count=Count('id')).order_by('month')
     # Plotly 그래프 생성
-    fig = px.line(df, x='month', y='count', title='월별 구독자 수 추이', markers=True, labels={'month': '월', 'count': '구독자 수'})
-    fig.update_layout(template='plotly_white', width=800,height=500, font_size=16,)
+    fig = px.line(subscriptions, x='month', y='count', title='월별 구독자 수 추이', markers=True, labels={'month': '월', 'count': '구독자 수'})
+    fig.update_layout(template='plotly_white', width=1000,height=500, font_size=16,)
     fig.update_traces(line_color= '#5B574F', line_width= 4,)
     # 그래프를 HTML로 변환
     graph_html = fig.to_html(full_html=False)
@@ -381,7 +379,9 @@ def plot_subscription_trend(request):
         'graph_html': graph_html,
         'months':months,
         'default_chart':default_chart,
-        'data':data,
+        'data':json.dumps(data),
+        'title1':'월별 구독자 수 추이',
+        'title2':'월별 키워드 분석',
     }
     return render(request, 'seller/plot.html', context)
 
@@ -405,30 +405,52 @@ def get_monthly_keyword_distribution():
     return data
 
 def generate_pie_chart(data, month):
-    df = pd.DataFrame(data[month])
-    fig = px.pie(df, names='keyword', values='count', title=f"{month} 키워드 비중")
-    
-    fig.update_layout(
-        template='plotly_white',
-        width=800,height=500,
-        font_size=16,
-    )
-    
-    fig.update_traces(textposition='outside',textinfo='label+percent', textfont_size=16,textfont_color="black")
+    month_data = data.get(month, [])
+    labels = [item['keyword'] for item in month_data]
+    values = [item['count'] for item in month_data]
+
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values, textinfo='label+percent')])
+    fig.update_traces(textposition='outside', textfont_size=16, textfont_color="black")
+    fig.update_layout(template='plotly_white', title=f"{month} 키워드 비중", width=1000, height=500, font_size=12)
     
     return fig.to_html(full_html=False)
 
-from dotenv import load_dotenv
-import os
-from django.conf import settings
-from langchain_community.utilities import SQLDatabase
-from langchain.chains import create_sql_query_chain
-from langchain_openai import ChatOpenAI
-from langchain_community.tools.sql_database.tool import QuerySQLDataBaseTool
-from operator import itemgetter
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import PromptTemplate
-from langchain_core.runnables import RunnablePassthrough
+def order_analysis(request):
+    # 월별 주문 수 집계
+    orders = Order.objects.annotate(month=TruncMonth('datetime')).values('month').annotate(count=Count('id')).order_by('month')
+    # Plotly 그래프 생성
+    fig = px.line(orders, x='month', y='count', title='월별 주문수 추이', markers=True, labels={'month': '월', 'count': '주문수'})
+    fig.update_layout(template='plotly_white', width=1000,height=500, font_size=16,)
+    fig.update_traces(line_color= '#5B574F', line_width= 4,)
+    # 그래프를 HTML로 변환
+    graph_html = fig.to_html(full_html=False)
+    
+    order_item = OrderCart.objects.annotate(
+        month=ExtractMonth('order__datetime'),
+        year=ExtractYear('order__datetime')
+    ).values('month', 'year', 'cart__item__name').annotate(count=Count('id')).order_by('year', 'month', 'count')
+    
+    data = {}
+    for entry in order_item:
+        year_month = f"{entry['year']}-{entry['month']:02d}"
+        if year_month not in data:
+            data[year_month] = []
+        data[year_month].append({
+            'keyword': entry['cart__item__name'],
+            'count': entry['count']
+        })
+    months = list(data.keys())
+    default_chart = generate_pie_chart(data, months[-1])
+
+    context={
+        'graph_html': graph_html,
+        'months':months,
+        'default_chart':default_chart,
+        'data':json.dumps(data),
+        'title1':'월별 주문 수 추이',
+        'title2':'월별 주문 상품 분석',
+    }
+    return render(request, 'seller/plot.html', context)
 
 load_dotenv()
 API_KEY = os.getenv("OPENAI_API_KEY")

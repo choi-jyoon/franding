@@ -15,6 +15,7 @@ urlpatterns = [
     path('seller_orderindex/', views.seller_orderindex, name='seller_orderindex'),
     path('order_detail/<int:pk>/', views.order_detail, name='order_detail'),
     path('update_delivery_status/<str:model_type>/<int:pk>/', views.update_delivery_status, name='update_delivery_status'),
+    path('order_analysis/', views.order_analysis, name='order_analysis'),
     # 구독관리
     path('subscribe_index/', views.subscribe_index, name='subscribe_index'),
     path('update_keyword/<int:pk>/', views.subscribe_index, name='update_keyword'),

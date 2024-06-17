@@ -66,3 +66,6 @@ class CustomAuthenticationForm(AuthenticationForm):
         'class': 'form-control',
         'placeholder': '비밀번호',
     }))
+    
+class FindUsernameForm(forms.Form):
+    email = forms.EmailField(label='이메일', max_length=254)

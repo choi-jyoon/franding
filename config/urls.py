@@ -33,21 +33,24 @@ urlpatterns = [
     path('subscribe/', include('subscribe.urls')),
     path('about/',views.about, name='about' ),
     path('search/', views.searchItem, name='search' ),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('accounts/', include('allauth.urls')),
-    path('accounts/register/', views.register, name='register'),
-    path('login/', views.custom_login, name='login'),
-    path('accounts/register/done/', views.UserCreateDoneTV.as_view(), name='register_done'),
     path('seller/', include('seller.urls')),
     path('payment/', include('payment.urls')),
     path('QnA/', include('QnA.urls')),    
     path('guide/', include('guide.urls')),
     
-    # path('password_reset/', views.UserPasswordResetView.as_view(), name="password_reset"),
-    # path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(), name="password_reset_done"),
-    # path('password_reset_confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
-    # path('password_reset_complete/', auth_views.PasswordResetCompleteView.as_view(), name="password_reset_complete"),
-    # path('find-username/', views.find_username, name='find_username'),
+    # 계정관련 
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/', include('allauth.urls')),     # 소셜로그인 
+    path('login/', views.custom_login, name='login'),       # 로그인
+    path('accounts/register/', views.register, name='register'),    # 회원가입
+    path('accounts/register/done/', views.UserCreateDoneTV.as_view(), name='register_done'),
+    # 비밀번호 찾기 
+    path('password-reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('password-reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('password-reset/complete/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    # 아이디 찾기
+    path('find-username/', views.find_username, name='find_username'),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
