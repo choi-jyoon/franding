@@ -15,7 +15,23 @@ def load_data():
 # 임베딩 모델 초기화
 def init_model():
     sbert = SentenceTransformerEmbeddings(model_name='jhgan/ko-sroberta-multitask')
-    return sbert    
+    return sbert 
+
+
+# data_file()['title'].tolist()+data_file()['content'].tolist() 어떻게?
+def vector_store_texts(data_file):
+    id = data_file()['id'].tolist()
+    title = data_file()['title'].tolist()
+    content = data_file()['content'].tolist()
+    created_at = data_file()['created_at'].tolist()
+    text_list = []
+
+    for i, x, y, z in zip(id, title, content, created_at):
+        str_i = str(i)
+        texts = str_i + ", " + x + ", " + y + ", " + z
+        text_list.append(texts)
+
+    return text_list
 
 
 # 벡터 저장소 생성
@@ -26,13 +42,14 @@ def init_vector_store(data_file, sbert):
     # ],
     vector_store = Chroma.from_texts(
         # texts = [str(x) for x in data_file()['id'].tolist()], 
-        texts = data_file()['title'].tolist(),
+        # texts = data_file()['title'].tolist(),
+        texts = vector_store_texts(data_file),
         embedding=sbert(),
     )
     return vector_store
 
 
-def query(search="괜찮나요"):
+def query(search="6월 5일"):
     return search
 
 
@@ -40,12 +57,12 @@ def query(search="괜찮나요"):
 # app = FastAPI()
 
 # @app.post("/search/")
-def search_books(query=query):
+def search_question(query=query):
     vector_store = init_vector_store(load_data, init_model)
     results = vector_store.similarity_search(query=query(), k=3)  # 상위 3개 결과 반환
     return {"query": query, "results": results}
 
-print(search_books())
+# print(search_question())
 
 
 if __name__ == "__main__":

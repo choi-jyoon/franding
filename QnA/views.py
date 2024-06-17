@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from django.core.paginator import Paginator
 # from time_logger import time_logger
 import pandas as pd
+from cart.search_db import search_question
 
 
 # Create your views here.
@@ -150,3 +151,48 @@ def QnA_dataFrame():
 def question_csv_file_save():
     df = QnA_dataFrame()
     df.to_csv('QnA.csv', index=False)
+
+
+# search_db의 답변을 리스트로 반환
+def search_db_attr(search_db_answer):
+    search_db_rt_list=[]
+    search_db_results = search_db_answer['results']
+
+    for result in search_db_results:
+        search_db_rt = result.page_content
+        search_db_rt_list.append(search_db_rt)
+
+    return search_db_rt_list
+
+
+# ,앞부분까지 쪼개기
+def split_title(result_list):
+    title = []
+    for result in result_list:
+        s_result = result.split(',')[0]
+        title.append(s_result)
+
+    return title
+
+# split_title(search_db_attr(search_question()))
+
+
+# search_db llm모델 답변 읽어서 데이터베이스에 있는 질문 제목이랑 비교해서 질문 id반환 
+def search_best_item():
+    sh_question = search_question()
+    all_questions = Question.objects.all()
+    search_question_list = []
+
+    for ques in all_questions:
+        filter_title = ques.title
+        for s_db_attr in search_db_attr(sh_question):
+            if filter_title in s_db_attr:
+                search_question_list.append(ques)
+
+    return search_question_list
+
+# search_best_item()
+
+
+
+    
