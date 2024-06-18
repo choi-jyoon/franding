@@ -10,8 +10,6 @@ from django.core.paginator import Paginator
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Avg, Value, IntegerField, Count, Q
 from django.db.models.functions import Coalesce, ExtractMonth, ExtractYear, TruncMonth
-import plotly.express as px
-import plotly.graph_objs as go
 from django.conf import settings
 from langchain_community.utilities import SQLDatabase
 from django.http import JsonResponse
@@ -363,22 +361,15 @@ def review_analysis(request, pk):
 def plot_subscription_trend(request):
     # 월별 구독자 수 집계
     subscriptions = Subscribe.objects.annotate(month=TruncMonth('datetime')).values('month').annotate(count=Count('id')).order_by('month')
-    # Plotly 그래프 생성
-    fig = px.line(subscriptions, x='month', y='count', title='월별 구독자 수 추이', markers=True, labels={'month': '월', 'count': '구독자 수'})
-    fig.update_layout(template='plotly_white', width=1000,height=500, font_size=16,)
-    fig.update_traces(line_color= '#5B574F', line_width= 4,)
-    # 그래프를 HTML로 변환
-    graph_html = fig.to_html(full_html=False)
+    list_subscriptions=list(subscriptions)
     
     # 월별 키워드 점유율
     data = get_monthly_keyword_distribution()
     months = list(data.keys())
-    default_chart = generate_pie_chart(data, months[-1])
 
     context={
-        'graph_html': graph_html,
+        'linedata': json.dumps(list_subscriptions, default=str),
         'months':months,
-        'default_chart':default_chart,
         'data':json.dumps(data),
         'title1':'월별 구독자 수 추이',
         'title2':'월별 키워드 분석',
@@ -404,26 +395,9 @@ def get_monthly_keyword_distribution():
     
     return data
 
-def generate_pie_chart(data, month):
-    month_data = data.get(month, [])
-    labels = [item['keyword'] for item in month_data]
-    values = [item['count'] for item in month_data]
-
-    fig = go.Figure(data=[go.Pie(labels=labels, values=values, textinfo='label+percent')])
-    fig.update_traces(textposition='outside', textfont_size=16, textfont_color="black")
-    fig.update_layout(template='plotly_white', title=f"{month} 키워드 비중", width=1000, height=500, font_size=12)
-    
-    return fig.to_html(full_html=False)
-
 def order_analysis(request):
-    # 월별 주문 수 집계
-    orders = Order.objects.annotate(month=TruncMonth('datetime')).values('month').annotate(count=Count('id')).order_by('month')
-    # Plotly 그래프 생성
-    fig = px.line(orders, x='month', y='count', title='월별 주문수 추이', markers=True, labels={'month': '월', 'count': '주문수'})
-    fig.update_layout(template='plotly_white', width=1000,height=500, font_size=16,)
-    fig.update_traces(line_color= '#5B574F', line_width= 4,)
-    # 그래프를 HTML로 변환
-    graph_html = fig.to_html(full_html=False)
+    orders=Order.objects.annotate(month=TruncMonth('datetime')).values('month').annotate(count=Count('id')).order_by('month')
+    list_orders=list(orders)
     
     order_item = OrderCart.objects.annotate(
         month=ExtractMonth('order__datetime'),
@@ -440,15 +414,13 @@ def order_analysis(request):
             'count': entry['count']
         })
     months = list(data.keys())
-    default_chart = generate_pie_chart(data, months[-1])
-
+    
     context={
-        'graph_html': graph_html,
+        'linedata': json.dumps(list_orders, default=str),
         'months':months,
-        'default_chart':default_chart,
         'data':json.dumps(data),
         'title1':'월별 주문 수 추이',
-        'title2':'월별 주문 상품 분석',
+        'title2':'월별 주문상품 분석',
     }
     return render(request, 'seller/plot.html', context)
 
