@@ -206,16 +206,23 @@ def f_search_question(query):
 def qna_search(request):    
 
     # 검색 여부에 따른 필터링
-    search_word = request.POST.get('search')
+    search_word = request.GET.get('search', '')
 
-    questions = f_search_question(search_word)
+    # # 검색어가 있으면 세션에 저장
+    # if search_word:
+    #     request.session['search_word'] = search_word
+    # else:
+    #     # 세션에서 이전 검색어 가져오기 (없으면 빈 문자열)
+    #     search_word = request.session.get('search_word', '')
 
-    paginator = Paginator(questions, 6)  # Show 6 questions per page.
+    results = f_search_question(search_word)  # 검색 조건 수정 필요    
+
+    paginator = Paginator(results, 6)  # Show 6 questions per page.
 
     page_number = request.GET.get('page')
-    questions_page = paginator.get_page(page_number)
+    page_obj = paginator.get_page(page_number)
 
-    return render(request, 'QnA/qna_search.html', {'questions': questions_page})       
+    return render(request, 'QnA/qna_search.html', {'page_obj': page_obj, 'search_word': search_word})       
 
     
 
