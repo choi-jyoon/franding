@@ -72,20 +72,10 @@ def payment_list(request, total_price=0):
     if total_price < 50000:
         shipping_fee = 3000
         total_price += shipping_fee
+        tmp_price = total_price     # 임시 금액 변수 설정 -> 오류 처리에 사용
     else:
         shipping_fee = 0    
                           
-           
-    # 세션에서 total_price를 초기화 (결제 페이지에 처음 들어왔을 때만)
-    if 'initial_visit' not in request.session:
-        request.session['total_price'] = 0
-        request.session['initial_visit'] = True
-    else:
-        if 'total_price' in request.session:
-            total_price = request.session['total_price']
-        # 두 번째 방문 시 'initial_visit'을 삭제
-        del request.session['initial_visit']
-            
             
     if request.method == "POST": # False
         # 배송정보를 session에 저장
@@ -98,7 +88,11 @@ def payment_list(request, total_price=0):
             'receiver_phone': request.POST.get('receiver_phone'),
             'receiver_email': request.POST.get('receiver_email')
         }
-        request.session['total_price'] = total_price
+        
+        # 쿠폰 적용시 세션의 total_price를 total_price 로 적용 
+        if 'total_price' in request.session and request.session['total_price'] != 0 and request.session['total_price'] != total_price:
+            total_price = request.session['total_price'] 
+        
         
         URL = 'https://kapi.kakao.com/v1/payment/ready'
         headers = {
@@ -117,6 +111,9 @@ def payment_list(request, total_price=0):
             'fail_url':f'http://{current_domain}/payment/payfail',
             'cancel_url':f'http://{current_domain}/payment/paycancel'
         }
+        # 결제 금액 0원일 때 오류 방지 
+        if data['total_amount'] == 0:
+            data['total_amount'] = tmp_price
 
         res = requests.post(URL, data=data, headers=headers)
         request.session['tid'] = res.json()['tid']      # 결제 승인시 사용할 tid를 세션에 저장
@@ -136,7 +133,6 @@ def payment_list(request, total_price=0):
     
     return render(request, template_name, context)
         
-
 def paysuccess(request):
     user=request.user
     cart_list = []
