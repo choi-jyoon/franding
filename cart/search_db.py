@@ -62,8 +62,6 @@ def search_question(query):
     results = vector_store.similarity_search(query=query, k=10)  # 상위 3개 결과 반환
     return {"query": query, "results": results}
 
-# print(search_question())
-
 
 if __name__ == "__main__":
     # uvicorn.run("cart.search_db:app", host="127.0.0.1", port=9000, reload=True)

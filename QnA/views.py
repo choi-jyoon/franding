@@ -57,6 +57,7 @@ def answer_detail(request, question_id):
 def seller_questions(request):    
 
     # 작성일자에 따른 필터링
+    
     period = request.GET.get('period', '3days')
     now = datetime.now()
 
@@ -204,10 +205,18 @@ def f_search_question(query):
 # 검색
 def qna_search(request):    
 
+    # 검색 여부에 따른 필터링
     search_word = request.POST.get('search')
 
-    q_search = f_search_question(search_word)
+    questions = f_search_question(search_word)
 
-    return render(request, 'QnA/qna_search.html', {'search_question_list': q_search})
+    paginator = Paginator(questions, 6)  # Show 6 questions per page.
+
+    page_number = request.GET.get('page')
+    questions_page = paginator.get_page(page_number)
+
+    return render(request, 'QnA/qna_search.html', {'questions': questions_page})       
+
+    
 
     
