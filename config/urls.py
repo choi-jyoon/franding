@@ -44,8 +44,8 @@ urlpatterns = [
     path('login/', views.custom_login, name='login'),       # 로그인
     path('accounts/register/', views.register, name='register'),    # 회원가입
     path('accounts/register/done/', views.UserCreateDoneTV.as_view(), name='register_done'),
-    path('accounts/register/send-email/', views.send_verification_email, name='send_verification_email'),      # 이메일 인증
-    path('activate/<str:token>/', views.activate_account, name='activate_account'),
+    # path('accounts/register/send-email/', views.send_verification_email, name='send_verification_email'),      # 이메일 인증
+    # path('activate/<str:token>/', views.activate_account, name='activate_account'),
     
     # 비밀번호 찾기 
     path('password-reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
