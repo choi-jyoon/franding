@@ -215,23 +215,23 @@
     <nav aria-label="Page navigation fixed-bottom">
         <ul class="pagination justify-content-center">
             {% if page_obj.has_previous %}
-                <li class="page-item"><a class="page-link" href="?search_word={{ search_word }}&page=1">&laquo;</a></li>
-                <li class="page-item"><a class="page-link" href="?search_word={{ search_word }}&page={{ page_obj.previous_page_number }}">&lt;</a></li>
+                <li class="page-item"><a class="page-link" href="?search={{ search_word }}&page=1">&laquo;</a></li>
+                <li class="page-item"><a class="page-link" href="?search={{ search_word }}&page={{ page_obj.previous_page_number }}">&lt;</a></li>
             {% endif %}                    
 
             {% with current=page_obj.number max_pages=page_obj.paginator.num_pages %}
                 {% with start_page=current|add:-2|default_if_none:1 end_page=current|add:2 %}
                     {% for page in page_obj.paginator.page_range %}
                         {% if page >= start_page and page <= end_page %}
-                        <li class="page-item {% if page_obj.number == page %}active{% endif %}"><a class="page-link" href="?search_word={{ search_word }}&page={{ page }}">{{ page }}</a></li>
+                        <li class="page-item {% if page_obj.number == page %}active{% endif %}"><a class="page-link" href="?search={{ search_word }}&page={{ page }}">{{ page }}</a></li>
                         {% endif %}
                     {% endfor %}
                 {% endwith %}
             {% endwith %}
             
             {% if page_obj.has_next %}
-                <li class="page-item"><a class="page-link" href="?search_word={{ search_word }}&page={{ page_obj.next_page_number }}">&gt;</a></li>
-                <li class="page-item"><a class="page-link" href="?search_word={{ search_word }}&page={{ page_obj.paginator.num_pages }}">&raquo;</a></li>
+                <li class="page-item"><a class="page-link" href="?search={{ search_word }}&page={{ page_obj.next_page_number }}">&gt;</a></li>
+                <li class="page-item"><a class="page-link" href="?search={{ search_word }}&page={{ page_obj.paginator.num_pages }}">&raquo;</a></li>
             {% endif %}
         </ul>
     </nav>
