@@ -5,7 +5,7 @@ app_name='subscribe'
 urlpatterns = [
 
     path('', views.membership, name='index'),
-    path('subscribe/', views.index, name='subscribe'),
+    path('subscribe/', views.subscribe, name='subscribe'),
     path('<int:pk>/', views.detail, name='subscribe_detail'),
     path('pay/', views.first_pay_process, name='payment'),
     path('paysuccess/', views.pay_success, name='paysuccess'),

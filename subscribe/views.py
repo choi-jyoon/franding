@@ -12,7 +12,10 @@ import random
 import requests
 import os
 from dotenv import load_dotenv
-# from .tasks import process_recurring_payments
+from .tasks import process_recurring_payments
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.conf import settings
 
 load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY')
@@ -33,10 +36,31 @@ def membership(request):
     else:
         return redirect('subscribe:subscribe')
     
+
+def send_subscribe_email(current_month_keywords, selected_keywords, selected_item, application_date, email):
+    subject = '구독 신청 안내'
+    message = render_to_string('subscribe/subscribe_mail.html', {
+        'current_month_keywords': current_month_keywords,
+        'selected_keywords': selected_keywords,
+        'selected_item' : selected_item,
+        'application_date' : application_date
+    })
+    from_email = settings.DEFAULT_FROM_EMAIL
+    recipient_list = [email]
+    
+    send_mail(
+        subject,
+        message,
+        from_email,
+        recipient_list,
+        fail_silently=False,
+        html_message=message
+    )
     
 @login_required
-def index(request):
+def subscribe(request):
     now = timezone.now()
+    keyword_objects = Keyword.objects.filter(month__year=now.year, month__month=now.month)
     
     # 구독 키워드 신청 
     if request.method == 'POST':
@@ -45,17 +69,44 @@ def index(request):
         
         subscribe = Subscribe.objects.get_or_create(user = request.user, state=0, delivery__isnull = False)
         
+        # 키워드별로 카테고리 1, 2 리스트 저장
+        cat1 = []
+        cat2 = []
+        keywords = []
+            
         for id in keyword_ids:
-            subscribe_keyword = SubscribeKeyword(keyword = Keyword.objects.get(pk=id), subscribe=subscribe[0])
+            keyword =Keyword.objects.get(pk=id)
+            keywords.append(keyword)
+            subscribe_keyword = SubscribeKeyword(keyword = keyword, subscribe=subscribe[0])
             subscribe_keyword.save()
         
-        # 키워드 선택 후 subscribe 업데이트 
+        
+            cat1.append(subscribe_keyword.keyword.category1)
+            cat2.append(subscribe_keyword.keyword.category2)
+        
+        # 가장 많이 나온 값 선택
+        most_cat1 = Counter(cat1).most_common(1)[0][0]
+        most_cat2 = Counter(cat2).most_common(1)[0][0]
+        
+        # 가장 많이 나온 카테고리에 맞는 아이템 선정
+        items = Item.objects.filter(cat1 = most_cat1, cat2 = most_cat2, item_type = '1')
+        if items.exists():
+            item = random.choice(items)
+        # 카테고리에 맞는 아이템 없을 시 카테고리1만 고려해서 랜덤 선택
+        else:
+            item = random.choice(Item.objects.filter(cat1 = most_cat1, item_type = '1'))
+            
+        subscribe[0].item = item
         subscribe[0].state = 1
+        
         subscribe[0].save()
+        
+        #구독 신청 완료 메일
+        send_subscribe_email(keyword_objects, keywords, item, now, request.user.email)
         
         return redirect('subscribe:subscribe_detail', pk= subscribe[0].id)
     
-    keyword_objects = Keyword.objects.filter(month__year=now.year, month__month=now.month)
+    
     subscribe_objects = SubscribeKeyword.objects.filter(subscribe__user=request.user)
     is_subscribed = request.user.subscribe_set.filter(datetime__year=now.year, datetime__month=now.month, state=1).exists()
     
@@ -153,6 +204,24 @@ def first_pay_process(request):
     }
     return render(request, 'subscribe/regular_pay.html', context)
 
+def send_payment_summary_email(payment_info, delivery_info, item, email):
+    subject = '결제 완료 안내'
+    message = render_to_string('subscribe/mail.html', {
+        'payment_info': payment_info,
+        'delivery_info': delivery_info,
+        'item' : item
+    })
+    from_email = settings.DEFAULT_FROM_EMAIL
+    recipient_list = [email]
+    
+    send_mail(
+        subject,
+        message,
+        from_email,
+        recipient_list,
+        fail_silently=False,
+        html_message=message
+    )
 
 @login_required
 def pay_success(request):
@@ -221,7 +290,11 @@ def pay_success(request):
             if 'delivery_info' in request.session:
                 del request.session['delivery_info']
             
-            # process_recurring_payments.delay(request.user.id)
+            process_recurring_payments.delay(request.user.id)
+            item = "membership"
+            
+            # 결제 완료 메일 전송
+            send_payment_summary_email(payment_info, delivery_info, item, request.user.email)
             
             # index 함수 호출
             return redirect('subscribe:subscribe')
@@ -303,28 +376,6 @@ def detail(request, pk):
     
     subscribe = Subscribe.objects.get(pk=pk)
     sub_keywords = SubscribeKeyword.objects.filter(subscribe=subscribe)
-    
-    # 키워드별로 카테고리 1, 2 리스트 저장
-    cat1 = []
-    cat2 = []
-    for sub_keyword in sub_keywords:
-        cat1.append(sub_keyword.keyword.category1)
-        cat2.append(sub_keyword.keyword.category2)
-    
-    # 가장 많이 나온 값 선택
-    most_cat1 = Counter(cat1).most_common(1)[0][0]
-    most_cat2 = Counter(cat2).most_common(1)[0][0]
-    
-    # 가장 많이 나온 카테고리에 맞는 아이템 선정
-    items = Item.objects.filter(cat1 = most_cat1, cat2 = most_cat2, item_type = '1')
-    if items.exists():
-        item = random.choice(items)
-    # 카테고리에 맞는 아이템 없을 시 카테고리1만 고려해서 랜덤 선택
-    else:
-        item = random.choice(Item.objects.filter(cat1 = most_cat1, item_type = '1'))
-        
-    subscribe.item = item
-    subscribe.save()
     
     context = {
         'subscribe_object':subscribe,

@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse, JsonResponse
-from django.http import HttpResponse
+from django.core.mail import send_mail
+from subscribe.views import send_payment_summary_email
 # from time_logger import time_logger
 
 load_dotenv()
@@ -177,6 +178,7 @@ def paysuccess(request):
         delivery_info=delivery_info
     )
 
+    items = []
     # 주문과 카트 아이템들 연결 및 카트 상태 변경
     for cart in cart_list:
         order_cart = OrderCart.objects.create(
@@ -186,6 +188,7 @@ def paysuccess(request):
         # 카트 상태를 변경하여 주문에 연결되었음을 표시
         cart.status = True
         cart.save()
+        items.append(cart)
 
     URL = 'https://kapi.kakao.com/v1/payment/approve'
     headers = {
@@ -218,6 +221,9 @@ def paysuccess(request):
         total_amount=total_price,
         status='approved'  # 결제 준비 상태로 저장
     )
+    
+    # 결제 완료 메일 전송
+    send_payment_summary_email(pay_info, delivery_info, items, request.user.email)
     
     # 세션에서 delivery_info 및 total_price 제거
     if 'delivery_info' in request.session:

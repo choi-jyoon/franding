@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>결제 완료 안내</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>결제 완료 안내</h1>
+        <table>
+            <tr>
+                <th>항목</th>
+                <th>내용</th>
+            </tr>
+            <tr>
+                <td>결제 번호</td>
+                <td>{{ payment_info.tid }}</td>
+            </tr>
+            <tr>
+                <td>결제 금액</td>
+                <td>{{ payment_info.total_amount }} 원</td>
+            </tr>
+            <tr>
+                <td>주문 상품</td>
+                <td>{{ item}} 등</td>
+            </tr>
+            <tr>
+                <td>결제 승인 시간</td>
+                <td>{{ payment_info.approved_at }}</td>
+            </tr>
+            <tr>
+                {% if payment_info.next_payment_date%}
+                <td>다음 결제 예정일</td>
+                <td>{{ payment_info.next_payment_date }}</td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td>배송 정보</td>
+                <td>
+                    {{ delivery_info.receiver }}<br>
+                    {{ delivery_info.receiver_postcode }}<br>
+                    {{ delivery_info.receiver_address }} {{ delivery_info.receiver_detailAddress }} {{ delivery_info.receiver_extraAddress }}<br>
+                    {{ delivery_info.receiver_phone }}<br>
+                    {{ delivery_info.receiver_email }}
+                </td>
+            </tr>
+        </table>
+        <p>결제가 완료되었습니다. 감사합니다.</p>
+    </div>
+</body>
+</html>

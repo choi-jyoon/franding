@@ -75,7 +75,7 @@
 <div>
     <h5>{{date.year}}년 {{date.month}}월 이달의 키워드</h5>
 </div>
-<form id="keyword-form" method="post" action="{% url 'subscribe:index' %}">
+<form id="keyword-form" method="post" action="{% url 'subscribe:subscribe' %}">
     {% csrf_token %}
     <div class="grid-out-container">
         <div class="grid-container d-flex justify-content-center align-items-center ">
