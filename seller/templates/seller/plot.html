@@ -18,9 +18,9 @@
             min-height: 100vh;
             margin: 0;
         }
-        #graph-div, #chart-container {
-            width: 80%; /* 필요에 따라 너비 조정 */
-            max-width: 800px; /* 최대 너비 설정 */
+        #chart, #chart-container {
+            width: 100%; /* 필요에 따라 너비 조정 */
+            max-width: 1000px; /* 최대 너비 설정 */
             margin: 0 auto; /* 가운데 정렬 */
         }
         h1 {
@@ -40,9 +40,7 @@
         <button onclick="generatePDF()" class="btn btn-outline-dark" style="margin-left: auto; display: block;"><i class="bi bi-download" style="font-size: 1.2em;"></i></button>
         <h1>{{title1}}</h1>
         <br>
-        <div id="graph-div">
-            {{ graph_html|safe }}
-        </div>
+        <div id="chart"></div>
         <br>
         <hr>
         <br>
@@ -53,13 +51,42 @@
                 <button class="btn btn-outline-dark" onclick="updateChart('{{ month }}')">{{ month }}</button>
             {% endfor %}
         </div>
-        <div id="chart-container">
-            {{ default_chart|safe }}
-        </div>
+        <div id="chart-container"></div>
     </div>
 
     <script>
         function initializeChartFunctions() {
+            const lineData = JSON.parse('{{ linedata|escapejs }}');
+
+            const xData = lineData.map(item => item.month);
+            const yData = lineData.map(item => item.count);
+
+            const trace = {
+                x: xData,
+                y: yData,
+                type: 'scatter',
+                mode: 'lines+markers',
+                marker: { size: 10 },
+                line: { color: '#5B574F' }
+            };
+
+            const layout = {
+                xaxis: {
+                    title: '월',
+                },
+                yaxis: {
+                    title: '주문 수'
+                },
+                template: 'plotly_white',
+                width: 1000,
+                height: 500,
+                font: {
+                    size: 12
+                }
+            };
+
+            Plotly.newPlot('chart', [trace], layout);
+
             const data = JSON.parse('{{ data|escapejs }}');
 
             function updateChart(month) {
@@ -94,6 +121,10 @@
 
             // 전역 범위에 함수를 노출시켜 버튼 클릭 이벤트에서 접근할 수 있도록 합니다.
             window.updateChart = updateChart;
+
+            // 디폴트로 마지막 달의 데이터를 사용하여 차트를 그립니다.
+            const defaultMonth = '{{ months|last }}';
+            updateChart(defaultMonth);
         }
         document.addEventListener('DOMContentLoaded', initializeChartFunctions);
 
