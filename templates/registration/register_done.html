@@ -2,13 +2,105 @@
 
 {% block title %}register_done.html{% endblock %}
 
-
 {% block content %}
-
-    <h1>회원가입 완료</h1> 
+    <h1>회원가입 완료</h1>
     <hr>
-    <h5>franding에 오신 걸 환영합니다. 당신의 향기로운 여정을 응원합니다.</h5> 
+    <h5>franding에 오신 걸 환영합니다. 당신의 향기로운 여정을 응원합니다.</h5>
+    <h5>이메일 인증을 해야 회원가입이 완료됩니다.</h5>
     <br>
-    <button class="btn btn-outline-secondary" ><a href="{% url 'login' %}">Log in</a> </button>
+    <a href="{% url 'send_verification_email' %}" class="btn btn-outline-secondary" id="verification-btn">이메일 인증</a>
 
+    <!-- Modal -->
+     {% if message %}
+     <div class="modal fade" id="emailModal" tabindex="-1" role="dialog" aria-labelledby="emailModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="emailModalLabel">이메일 인증</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              {% if message %}
+                <p>{{ message }}</p>
+              {% elif error_message %}
+                <p>{{ error_message }}</p>
+              {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">확인</button>
+            </div>
+          </div>
+        </div>
+      </div>
+  {% endif %}
+
+  {% if success_message %}
+  <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="emailModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="emailModalLabel">이메일 인증</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          {{success_message}}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="redirectToLogin()">로그인 하기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if error_message %}
+  <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    {{error_message}}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="redirectToLogin()">로그인 하기</button>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra-script %}
+<script>
+  $(document).ready(function() {
+    {% if success_message %}
+      $('#successModal').modal('show');
+    {% elif message %}
+      $('#emailModal').modal('show');
+    {% elif error_message %}
+      $('#errorModal').modal('show');
+    {% endif %}
+  });
+
+  function redirectToLogin() {
+    window.location.href = "{% url 'login' %}";
+  }
+</script>
+
+<script>
+    // 이메일 인증 버튼 클릭 시 send_verification_email URL로 이동
+    $('#verification-btn').click(function(e) {
+        e.preventDefault();
+        window.location.href = '{% url "send_verification_email" %}';
+    });
+</script>
 {% endblock %}
