@@ -122,7 +122,7 @@ def searchItem(request):
     select_option = request.GET.get('select_option', '') or request.POST.get('select_option', '')
     objects = Item.objects.all()
 
-    if request.method == 'POST' or 'search_word' in request.GET or 'select_option' in request.GET:
+    if search_word or select_option:
         if select_option == '' or select_option == '분류':
             objects = Item.objects.filter(Q(name__icontains=search_word) | Q(summary__icontains=search_word) | Q(description__icontains=search_word)
                                           | Q(cat1__name__icontains=search_word) | Q(cat2__name__icontains=search_word) | Q(item_type__name__icontains=search_word)
