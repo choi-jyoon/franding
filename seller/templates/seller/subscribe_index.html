@@ -468,6 +468,7 @@
 </script>
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
 <script>
     $(document).ready(function(){
@@ -487,6 +488,37 @@
     });
 
     function initializeChartFunctions() {
+        const orders = JSON.parse('{{ orders|escapejs }}');
+
+        const xData = orders.map(item => item.month);
+        const yData = orders.map(item => item.count);
+
+        const trace = {
+            x: xData,
+            y: yData,
+            type: 'scatter',
+            mode: 'lines+markers',
+            marker: { size: 10 },
+            line: { color: 'blue' }
+        };
+
+        const layout = {
+            xaxis: {
+                title: '월',
+            },
+            yaxis: {
+                title: '주문 수'
+            },
+            template: 'plotly_white',
+            width: 1000,
+            height: 500,
+            font: {
+                size: 12
+            }
+        };
+
+        Plotly.newPlot('chart', [trace], layout);
+
         const data = JSON.parse('{{ data|escapejs }}');
 
         function updateChart(month) {
@@ -521,6 +553,10 @@
 
         // 전역 범위에 함수를 노출시켜 버튼 클릭 이벤트에서 접근할 수 있도록 합니다.
         window.updateChart = updateChart;
+
+        // 디폴트로 마지막 달의 데이터를 사용하여 차트를 그립니다.
+        const defaultMonth = '{{ months|last }}';
+        updateChart(defaultMonth);
     }
 </script>
 {% endblock %}

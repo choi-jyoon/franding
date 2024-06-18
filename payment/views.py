@@ -111,16 +111,15 @@ def payment_list(request, total_price=0):
             'fail_url':f'http://{current_domain}/payment/payfail',
             'cancel_url':f'http://{current_domain}/payment/paycancel'
         }
-        # 결제 금액 0원일 때 오류 방지 
-        if data['total_amount'] == 0:
-            data['total_amount'] = tmp_price
+        
+        if 'total_price' not in request.session:
+            request.session['total_price'] = total_price
 
         res = requests.post(URL, data=data, headers=headers)
         request.session['tid'] = res.json()['tid']      # 결제 승인시 사용할 tid를 세션에 저장
         next_url = res.json()['next_redirect_pc_url']   # 결제 페이지로 넘어갈 url을 저장
         
-        request.session['initial_visit'] = True
-        del request.session['initial_visit'] 
+
         return redirect(next_url)
     
     context = {

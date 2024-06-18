@@ -204,15 +204,15 @@ class CustomPasswordResetView(PasswordResetView):
 
     
 def searchItem(request):
-    search_word = request.POST.get('search_word', '')
-    select_option = request.POST.get('select_option', '')
+    search_word = request.GET.get('search_word', '') or request.POST.get('search_word', '')
+    select_option = request.GET.get('select_option', '') or request.POST.get('select_option', '')
     objects = Item.objects.all()
-    
-    if request.method == 'POST':
+
+    if search_word or select_option:
         if select_option == '' or select_option == '분류':
-            objects = Item.objects.filter(Q(name__icontains=search_word)| Q(summary__icontains=search_word)|Q(description__icontains=search_word)
-                                    |Q(cat1__name__icontains=search_word)|Q(cat2__name__icontains=search_word)|Q(item_type__name__icontains=search_word)
-                                    |Q(brand__name__icontains=search_word))
+            objects = Item.objects.filter(Q(name__icontains=search_word) | Q(summary__icontains=search_word) | Q(description__icontains=search_word)
+                                          | Q(cat1__name__icontains=search_word) | Q(cat2__name__icontains=search_word) | Q(item_type__name__icontains=search_word)
+                                          | Q(brand__name__icontains=search_word))
         elif select_option == 'cat1':
             objects = Item.objects.filter(Q(cat1__name__icontains=search_word))
         elif select_option == 'cat2':
@@ -224,7 +224,7 @@ def searchItem(request):
         elif select_option == 'brand':
             objects = Item.objects.filter(Q(brand__name__icontains=search_word))
         elif select_option == 'desc':
-            objects = Item.objects.filter(Q(summary__icontains=search_word)|Q(description__icontains=search_word))
+            objects = Item.objects.filter(Q(summary__icontains=search_word) | Q(description__icontains=search_word))
             
     paginator = Paginator(objects, 16) 
 
