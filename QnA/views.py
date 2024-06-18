@@ -58,7 +58,7 @@ def seller_questions(request):
 
     # 작성일자에 따른 필터링
     
-    period = request.GET.get('period', '3days')
+    period = request.GET.get('period', '3weeks')
     now = datetime.now()
 
     if period == '1day':
