@@ -74,9 +74,12 @@ INSTALLED_APPS = [
     
     # 'rest_framework',
     'QnA',
+    # 'debug_toolbar',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -199,6 +202,17 @@ CACHES = {
         }
     }
 }
+
+INTERNAL_IPS = [
+    # ...,
+    '127.0.0.1',
+]
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
+
+
 # 소셜 로그인을 위한 키와 시크릿 설정
 
 SOCIALACCOUNT_PROVIDERS = {

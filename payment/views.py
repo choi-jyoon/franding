@@ -8,10 +8,14 @@ from dotenv import load_dotenv
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
+# from time_logger import time_logger
 
 load_dotenv()
 admin_key = os.getenv('admin_key')
 
+# @time_logger(category='payment_list')
+# 0.6695785522460938초
 def payment_list(request, total_price=0):
     current_domain = request.get_host()
     template_name = 'payment/payment_info.html'

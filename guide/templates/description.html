@@ -1,3 +1,4 @@
+<!-- guide/templates/guide/scent_list.html -->
 {% extends 'base.html' %}
 {% load static %}
 
@@ -40,20 +41,33 @@
 
 {% block content %}
 <div class="container">
-    <h1>Guide to Scents</h1>
-    {% for title, data in content.items %}
-        <div class="note" onclick="toggleDescription('{{ title|slugify }}')">
-            <strong>{{ title }}</strong>
-        </div>
-        <div id="{{ title|slugify }}" class="description">
-            <p>{{ data.설명 }}</p>
-            <ul>
-                {% for note_type, description in data.구성.items %}
-                    <li><strong>{{ note_type }}:</strong> {{ description }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-    {% endfor %}
+    <h1>Scent List</h1>
+    <ul>
+        {% for scent in scents %}
+            <li>
+                <div class="note" onclick="toggleDescription('{{ scent.slug }}')">
+                    <strong>{{ scent.name }}</strong>
+                </div>
+                <div id="{{ scent.slug }}" class="description">
+                    <p>{{ scent.description }}</p>
+                    {% if scent.children.exists %}
+                        <ul>
+                            {% for child in scent.children.all %}
+                                <li>
+                                    <div class="note" onclick="toggleDescription('{{ child.slug }}')">
+                                        <strong>{{ child.name }}</strong>
+                                    </div>
+                                    <div id="{{ child.slug }}" class="description">
+                                        <p>{{ child.description }}</p>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
 </div>
 {% endblock %}
 

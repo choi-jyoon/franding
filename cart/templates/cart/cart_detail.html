@@ -261,8 +261,6 @@
 
         {% endif %}
     </div>
-
-
     <div class="best-item">
         <h3>이 달의 추천 상품</h3>
         {% for product in best_items %}
@@ -275,7 +273,7 @@
             <ul>{{ product.price|intcomma }}원</ul>
         </div>
         {% endfor %}
-    </div>
+    </div>    
 </div>
 {% endblock %}
 

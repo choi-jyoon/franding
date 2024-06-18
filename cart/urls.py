@@ -32,3 +32,4 @@ urlpatterns = [
     path('badge_count/', views.badge_count, name='badge_count'),
     path('', include(router.urls)),
 ]
+

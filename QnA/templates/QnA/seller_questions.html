@@ -189,6 +189,12 @@
                 <option value="unanswered" {% if request.GET.answered == 'unanswered' %}selected{% endif %}>답변 안 됨</option>
             </select>
         </form>
+
+        <form class="d-flex" role="search" action="{% url 'QnA:search_qna' %}" method="post">
+            {% csrf_token %}
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
     </div>
     <div class="grid-container">
         {% for question in questions %}
@@ -233,4 +239,7 @@
 {% endblock %}
 
 {% block extra-script %}
+<script>
+    
+</script>
 {% endblock %}
