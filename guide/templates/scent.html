@@ -20,49 +20,6 @@
         text-align: center;
         font-size: 3em;
     }
-    p {
-        font-size: 1.2em;
-        line-height: 1.6;
-        margin: 20px 0;
-    }
-    .intro {
-        background-color: #FFF;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .about_text {
-        position: relative;
-        opacity: 0;
-        transform: translate3d(0, -100%, 0);
-        transition: all 1s;
-    }
-    .about_text.on {
-        opacity: 1;
-        transform: translateZ(0);
-    }
-    .text1, .text3 {
-        opacity: 0;
-        transform: translateX(-50px);
-        transition: opacity 0.5s, transform 0.5s;
-    }
-    .text1.show {
-        opacity: 1;
-        transform: translateX(0);
-    }
-    .text3.show {
-        opacity: 1;
-        transform: translateX(0);
-    }
-    .text2 {
-        opacity: 0;
-        transform: translateX(50px);
-        transition: opacity 0.5s, transform 0.5s;
-    }
-    .text2.show {
-        opacity: 1;
-        transform: translateX(0);
-    }
     .note {
         cursor: pointer;
         margin-bottom: 10px;
@@ -83,76 +40,24 @@
 
 {% block content %}
 <div class="container">
-    <div class="intro">
-        <h1 class="about_text">Franding</h1>
-        <p id="text1" class="text1">
-            "Franding"은 향기와 자신을 표현하는 방식 사이의 독특한 연결고리를 발견하고자 하는 혁신적인 이커머스 플랫폼입니다. 
-            우리의 명칭은 '향수(Fragrance)'와 '브랜딩(Branding) yourself'의 결합에서 탄생했습니다. 
-            이는 단순한 향수 쇼핑몰을 넘어, 개인의 정체성과 스타일을 향기로써 표현할 수 있는 새로운 차원의 공간을 제공하겠다는 우리의 약속입니다.
-            Franding에서는 각 개인의 독특한 이야기와 캐릭터를 담은 향수를 발견할 수 있습니다. 
-            우리는 세계 곳곳에서 엄선한 향수 브랜드와 협력하여, 다양성과 개성이 담긴 고유의 향기 컬렉션을 제공합니다. 
-            여기서 향수는 단순한 액세서리가 아니라, 자신의 이야기를 세상에 전하는 매개체로 변모합니다.
-        </p> 
-        <hr>
-        <p id="text2" class="text2">
-            우리는 'Franding'을 통해 향수가 개인의 브랜드를 구축하는 데 있어 중요한 역할을 한다는 신념을 가지고 있습니다. 
-            각자의 개성과 스타일을 반영하는 향수를 찾는 것은 자기 자신을 브랜딩하는 과정이며, 이를 통해 누구나 자신만의 독특한 향기 서명을 만들어낼 수 있습니다.
-            Franding의 모든 향수는 단순히 향기를 넘어, 착용자의 개성과 감정, 기억을 담아낼 수 있는 예술 작품입니다. 
-            우리는 향수를 선택하는 과정이 자기 자신을 탐색하고 발견하는 여정이 될 수 있도록, 개인 맞춤형 추천 서비스를 제공합니다. 
-            고객 개개인의 취향과 선호도를 분석하여, 가장 잘 어울리는 향수를 찾아드립니다.
-        </p> 
-        <hr>
-        <p id="text3" class="text3">
-            또한, Franding은 지속 가능한 미래를 향한 약속 또한 중요하게 여깁니다. 
-            우리는 환경에 미치는 영향을 최소화하고, 윤리적이며 지속 가능한 방식으로 생산된 향수들만을 선별하여 제공합니다. 
-            우리의 파트너 브랜드들 또한 이러한 가치를 공유하며, 지구와 그 위의 생명체들에 대한 존중을 기반으로 합니다.
-            Franding을 통해, 단순한 향수 쇼핑을 넘어 자신을 발견하고, 자신만의 이야기를 세상에 전하는 여정에 함께하세요. 
-            우리는 각자가 가진 독특한 빛을 세상에 뽐낼 수 있도록, 여러분의 여정을 지원하고 동행할 준비가 되어 있습니다. 
-            'Franding'에서는 모든 순간이 자신을 표현하는 기회이며, 우리는 그 기회를 최대한 활용할 수 있도록 도와드립니다.
-        </p>
-    </div>
-    
-    <div>
-        <h2>Scent Notes</h2>
-        {% for note in notes %}
-            <div class="note" onclick="toggleDescription('desc-{{ note.id }}')">
-                <strong>{{ note.name }}</strong>
-            </div>
-            <div id="desc-{{ note.id }}" class="description">
-                {{ note.description }}
-            </div>
-        {% endfor %}
-    </div>
+    <h1>Guide to Scents</h1>
+    {% for scent in scents %}
+        <div class="note" onclick="toggleDescription('{{ scent.slug }}')">
+            <strong>{{ scent.title }}</strong>
+        </div>
+        <div id="{{ scent.slug }}" class="description">
+            <ul>
+                {% for note, description in scent.details.items %}
+                    <li><strong>{{ note }}:</strong> {{ description }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
 </div>
 {% endblock %}
 
 {% block extra-script %}
 <script>
-    setTimeout(() => {
-        document.querySelector('.about_text').classList.add('on');
-    }, 500);
-
-    const text1 = document.getElementById('text1');
-    const text2 = document.getElementById('text2');
-    const text3 = document.getElementById('text3');
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('show');
-            } else {
-                entry.target.classList.remove('show');
-            }
-        });
-    }, {
-        rootMargin: '0px',
-        threshold: 0.5
-    });
-
-    observer.observe(text1);
-    observer.observe(text2);
-    observer.observe(text3);
-
     function toggleDescription(id) {
         var desc = document.getElementById(id);
         if (desc.style.display === 'none' || desc.style.display === '') {
