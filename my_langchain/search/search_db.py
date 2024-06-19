@@ -8,13 +8,14 @@ import uvicorn
 
 # 데이터 로드
 def load_data():
-    qna_csv = pd.read_csv('QnA.csv')
+    qna_csv = pd.read_csv('my_langchain/csv_file/QnA.csv')
     return qna_csv
 
 
 # 임베딩 모델 초기화
 def init_model():
-    sbert = SentenceTransformerEmbeddings(model_name='jhgan/ko-sroberta-multitask')
+    # sbert = SentenceTransformerEmbeddings(model_name='jhgan/ko-sroberta-multitask')
+    sbert = HuggingFaceEmbeddings(model_name='jhgan/ko-sroberta-multitask')
     return sbert 
 
 

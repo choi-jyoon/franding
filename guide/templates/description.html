@@ -1,52 +1,3 @@
-<<<<<<< HEAD
-<!-- guide/templates/guide/scent_list.html -->
-{% extends 'base.html' %}
-
-{% block extra_styles %}
-    <style>
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-
-        .button {
-            width: 45%;
-            height: 45%;
-            margin: 2%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #fff;
-            border: 2px solid #ccc;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s, background-color 0.3s;
-            text-decoration: none;
-            color: #333;
-            font-size: 24px;
-            text-align: center;
-        }
-
-        .button:hover {
-            transform: translateY(-10px);
-            background-color: #e0e0e0;
-        }
-
-        .button h2 {
-            margin: 0;
-        }
-
-        .button p {
-            margin: 10px 0 0;
-            font-size: 16px;
-            color: #666;
-        }
-    </style>
-=======
 {% extends 'base.html' %}
 {% load static %}
 
@@ -85,80 +36,25 @@
         border-radius: 5px;
     }
 </style>
->>>>>>> feat/guide
 {% endblock %}
 
 {% block content %}
 <div class="container">
-<<<<<<< HEAD
-<<<<<<<< HEAD:guide/templates/description.html
-    <h1>Scent List</h1>
-    <ul>
-        {% for scent in scents %}
-            <li>
-                <div class="note" onclick="toggleDescription('{{ scent.slug }}')">
-                    <strong>{{ scent.name }}</strong>
-                </div>
-                <div id="{{ scent.slug }}" class="description">
-                    <p>{{ scent.description }}</p>
-                    {% if scent.children.exists %}
-                        <ul>
-                            {% for child in scent.children.all %}
-                                <li>
-                                    <div class="note" onclick="toggleDescription('{{ child.slug }}')">
-                                        <strong>{{ child.name }}</strong>
-                                    </div>
-                                    <div id="{{ child.slug }}" class="description">
-                                        <p>{{ child.description }}</p>
-                                    </div>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </div>
-            </li>
-        {% endfor %}
-    </ul>
-========
-    <a href="{% url 'guide:description' %}" class="button">
-        <div>
-            <h2>Description</h2>
-            <p>페이지 설명</p>
-        </div>
-    </a>
-    <a href="{% url 'guide:pleasant' %}" class="button">
-        <div>
-            <h2>Pleasant</h2>
-            <p>페이지 설명</p>
-        </div>
-    </a>
-    <a href="{% url 'guide:tale' %}" class="button">
-        <div>
-            <h2>Tale</h2>
-            <p>페이지 설명</p>
-        </div>
-    </a>
-    <a href="{% url 'guide:tip' %}" class="button">
-        <div>
-            <h2>Tip</h2>
-            <p>페이지 설명</p>
-        </div>
-    </a>
->>>>>>>> feat/guide:guide/templates/guide_index.html
-</div>
-{% endblock %}
-=======
     <h1>Perfume Descriptions</h1>
     {% for description in descriptions %}
         <div class="note" onclick="toggleDescription('{{ description.slug }}')">
             <strong>{{ description.title }}</strong>
         </div>
         <div id="{{ description.slug }}" class="description">
-            <ul>
-                {% for section_title, section_desc in description.sections.items %}
-                    <li><strong>{{ section_title }}:</strong> {{ section_desc }}</li>
-                {% endfor %}
-            </ul>
+            {% if description.sections.items %}
+                <ul>
+                    {% for key, value in description.sections.items %}
+                        <li><strong>{{ key }}:</strong> {{ value }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>{{ description.sections }}</p>
+            {% endif %}
         </div>
     {% endfor %}
 </div>
@@ -176,4 +72,3 @@
     }
 </script>
 {% endblock %}
->>>>>>> feat/guide
