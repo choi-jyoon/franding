@@ -46,12 +46,15 @@
             <strong>{{ description.title }}</strong>
         </div>
         <div id="{{ description.slug }}" class="description">
-            <p>{{ description.description }}</p>
-            <ul>
-                {% for note, note_description in description.notes.items %}
-                    <li><strong>{{ note }}:</strong> {{ note_description }}</li>
-                {% endfor %}
-            </ul>
+            {% if description.sections.items %}
+                <ul>
+                    {% for key, value in description.sections.items %}
+                        <li><strong>{{ key }}:</strong> {{ value }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>{{ description.sections }}</p>
+            {% endif %}
         </div>
     {% endfor %}
 </div>
