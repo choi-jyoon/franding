@@ -40,14 +40,14 @@
 
 {% block content %}
 <div class="container">
-    <h1>Perfume Tips</h1>
-    {% for tip in tips %}
-        <div class="note" onclick="toggleDescription('{{ tip.slug }}')">
-            <strong>{{ tip.title }}</strong>
+    <h1>Perfume Descriptions</h1>
+    {% for description in descriptions %}
+        <div class="note" onclick="toggleDescription('{{ description.slug }}')">
+            <strong>{{ description.title }}</strong>
         </div>
-        <div id="{{ tip.slug }}" class="description">
+        <div id="{{ description.slug }}" class="description">
             <ul>
-                {% for section_title, section_desc in tip.sections.items %}
+                {% for section_title, section_desc in description.sections.items %}
                     <li><strong>{{ section_title }}:</strong> {{ section_desc }}</li>
                 {% endfor %}
             </ul>

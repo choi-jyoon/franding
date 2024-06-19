@@ -1,71 +1,76 @@
 {% extends 'base.html' %}
-{% load static %}
 
-{% block extra-style %}
-<style>
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #F5F5F5;
-        color: #333;
-    }
-    .container {
-        max-width: 1200px;
-        margin: auto;
-        padding: 20px;
-    }
-    h1 {
-        color: #6D6875;
-        text-align: center;
-        font-size: 3em;
-    }
-    .note {
-        cursor: pointer;
-        margin-bottom: 10px;
-        background-color: #FFF;
-        padding: 10px;
-        border-radius: 5px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    .description {
-        display: none;
-        margin-left: 20px;
-        padding: 10px;
-        background-color: #F5F5F5;
-        border-radius: 5px;
-    }
-</style>
+{% block extra_styles %}
+    <style>
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .button {
+            width: 45%;
+            height: 45%;
+            margin: 2%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, background-color 0.3s;
+            text-decoration: none;
+            color: #333;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .button:hover {
+            transform: translateY(-10px);
+            background-color: #e0e0e0;
+        }
+
+        .button h2 {
+            margin: 0;
+        }
+
+        .button p {
+            margin: 10px 0 0;
+            font-size: 16px;
+            color: #666;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-    <h1>Guide to Scents</h1>
-    {% for title, data in content.items %}
-        <div class="note" onclick="toggleDescription('{{ title|slugify }}')">
-            <strong>{{ title }}</strong>
+    <a href="{% url 'guide:description' %}" class="button">
+        <div>
+            <h2>Description</h2>
+            <p>페이지 설명</p>
         </div>
-        <div id="{{ title|slugify }}" class="description">
-            <p>{{ data.설명 }}</p>
-            <ul>
-                {% for note_type, description in data.구성.items %}
-                    <li><strong>{{ note_type }}:</strong> {{ description }}</li>
-                {% endfor %}
-            </ul>
+    </a>
+    <a href="{% url 'guide:pleasant' %}" class="button">
+        <div>
+            <h2>Pleasant</h2>
+            <p>페이지 설명</p>
         </div>
-    {% endfor %}
+    </a>
+    <a href="{% url 'guide:tale' %}" class="button">
+        <div>
+            <h2>Tale</h2>
+            <p>페이지 설명</p>
+        </div>
+    </a>
+    <a href="{% url 'guide:tip' %}" class="button">
+        <div>
+            <h2>Tip</h2>
+            <p>페이지 설명</p>
+        </div>
+    </a>
 </div>
-{% endblock %}
-
-{% block extra-script %}
-<script>
-    function toggleDescription(id) {
-        var desc = document.getElementById(id);
-        if (desc.style.display === 'none' || desc.style.display === '') {
-            desc.style.display = 'block';
-        } else {
-            desc.style.display = 'none';
-        }
-    }
-</script>
 {% endblock %}
