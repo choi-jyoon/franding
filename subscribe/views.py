@@ -290,7 +290,7 @@ def pay_success(request):
             if 'delivery_info' in request.session:
                 del request.session['delivery_info']
             
-            process_recurring_payments.delay(request.user.id)
+            # process_recurring_payments.delay(request.user.id)
             item = "membership"
             
             # 결제 완료 메일 전송
