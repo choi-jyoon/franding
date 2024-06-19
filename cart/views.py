@@ -14,6 +14,7 @@ from django.http import HttpResponse
 from my_langchain.recommend.best_item import best_items
 import csv
 import pandas as pd
+from QnA.views import cache_data
 
 
 # 상품 조회해서 csv파일로 만들기
@@ -96,8 +97,6 @@ def best_cart_item(product_paid_for, attrebutes='item_id'):
 #     return product_paid_for
 
 
-
-
 # 문자 읽어서 데이터베이스에 있는 상품 이름이랑 비교해서 상품 id반환 
 def search_best_item():
     best_item = best_items()
@@ -163,13 +162,14 @@ def check_user_authentication(request, cart_count=None):
             cart_count = 0
 
         return cart_count
+    
 
 
 # 장바구니 페이지
 # 7.157054662704468초
 # @time_logger("cart_detail")
 @login_required
-def cart_detail(request, best_items=search_best_item):
+def cart_detail(request):
     """
     장바구니 페이지를 렌더링하고 체크 표시된 항목의 총 가격을 계산합니다.
 
@@ -190,12 +190,16 @@ def cart_detail(request, best_items=search_best_item):
     # product_paid_for = Cart.objects.filter(status=True).values('item_id').annotate(total_amount = Sum('amount')).order_by('-total_amount')[:1]
 
     # best_items = best_cart_item(product_paid_for)
+
+    cache_key = '매달 상품 추천'
+
+    item_recommend = cache_data(key_name=cache_key, langchain_func=search_best_item)
     
     context = {
         'user': request.user,        
         'cart': cart,
         'total_price': total_price,
-        'best_items': best_items(),        
+        'best_items': item_recommend,        
     }
     return render(request, 'cart/cart_detail.html', context)
 

@@ -12,7 +12,7 @@ import random
 import requests
 import os
 from dotenv import load_dotenv
-from .tasks import process_recurring_payments
+# from .tasks import process_recurring_payments
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
