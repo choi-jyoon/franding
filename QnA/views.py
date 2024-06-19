@@ -9,7 +9,9 @@ from datetime import datetime, timedelta
 from django.core.paginator import Paginator
 # from time_logger import time_logger
 import pandas as pd
-from cart.search_db import search_question
+from my_langchain.search.search_db import search_question
+from django.core.cache import cache
+import redis
 
 
 # Create your views here.
@@ -24,7 +26,7 @@ def question_create(request, item_id):
             question.user_id_id= request.user.id
             question.item_id.id = item_id
             question.save()            
-            # return redirect(reverse('QnA:question_list', args=[item_id]))
+
             return redirect(reverse('QnA:home'))
             
     else:
@@ -153,7 +155,7 @@ def QnA_dataFrame():
 # 검색에 사용할 question csv 파일 생성
 def question_csv_file_save():
     df = QnA_dataFrame()
-    df.to_csv('QnA.csv', index=False)
+    df.to_csv('my_langchain/csv_file/QnA.csv', index=False)    
 
 
 # search_db의 답변을 리스트로 반환
@@ -200,7 +202,44 @@ def f_search_question(query):
 
     return search_question_list
 
-# search_best_item()
+
+# 레디스 연결 상태 확인
+def redis_connect():
+    """ 레디스 연결 상태 확인 """
+
+    try:
+        r = redis.Redis(host='127.0.0.1', port=6379/1)
+        r.ping()
+        print("Redis에 성공적으로 연결되었습니다.")
+    except redis.exceptions.ConnectionError as e:
+        print(f"Redis 연결 실패: {e}")
+
+
+# 캐시 키 생성
+def cache_key_create(search_word):
+    """ 캐시 키 생성 """
+
+    modified_search_word = search_word.replace(' ', '_')
+
+    return modified_search_word
+
+
+# 캐시에 데이터 저장
+def cache_data(search_word):
+    """ 캐시에 데이터 저장 """
+
+    cache_key = cache_key_create(search_word)
+    cached_data = cache.get(cache_key)
+
+    # 캐시 없으면 데이터 저장
+    if not cached_data:
+        search_question = f_search_question(search_word)
+        cache.set(cache_key, search_question, 60*60*72)  # 24시간
+
+        return f_search_question(search_word)
+    
+    return cached_data
+
 
 # 검색
 def qna_search(request):    
@@ -208,7 +247,7 @@ def qna_search(request):
     # 검색 여부에 따른 필터링
     search_word = request.GET.get('search', '') or request.POST.get('search', '')
 
-    results = f_search_question(search_word)  # 검색 조건 수정 필요    
+    results = cache_data(search_word)  # 검색 조건 수정 필요    
 
     paginator = Paginator(results, 6)  # Show 6 questions per page.
 

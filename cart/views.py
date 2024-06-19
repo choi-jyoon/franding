@@ -11,7 +11,7 @@ from rest_framework import viewsets
 from .serializers import CartSerializer
 from django.http import HttpResponse
 # from time_logger import time_logger
-from cart.best_item import best_items
+from my_langchain.recommend.best_item import best_items
 import csv
 import pandas as pd
 
@@ -69,7 +69,7 @@ def item_dataFrame():
 
 def item_csv_file_save():
     df = item_dataFrame()
-    df.to_csv('items.csv', index=False)
+    df.to_csv('my_langchain/csv_file/items.csv', index=False)    
 
 
 # 장바구니 총량 구하기
