@@ -154,9 +154,10 @@
             <strong>{{ description.title }}</strong>
         </div>
         <div id="{{ description.slug }}" class="description">
+            <p>{{ description.description }}</p>
             <ul>
-                {% for section_title, section_desc in description.sections.items %}
-                    <li><strong>{{ section_title }}:</strong> {{ section_desc }}</li>
+                {% for note, note_description in description.notes.items %}
+                    <li><strong>{{ note }}:</strong> {{ note_description }}</li>
                 {% endfor %}
             </ul>
         </div>
