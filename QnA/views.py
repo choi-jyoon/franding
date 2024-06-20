@@ -214,6 +214,17 @@ def redis_connect():
     except redis.exceptions.ConnectionError as e:
         print(f"Redis 연결 실패: {e}")
 
+def redis_connect2():
+    """ 레디스 연결 상태 확인 """
+
+    r = redis.StrictRedis(
+    host='52.79.153.140',
+    port=16379,
+    decode_responses=True
+    )
+
+    print(r.ping())  # PONG 출력
+
 
 # 캐시 키 생성
 def cache_key_create(search_word):

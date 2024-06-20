@@ -203,7 +203,7 @@ ALLOWED_HOSTS = ['testserver', 'localhost', '127.0.0.1', '[::1]']
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/1',  # Redis 서버 위치
+        'LOCATION': 'redis://52.79.153.140:16379',  # Redis 서버 위치
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
