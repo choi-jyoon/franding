@@ -225,7 +225,7 @@ def cache_key_create(search_word):
 
 
 # 캐시에 키 생성
-def cache_data(langchain_func, key_name, search_word=None):
+def cache_data(langchain_func, key_name, cache_time, search_word=None):
     """ 캐시에 데이터 저장 """
 
     cache_key = cache_key_create(key_name)
@@ -241,7 +241,7 @@ def cache_data(langchain_func, key_name, search_word=None):
             func_value = langchain_func(search_word)     
         
         # 캐시에 데이터 저장
-        cache.set(cache_key, func_value, 60*60*72)  # 72시간
+        cache.set(cache_key, func_value, cache_time)  # 72시간
 
         return func_value        
     
@@ -254,7 +254,7 @@ def qna_search(request):
     # 검색 여부에 따른 필터링
     search_word = request.GET.get('search', '') or request.POST.get('search', '')
 
-    results = cache_data(key_name=search_word, search_word=search_word, langchain_func=f_search_question)  # 검색 조건 수정 필요    
+    results = cache_data(key_name=search_word, search_word=search_word, langchain_func=f_search_question, cache_time=60*60*24*365)  # 검색 조건 수정 필요    
 
     paginator = Paginator(results, 6)  # Show 6 questions per page.
 

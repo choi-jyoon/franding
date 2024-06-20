@@ -121,7 +121,7 @@ DATABASES = {
         'NAME': 'franding_db',
         'USER': 'postgres',
         'PASSWORD': DB_PASSWORD,
-        'HOST': 'hanslab.org',  # 또는 PostgreSQL 서버의 IP 주소
+        'HOST': '211.110.169.141',  # 또는 PostgreSQL 서버의 IP 주소
         'PORT': '35432',       # PostgreSQL의 기본 포트 번호
     }
 }

@@ -162,7 +162,6 @@ def check_user_authentication(request, cart_count=None):
             cart_count = 0
 
         return cart_count
-    
 
 
 # 장바구니 페이지
@@ -188,12 +187,9 @@ def cart_detail(request):
 
     # 상품 추천 필터링
     # product_paid_for = Cart.objects.filter(status=True).values('item_id').annotate(total_amount = Sum('amount')).order_by('-total_amount')[:1]
-
     # best_items = best_cart_item(product_paid_for)
 
-    cache_key = '매달 상품 추천'
-
-    item_recommend = cache_data(key_name=cache_key, langchain_func=search_best_item)
+    item_recommend = cache_data(key_name='매달 상품 추천', langchain_func=search_best_item, cache_time=60*60*24*30)
     
     context = {
         'user': request.user,        
@@ -208,8 +204,6 @@ def cart_detail(request):
 # 1.5220270156860352,
 # 1.8930752277374268,
 # 2.037010669708252,
-# 1.390061616897583,
-# 1.8565404415130615,초
 # @time_logger("accept_ajax")
 @login_required
 def accept_ajax(request, total_price=0):

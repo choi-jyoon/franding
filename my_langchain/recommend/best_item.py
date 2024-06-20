@@ -13,12 +13,13 @@ from langchain_core.prompts import SystemMessagePromptTemplate
 # from cart.views import check_user_authentication
 
 
-def db_url():  
+# 세팅에서 가져오면 더 좋음
+def db_url():
     username='postgres'
     password=os.getenv("DB_PASSWORD")
-    port='25432'
+    port='35432'
     database='franding_db'
-    host='hanslab.org'
+    host='211.110.169.141'
 
     return f"postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}"
 
