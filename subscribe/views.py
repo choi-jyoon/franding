@@ -12,7 +12,7 @@ import random
 import requests
 import os
 from dotenv import load_dotenv
-from .tasks import process_recurring_payments
+# from .tasks import process_recurring_payments
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
@@ -290,7 +290,7 @@ def pay_success(request):
             if 'delivery_info' in request.session:
                 del request.session['delivery_info']
             
-            process_recurring_payments.delay(request.user.id)
+            # process_recurring_payments.delay(request.user.id)
             item = "membership"
             
             # 결제 완료 메일 전송

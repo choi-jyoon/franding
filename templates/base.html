@@ -146,6 +146,118 @@
             text-decoration: none;
             color: black;
         }
+        .open-chatbot-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #5B574F;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #chatbotContainer {
+            display: none;
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 400px;
+            max-height: 600px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 1000;
+        }
+        .chatbot-widget {
+            width: 100%;
+            max-height: 100%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .chatbot-header {
+            background-color: #5B574F;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .chatbot-body {
+            background-color: white;
+            padding: 10px;
+            overflow-y: auto;
+            height: 300px;
+        }
+
+        .chatbot-input {
+            display: flex;
+        }
+
+        .chatbot-input input {
+            flex-grow: 1;
+            border: 1px solid #ccc;
+            border-radius: 0;
+        }
+
+        .chatbot-input button {
+            border-radius: 0;
+        }
+
+        .chat-message {
+            display: flex;
+            margin-bottom: 10px;
+            align-items: flex-start;
+        }
+
+        .chat-message.user .message {
+            background-color: #5B574F;
+            color: white;
+            margin-left: auto;
+            border-radius: 15px 15px 0 15px;
+        }
+
+        .chat-message.bot .message {
+            background-color: #f1f1f1;
+            margin-right: auto;
+            border-radius: 15px 15px 15px 0;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 10px;
+            word-wrap: break-word;
+        }
+
+        .static-profile-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .btn-custom {
+            background-color: #5B574F;
+            color: white;
+        }
+
+        .faq-buttons {
+            background-color: white; /* 올바른 속성 이름 */
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .faq-buttons button {
+            flex: 1;
+            margin: 0 5px;
+        }
     </style>
     {% block extra-style %}
 
@@ -280,6 +392,28 @@
     <div class="container mb-5">
         {% block content %}{% endblock %}
     </div>
+    <button class="open-chatbot-button" id="openChatbotButton">💬</button>
+    <div id="chatbotContainer">
+        <div class="chatbot-widget" id="chatbotWidget">
+            <div class="chatbot-header" id="chatbotHeader">Franding Chatbot</div>
+            <div class="chatbot-body" id="chatbotBody">
+                <div id="chatbox">
+                    <!-- Chat messages will appear here -->
+                </div>
+            </div>
+            <div class="faq-buttons">
+                <button type="button" class="btn btn-outline-secondary faq-button">숲 냄새를 좋아하는 사람에게 추천해줄 제품은 뭐가 좋을까?</button>
+                <button type="button" class="btn btn-outline-secondary faq-button">가장 리뷰가 좋은 제품은 뭐야?</button>
+                <button type="button" class="btn btn-outline-secondary faq-button">시트러스는 무슨 향기야?</button>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="userInput" class="form-control" placeholder="메시지를 입력하세요...">
+                <button type="button" class="btn btn-custom" id="sendButton">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <input type="hidden" name="csrfmiddlewaretoken" id="csrfToken" value="{{ csrf_token }}">
 
     {% block footer %}
     <footer class="footer bg-light">
@@ -336,6 +470,82 @@
         }
 
 
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#openChatbotButton').click(function() {
+                $('#chatbotContainer').toggle();
+            });
+            $('#chatbox').append('<div class="chat-message bot"><img src="{% static "img/logo.jpg" %}" alt="Bot" class="static-profile-image"><div class="message"> 안녕하세요! Franding 챗봇입니다. 무엇을 도와드릴까요?</div></div>');
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            const csrftoken = getCookie('csrftoken');
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            function sendMessage(userMessage) {
+                $('#chatbox').append('<div class="chat-message user"><div class="message"> ' + userMessage + '</div></div>');
+
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'chatbot:chat_response' %}",
+                    data: {
+                        message: userMessage,
+                        csrfmiddlewaretoken: csrftoken
+                    },
+                    success: function(data) {
+                        const botResponse = data.response;
+                        $('#chatbox').append('<div class="chat-message bot"><img src="{% static "img/logo.jpg" %}" alt="Bot" class="static-profile-image"><div class="message"> ' + botResponse + '</div></div>');
+                    },
+                    error: function() {
+                        $('#chatbox').append('<div class="chat-message bot"><img src="{% static "img/logo.jpg" %}" alt="Bot" class="static-profile-image"><div class="message"> 오류가 발생했습니다.</div></div>');
+                    }
+                });
+
+                $('#userInput').val('');
+            }
+
+            $('#userInput').keypress(function(e) {
+                if (e.which == 13 && $(this).val().trim() !== '') { // Enter 키 입력 && 입력값이 있는 경우
+                    const userMessage = $(this).val().trim();
+                    sendMessage(userMessage);
+                    $(this).val(''); // 입력창 초기화
+                }
+            });
+
+            $('#sendButton').click(function() {
+                const userMessage = $('#userInput').val();
+                if (userMessage) {
+                    sendMessage(userMessage);
+                    $('#userInput').val(''); 
+                }
+            });
+
+            $('.faq-button').click(function() {
+                const userMessage = $(this).text();
+                sendMessage(userMessage);
+            });
+        });
     </script>
 </body>
 

@@ -37,6 +37,7 @@ urlpatterns = [
     path('payment/', include('payment.urls')),
     path('QnA/', include('QnA.urls')),    
     path('guide/', include('guide.urls')),
+    path('chatbot/', include('chatbot.urls')),
     
     # 계정관련 
     path('accounts/', include('django.contrib.auth.urls')),

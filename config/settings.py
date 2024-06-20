@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'review',
     'seller',
     'cart',
+    'chatbot',
     # 'bootstrap4',
     'payment',
     'event',
