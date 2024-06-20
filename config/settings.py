@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'review',
     'seller',
     'cart',
+    'chatbot',
     # 'bootstrap4',
     'payment',
     'event',
@@ -121,7 +122,7 @@ DATABASES = {
         'NAME': 'franding_db',
         'USER': 'postgres',
         'PASSWORD': DB_PASSWORD,
-        'HOST': 'hanslab.org',  # 또는 PostgreSQL 서버의 IP 주소
+        'HOST': 'db.hanslab.org',  # 또는 PostgreSQL 서버의 IP 주소
         'PORT': '35432',       # PostgreSQL의 기본 포트 번호
     }
 }
