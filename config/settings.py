@@ -16,11 +16,16 @@ from django.urls import reverse_lazy
 from dotenv import load_dotenv
 
 load_dotenv()
+DJANGO_SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
+DB_PORT=os.getenv('DB_PORT')
+DB_NAME=os.getenv('DB_NAME')
+DB_HOST=os.getenv('DB_HOST')
 GOOGLE_CLIEND_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_KEY = os.getenv('GOOGLE_KEY')
 KAKAO_CLIENT_ID = os.getenv('KAKAO_CLIENT_ID')
 KAKAO_KEY = os.getenv('KAKAO_KEY')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
@@ -37,7 +42,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-*vp_8&e63t5yoa15dp))q58_shk_i*3z1v1a29v&eygbhdjp^#'
+SECRET_KEY = DJANGO_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -125,11 +130,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'franding_db',
+        'NAME': DB_NAME,
         'USER': 'postgres',
         'PASSWORD': DB_PASSWORD,
-        'HOST': 'db.hanslab.org',  # 또는 PostgreSQL 서버의 IP 주소
-        'PORT': '35432',       # PostgreSQL의 기본 포트 번호
+        'HOST': DB_HOST,  # 또는 PostgreSQL 서버의 IP 주소
+        'PORT': DB_PORT,       # PostgreSQL의 기본 포트 번호
     }
 }
 
@@ -190,8 +195,6 @@ LOGIN_REDIRECT_URL='mypage:add_user_info'
 LOGOUT_REDIRECT_URL = 'login'
 ACCOUNT_LOGOUT_REDIRECT_URL = reverse_lazy('accountapp:login')
 ACCOUNT_LOGOUT_ON_GET = True
-# ACCOUNT_LOGOUT_ON_GET = True
-# SOCIALACCOUNT_ADAPTER = 'config.adapters.YourSocialAccountAdapter'
 
 
 # MEDIA_URL='/media/'
@@ -252,9 +255,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'franding3@gmail.com'
+EMAIL_HOST_USER = EMAIL_HOST_USER
 EMAIL_HOST_PASSWORD = EMAIL_PASSWORD
-DEFAULT_FROM_EMAIL = 'franding3@gmail.com'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # AWS settings
 AWS_ACCESS_KEY_ID = AWS_ACCESS_KEY_ID
