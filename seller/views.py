@@ -94,6 +94,10 @@ def generate_ai_image(request):
         filename = fs.save(f"{request.POST.get('id')}.jpg", image_data)
         file_url = fs.url(filename)
         s3.upload_file(filename, 'franding', filename)
+        
+        # # 로컬 파일 삭제 
+        os.remove(filename)
+        
 
         return JsonResponse({'image_url': file_url})
     
@@ -118,23 +122,21 @@ def item_create(request):
                 url = fs.url(name)
                 s3.upload_file(name, 'franding', name)
                 
+                # # 로컬 파일 삭제 
+                os.remove(name)
+                
                 item.image = url
               
             # back_image 처리
             if back_image_url:
                 # 이미 S3에 업로드된 이미지라면 그대로 사용
                 item.back_image = back_image_url
-            else:
-                # 새로 이미지를 업로드해야 한다면 아래와 같이 처리
-                if 'back_image' in request.FILES:
-                    uploaded_file = request.FILES['back_image']
-                    name = fs.save(uploaded_file.name, uploaded_file)
-                    url = fs.url(name)
-                    s3.upload_file(name, 'franding', name)
-                    item.back_image = url  
 
             item.save()
             return redirect('seller:seller_index')  # 상품 목록 페이지로 리디렉션합니다. -> item_list 오류 : item:item_list 로 url 네임 명시
+        else:
+            # 폼 오류 발생 시 모달 창 표시
+            return render(request, 'seller/item_form.html', {'form': form})
         
     else:
         form = ItemForm()
@@ -159,6 +161,7 @@ def item_detail(request, pk):
                 name = fs.save(uploaded_file.name, uploaded_file)
                 url = fs.url(name)
                 item.image = url
+                s3.upload_file(name, 'franding', name)
                 
             # back_image 처리
             if back_image_url:
@@ -167,6 +170,15 @@ def item_detail(request, pk):
 
             form.save()
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        else:
+            # 폼 오류 발생 시 모달 창 표시
+            context = {
+                'form': form,
+                'item': item,
+                'reviews': reviews,
+                'average': average,
+            }
+            return render(request, 'seller/item_detail.html', context)
     else:
         form = ItemForm(instance=item)
         

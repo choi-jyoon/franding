@@ -94,14 +94,25 @@
         <img id="imagePreview" src="{% if form.instance.image %}{{ form.instance.image }}{% else %}#{% endif %}" alt="Image Preview" style="max-width: 100%; height: auto;">
         <br>
         <hr>
-        <div class="form-group d-flex justify-content-between align-items-center">
+        <div class="form-group d-flex align-items-center">
+            <label for="prompt-input" class="mr-3">프롬프트 입력:</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="prompt-input" placeholder="이미지 생성을 위한 프롬프트를 입력하세요">
+                <button type="button" class="btn btn-primary generate-ai-image">AI 이미지 생성하기</button>
+            </div>
+        </div>
+        <input type="hidden" id="back-image-url" name="back_image" value="{{ form.instance.back_image }}"> 
+        
+        
+        
+        {% comment %} <div class="form-group d-flex justify-content-between align-items-center">
             <label for="prompt-input">프롬프트 입력:</label>
             <div class="d-flex align-items-center">
                 <input type="text" class="form-control" id="prompt-input" placeholder="향수 설명을 적어주세요">
-                <button type="button" class="btn btn-primary generate-ai-image ml-3">이미지 생성</button>
+                <button type="button" class="btn btn-primary generate-ai-image ml-3">AI 이미지 생성하기</button>
             </div>
         </div>
-        <input type="hidden" id="back-image-url" name="back_image" value="{{ form.instance.back_image }}">
+        <input type="hidden" id="back-image-url" name="back_image" value="{{ form.instance.back_image }}"> {% endcomment %}
         
 
         <!-- 모달 창 -->
@@ -155,10 +166,41 @@
       </div>
     </div>
 </div>
+{% if form.errors %}
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <div>다시 확인해 주세요</div>
+                    {{form.errors}}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block extra-script %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if form.errors %}
+            var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+            errorModal.show();
+        {% endif %}
+    });
+    
+</script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const imageInput = document.querySelector('input[name="image"]');

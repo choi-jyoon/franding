@@ -296,10 +296,42 @@
     </tbody>
 </table>
 <a href="#" class="btn btn-secondary" style="float: right;">배너 광고 문의</a>
+
+<!--form error modal-->
+{% if form.errors %}
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <div>다시 확인해 주세요</div>
+                    {{form.errors}}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block extra-script %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if form.errors %}
+            var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+            errorModal.show();
+        {% endif %}
+    });
+    
+</script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const imageInput = document.querySelector('input[name="image"]');
