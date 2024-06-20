@@ -258,7 +258,7 @@
                         <ul class="dropdown-menu-start dropdown-menu " aria-labelledby="navbarUserDropdown">
                             <form action="{% url 'logout' %}" method="post">
                                 {% csrf_token %}
-                                <button type="submit" class="dropdown-item">Logout</button>
+                                <button type="submit" class="dropdown-item" id="logoutButton">Logout</button>
                             </form>
                             <li><a class="dropdown-item" href="{% url 'mypage:order_index' %}">My Page</a></li>
                         </ul>
@@ -315,11 +315,11 @@
         
         document.addEventListener('DOMContentLoaded', function() {            
             const badgeCount = getCartItems();
-    if (badgeCount !== null) {
-        updateCartBadge(badgeCount);
-    } else {
-        console.warn('No cart count found in localStorage');
-    }
+            if (badgeCount !== null) {
+                updateCartBadge(badgeCount);
+            } else {
+                console.warn('badgeCount가 존재하지 않습니다.');
+            }
         });
         
         // 로컬 스토리지에서 장바구니 데이터를 불러오기
@@ -335,6 +335,19 @@
             console.log('badge_count',badge_count);
         }
 
+        // 로그아웃 시 장바구니 배지 로컬 스토리지 삭제
+        document.addEventListener('DOMContentLoaded', function() {
+            var logoutButton = document.getElementById('logoutButton');
+
+            if (logoutButton) {
+                logoutButton.addEventListener('click', function() {
+                    // 여기서 'yourKey'는 삭제하고자 하는 로컬 스토리지의 키입니다.
+                    localStorage.removeItem('cart_count');
+                    // 필요한 경우 여러 키를 삭제할 수 있습니다.
+                    // localStorage.removeItem('anotherKey');
+                });                
+            }
+        });       
 
     </script>
 </body>
