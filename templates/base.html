@@ -194,7 +194,7 @@
             background-color: white;
             padding: 10px;
             overflow-y: auto;
-            height: 300px;
+            height: 330px;
         }
 
         .chatbot-input {
@@ -252,11 +252,42 @@
             background-color: white; /* 올바른 속성 이름 */
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
         }
         .faq-buttons button {
             flex: 1;
             margin: 0 5px;
+        }
+
+        /* Three dots animation */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            margin: 0 2px;
+            background-color: #bbb;
+            border-radius: 50%;
+            display: inline-block;
+            animation: typing 1s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0);
+            } 40% {
+                transform: scale(1);
+            }
         }
     </style>
     {% block extra-style %}
@@ -503,8 +534,26 @@
                 }
             });
 
+            function addTypingIndicator() {
+                const typingMessageId = 'typing-' + Date.now();
+                const typingHtml = `
+                    <div class="chat-message bot typing-indicator" id="${typingMessageId}">
+                        <img src="{% static 'img/logo.jpg' %}" alt="Bot" class="static-profile-image">
+                        <div class="message">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                `;
+                $('#chatbox').append(typingHtml);
+                return typingMessageId;
+            }
+
             function sendMessage(userMessage) {
                 $('#chatbox').append('<div class="chat-message user"><div class="message"> ' + userMessage + '</div></div>');
+                
+                const typingMessageId = addTypingIndicator();
 
                 $.ajax({
                     type: "POST",
@@ -515,9 +564,11 @@
                     },
                     success: function(data) {
                         const botResponse = data.response;
+                        $('#' + typingMessageId).remove(); // 로딩 플레이스홀더 지우기
                         $('#chatbox').append('<div class="chat-message bot"><img src="{% static "img/logo.jpg" %}" alt="Bot" class="static-profile-image"><div class="message"> ' + botResponse + '</div></div>');
                     },
                     error: function() {
+                        $('#' + typingMessageId).remove();
                         $('#chatbox').append('<div class="chat-message bot"><img src="{% static "img/logo.jpg" %}" alt="Bot" class="static-profile-image"><div class="message"> 오류가 발생했습니다.</div></div>');
                     }
                 });
