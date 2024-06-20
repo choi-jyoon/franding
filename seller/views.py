@@ -1,13 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
+import requests
 from .forms import ItemForm, ReviewReplyForm, KeywordForm
 from item.models import Item, Brand, ItemType, Size
 from review.models import Review, ReviewReply
 from cart.models import Order, OrderCart
 from subscribe.models import Keyword, Subscribe, SubscribeKeyword
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseBadRequest, HttpResponseRedirect, HttpResponse
 from django.core.paginator import Paginator
 from django.core.files.storage import FileSystemStorage
+from django.core.files.base import ContentFile
 from django.db.models import Avg, Value, IntegerField, Count, Q
 from django.db.models.functions import Coalesce, ExtractMonth, ExtractYear, TruncMonth
 from django.conf import settings
@@ -20,10 +22,16 @@ from langchain_community.tools.sql_database.tool import QuerySQLDataBaseTool
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
+from django.views.decorators.csrf import csrf_exempt
+# from googletrans import Translator
 import os
 import json
-
+import openai
+import boto3
 from dotenv import load_dotenv
+
+load_dotenv()
+
 # 상품관리(등록,수정,삭제 등등)
 @login_required
 def seller_index(request):
@@ -58,11 +66,44 @@ def seller_index(request):
         }
     return render(request, 'seller/seller_index.html', context)
 
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
+
+@csrf_exempt
+def generate_ai_image(request):
+    if request.method == 'POST':
+        prompt = json.loads(request.body).get('prompt')
+        # translator = Translator()
+        # translated_prompt = translator.translate(prompt, src='ko', dest='en').text
+        client = openai.OpenAI(api_key=API_KEY)
+        response = client.images.generate(
+            prompt=prompt,
+            n=1,
+            size="1024x1024"
+        )
+        ai_image = response.data[0].url
+        
+        # 이미지 URL에서 이미지 데이터 가져오기
+        response = requests.get(ai_image)
+        image_data = ContentFile(response.content)
+        print(response)
+
+        # 로컬 파일 시스템에 이미지 파일 저장하기
+        fs = FileSystemStorage()
+        filename = fs.save(f"{request.POST.get('id')}.jpg", image_data)
+        file_url = fs.url(filename)
+        s3.upload_file(filename, 'franding', filename)
+
+        return JsonResponse({'image_url': file_url})
+    
+    return JsonResponse({'error': 'Invalid request method'})
 
 @login_required
 def item_create(request):
     if request.method == 'POST':
         form = ItemForm(request.POST, request.FILES)
+        back_image_url = request.POST.get('back_image', None)
         
         if form.is_valid():
             item = form.save(commit=False)
@@ -75,7 +116,22 @@ def item_create(request):
                 uploaded_file = request.FILES['image']
                 name = fs.save(uploaded_file.name, uploaded_file)
                 url = fs.url(name)
+                s3.upload_file(name, 'franding', name)
+                
                 item.image = url
+              
+            # back_image 처리
+            if back_image_url:
+                # 이미 S3에 업로드된 이미지라면 그대로 사용
+                item.back_image = back_image_url
+            else:
+                # 새로 이미지를 업로드해야 한다면 아래와 같이 처리
+                if 'back_image' in request.FILES:
+                    uploaded_file = request.FILES['back_image']
+                    name = fs.save(uploaded_file.name, uploaded_file)
+                    url = fs.url(name)
+                    s3.upload_file(name, 'franding', name)
+                    item.back_image = url  
 
             item.save()
             return redirect('seller:seller_index')  # 상품 목록 페이지로 리디렉션합니다. -> item_list 오류 : item:item_list 로 url 네임 명시
@@ -93,6 +149,7 @@ def item_detail(request, pk):
     
     if request.method == 'POST':
         form = ItemForm(request.POST, request.FILES, instance=item)
+        back_image_url = request.POST.get('back_image', None)
         
         if form.is_valid():
             if 'image' in request.FILES:
@@ -102,6 +159,11 @@ def item_detail(request, pk):
                 name = fs.save(uploaded_file.name, uploaded_file)
                 url = fs.url(name)
                 item.image = url
+                
+            # back_image 처리
+            if back_image_url:
+                # 이미 S3에 업로드된 이미지라면 그대로 사용
+                item.back_image = back_image_url
 
             form.save()
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
@@ -312,7 +374,6 @@ def get_postgresql_uri():
     pg_uri = f"postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}"
     return pg_uri
 
-load_dotenv()
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
 
@@ -424,7 +485,6 @@ def order_analysis(request):
     }
     return render(request, 'seller/plot.html', context)
 
-load_dotenv()
 API_KEY = os.getenv("OPENAI_API_KEY")
 DATABASES = settings.DATABASES['default']
 
@@ -455,3 +515,4 @@ def recommend_keyword(request):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
     else:
         return HttpResponse(status=405)
+    

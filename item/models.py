@@ -45,12 +45,13 @@ class Item(models.Model):
     inventory = models.IntegerField(default=0)
     summary = models.CharField(max_length=250)
     description = models.TextField()
-    image = models.URLField(null=True)
-    back_image = models.URLField(null=True)
+    image = models.ImageField(upload_to='media/', max_length=255, null=True)
+    back_image = models.URLField(max_length=500, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     views = models.IntegerField(default=0)  # 조회수
 
     def __str__(self):
+        
         return self.name
     
 class ItemViewCount(models.Model):

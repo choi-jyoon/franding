@@ -49,14 +49,16 @@
         color: #ffffff; /* 마우스를 올렸을 때 폰트 색상 변경 */
     }
 
-    .add-brand {
+    .add-brand,
+    .generate-ai-image {
         background-color: white; /* 활성 페이지 버튼의 배경색 */
         border-color: #5B574F; /* 활성 페이지 버튼의 테두리 색상 */
         color: #5B574F;
         border-radius: 5px;
     }
 
-    .add-brand:hover {
+    .add-brand:hover,
+    .generate-ai-image:hover {
         background-color: #5B574F;
         color: white; /* 마우스 오버 시 페이지 버튼의 텍스트 색상 */
     }
@@ -90,7 +92,42 @@
         <br>
         {% if field.name == "image" %}
         <img id="imagePreview" src="{% if form.instance.image %}{{ form.instance.image }}{% else %}#{% endif %}" alt="Image Preview" style="max-width: 100%; height: auto;">
+        <br>
+        <hr>
+        <div class="form-group d-flex justify-content-between align-items-center">
+            <label for="prompt-input">프롬프트 입력:</label>
+            <div class="d-flex align-items-center">
+                <input type="text" class="form-control" id="prompt-input" placeholder="향수 설명을 적어주세요">
+                <button type="button" class="btn btn-primary generate-ai-image ml-3">이미지 생성</button>
+            </div>
+        </div>
+        <input type="hidden" id="back-image-url" name="back_image" value="{{ form.instance.back_image }}">
+        
+
+        <!-- 모달 창 -->
+        <div class="modal fade" id="aiImageModal" tabindex="-1" aria-labelledby="aiImageModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="aiImageModalLabel">AI 이미지 생성 중...</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                            <p>이미지를 생성 중입니다. 잠시만 기다려 주세요.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <img id="back_image_preview" src="{% if form.instance.back_image %}{{ form.instance.back_image }}{% else %}#{% endif %}" alt="Image Preview" style="max-width: 100%; height: auto;">
         {% endif %}
+        <br>
     {% endfor %}
     <button class="btn large-button">등 록</button>
 </form>
@@ -111,6 +148,7 @@
               <input type="text" class="form-control" id="field-name" name="field-name">
               <input type="hidden" id="field-type" name="field-type"> <!-- 히든값으로 field-type보내주기 -->
             </div>
+            <br>
             <button type="submit" class="btn btn-sucess" id='btn-add'>추가</button>
           </form>
         </div>
@@ -203,6 +241,62 @@
                 return false; // 폼 제출 중지
             }
         });
+    });
+</script>
+<script>
+    document.querySelectorAll('.generate-ai-image').forEach(button => {
+        button.addEventListener('click', () => {
+            const promptInput = document.getElementById('prompt-input');
+            const prompt = promptInput.value.trim();
+            console.log(prompt)
+    
+            if (prompt) {
+                // 모달 창 열기
+                $('#aiImageModal').modal('show');
+    
+                fetch("{% url 'seller:ai_image' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value
+                    },
+                    body: JSON.stringify({ prompt: prompt })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // 모달 창 닫기
+                    $('#aiImageModal').modal('hide');
+    
+                    // 생성된 이미지 URL 처리
+                    const imagePreview = document.getElementById('back_image_preview');
+                    imagePreview.src = data.image_url;
+    
+                    // back-image-url 필드에 이미지 URL 설정
+                    const backImageField = document.getElementById('back-image-url');
+                    backImageField.value = data.image_url;
+                })
+                .catch(error => {
+                    // 모달 창 닫기
+                    $('#aiImageModal').modal('hide');
+                    console.error('Error generating AI image:', error);
+                });
+            } else {
+                alert('프롬프트를 입력해 주세요.');
+            }
+        });
+    });
+    
+    // 제품 등록 버튼 클릭 시 동작
+    document.querySelector('.product-registration-form').addEventListener('submit', (event) => {
+        event.preventDefault(); // 폼 제출 기본 동작 막기
+    
+        // back-image-url 필드의 값을 폼에 추가
+        const backImageField = document.getElementById('back-image-url');
+        const form = event.target;
+        form.appendChild(backImageField);
+    
+        // 폼 제출
+        form.submit();
     });
 </script>
 {% endblock %}

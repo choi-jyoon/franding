@@ -22,6 +22,10 @@ GOOGLE_KEY = os.getenv('GOOGLE_KEY')
 KAKAO_CLIENT_ID = os.getenv('KAKAO_CLIENT_ID')
 KAKAO_KEY = os.getenv('KAKAO_KEY')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_BUCKET_NAME  = os.getenv('AWS_BUCKET_NAME')
+AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
 
 
 
@@ -58,6 +62,7 @@ INSTALLED_APPS = [
     'review',
     'seller',
     'cart',
+    'chatbot',
     # 'bootstrap4',
     'payment',
     'event',
@@ -76,6 +81,8 @@ INSTALLED_APPS = [
     'QnA',
     # 'debug_toolbar',
     'django_filters',
+    # storage
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -121,7 +128,7 @@ DATABASES = {
         'NAME': 'franding_db',
         'USER': 'postgres',
         'PASSWORD': DB_PASSWORD,
-        'HOST': '211.110.169.141',  # 또는 PostgreSQL 서버의 IP 주소
+        'HOST': 'db.hanslab.org',  # 또는 PostgreSQL 서버의 IP 주소
         'PORT': '35432',       # PostgreSQL의 기본 포트 번호
     }
 }
@@ -187,8 +194,8 @@ ACCOUNT_LOGOUT_ON_GET = True
 # SOCIALACCOUNT_ADAPTER = 'config.adapters.YourSocialAccountAdapter'
 
 
-MEDIA_URL='/media/'
-MEDIA_ROOT=BASE_DIR/'media'
+# MEDIA_URL='/media/'
+# MEDIA_ROOT=BASE_DIR/'media'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 ALLOWED_HOSTS = ['testserver', 'localhost', '127.0.0.1', '[::1]']
@@ -240,6 +247,7 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+# Email 설정
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -247,3 +255,20 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'franding3@gmail.com'
 EMAIL_HOST_PASSWORD = EMAIL_PASSWORD
 DEFAULT_FROM_EMAIL = 'franding3@gmail.com'
+
+# AWS settings
+AWS_ACCESS_KEY_ID = AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY = AWS_SECRET_ACCESS_KEY
+AWS_STORAGE_BUCKET_NAME =  AWS_BUCKET_NAME
+AWS_S3_REGION_NAME = AWS_S3_REGION_NAME
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
+
+# Static files (CSS, JavaScript, Images)
+# AWS_STATIC_LOCATION = 'static'
+# STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_STATIC_LOCATION}/'
+# STATICFILES_STORAGE = 'config.storage_backends.StaticStorage'
+
+# Media files (uploads)
+AWS_MEDIA_LOCATION = 'media'
+DEFAULT_FILE_STORAGE = 'config.storage_backends.MediaStorage'
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
