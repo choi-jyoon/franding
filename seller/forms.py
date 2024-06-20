@@ -22,7 +22,7 @@ class ItemForm(forms.ModelForm):
             'inventory': '재고',  # 재고
             'summary': '요약',  # 요약
             'description': '설명',  # 설명
-            'image': '이미지 업로드'  # 이미지 URL
+            'image': '이미지 업로드',  # 이미지 URL
         }
         help_texts = {
             'cat1': '',  # 아이템의 주요 카테고리를 선택하세요.
@@ -31,12 +31,18 @@ class ItemForm(forms.ModelForm):
             'item_type': '',  # 퍼퓸, 코롱 등과 같은 아이템의 유형을 정의하세요.
             'size': '',  # 밀리리터 단위로 아이템의 크기를 입력하세요.
             'inventory': '',  # 재고에 있는 아이템의 수량을 입력하세요.
-            'image': ''  # 제품 이미지를 업로드해주세요.
+            'image': '',  # 제품 이미지를 업로드해주세요.
         }
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4, 'cols': 15}),  # 설명을 위한 텍스트 영역 설정
             'image': forms.FileInput(), # 이미지 파일필드
         }
+        
+    def clean_back_image(self):
+        back_image = self.cleaned_data['back_image']
+        if not back_image:
+            back_image = self.instance.back_image
+        return back_image
 
 class ReviewReplyForm(forms.ModelForm):
     class Meta:
