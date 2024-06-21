@@ -22,13 +22,7 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
         cd /home/ubuntu/franding
-        git pull
-        docker stop franding
-        docker rm franding
-        docker build -t franding .
-        docker run -d --name franding -p 8000:8000 franding
+        git pull        
+        docker-compose down
+        docker-compose up -d --build
         "
-      shell: /usr/bin/bash -e {0}
-      env:
-        SSH_AUTH_SOCK: /tmp/ssh-XXXXXXm3fpXF/agent.1738
-        SSH_AGENT_PID: 1739
