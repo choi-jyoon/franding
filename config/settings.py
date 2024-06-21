@@ -197,7 +197,7 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 LOGIN_REDIRECT_URL='mypage:add_user_info'
 # LOGOUT_REDIRECT_URL='/'
 LOGOUT_REDIRECT_URL = 'login'
-# ACCOUNT_LOGOUT_REDIRECT_URL = reverse_lazy('accountapp:login')
+ACCOUNT_LOGOUT_REDIRECT_URL = reverse_lazy('accountapp:login')
 ACCOUNT_LOGOUT_ON_GET = True
 
 
@@ -205,7 +205,7 @@ ACCOUNT_LOGOUT_ON_GET = True
 # MEDIA_ROOT=BASE_DIR/'media'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
-ALLOWED_HOSTS = ['testserver', 'localhost', '127.0.0.1', '[::1]']
+# ALLOWED_HOSTS = ['testserver', 'localhost', '127.0.0.1', '[::1]']
 
 CACHES = {
     'default': {
