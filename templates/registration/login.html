@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 
 {% load static %}
-{% load socialaccount %}
-{% providers_media_js %}
+{% comment %} {% load socialaccount %}
+{% providers_media_js %} {% endcomment %}
 
 {% block title %}Login{% endblock %}
 
@@ -137,12 +137,12 @@
             <a href="#" class="social-login-btn disabled">
                 <img src="{% static 'img/kakao-logo.png' %}" alt="Kakao Logo">
             </a>
-            <a href="{% provider_login_url 'naver' %}" class="social-login-btn">
+            {% comment %} <a href="{% provider_login_url 'naver' %}" class="social-login-btn">
                 <img src="{% static 'img/naver-logo.png' %}" alt="Naver Logo">
             </a>
             <a href="{% provider_login_url 'google' %}" class="social-login-btn">
                 <img src="{% static 'img/google-logo.png' %}" alt="Google Logo">
-            </a>
+            </a> {% endcomment %}
         </div>
     </div>
 </form>

@@ -26,6 +26,7 @@ distro==1.9.0
 Django==5.0.4
 django-allauth==0.63.3
 django-classy-tags==4.1.0
+django-cors-headers==4.4.0
 django-debug-toolbar==4.4.2
 django-filter==24.2
 django-payments==2.0.0
@@ -165,4 +166,3 @@ websocket-client==1.8.0
 websockets==12.0
 wrapt==1.16.0
 yarl==1.9.4
-zipp==3.19.2
