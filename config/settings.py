@@ -210,12 +210,13 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://52.79.153.140:16379',  # Redis 서버 위치
+        'LOCATION': 'redis://43.203.201.15:16379',  # Redis 서버 위치
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
     }
 }
+
 
 
 INTERNAL_IPS = [
