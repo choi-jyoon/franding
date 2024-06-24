@@ -90,6 +90,8 @@ INSTALLED_APPS = [
     'storages',
 ]
 
+SITE_ID = 1
+
 MIDDLEWARE = [
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',

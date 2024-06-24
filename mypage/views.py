@@ -6,7 +6,7 @@ from django.contrib.auth import logout as auth_logout
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator
 from QnA.models import Question
-from item.models import Item
+from item.models import Item, Like
 from django.http import JsonResponse
 from django.db.models import Count, Prefetch
 from django.utils import timezone
@@ -15,6 +15,7 @@ from django.db.models import Q
 import requests
 import os
 from dotenv import load_dotenv
+
 
 load_dotenv()
 admin_key = os.getenv('admin_key')
@@ -274,3 +275,20 @@ def user_coupon(request):
         'coupons' : coupons,
     }
     return render(request, 'mypage/user_coupon.html', context)
+
+
+@login_required
+def toggle_like(request, item_id):
+    item = get_object_or_404(Item, id=item_id)
+    like, created = Like.objects.get_or_create(user=request.user, item=item)
+
+    if not created:  # 이미 좋아요가 눌려져 있는 경우
+        like.delete()  # 좋아요 취소
+        return JsonResponse({"liked": False})
+
+    return JsonResponse({"liked": True})
+
+@login_required
+def item_like_list(request):
+    likes = Like.objects.filter(user=request.user).select_related('item')
+    return render(request, 'itemlike_list.html', {'likes': likes})

@@ -360,6 +360,9 @@
                     <input type="hidden" id="go-cart" name="go_cart" value="0">
                     <button class="btn btn-primary mt-3 add-to-cart-btn" type="button">장바구니 추가</button>
                 </form>
+                <button id="like-button" data-liked="{{ is_liked }}">
+                    <span id="like-icon">{% if is_liked %}❤️{% else %}🤍{% endif %}</span>
+                </button>
             </div>
         </div>
     </div>
@@ -727,6 +730,24 @@ window.addEventListener('click', function(event) {
 // }
 
 // setInterval(updateViewers, 10000);  // 10초마다 접속자 수 갱신
+    });
+});
+
+document.getElementById('like-button').addEventListener('click', function() {
+    fetch("{% url 'mypage:toggle_like' item.id %}", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        const icon = document.getElementById('like-icon');
+        if (data.liked) {
+            icon.textContent = '❤️';
+        } else {
+            icon.textContent = '🤍';
+        }
     });
 });
 </script>

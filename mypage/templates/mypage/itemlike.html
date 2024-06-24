@@ -10,7 +10,7 @@
             <a href="{% url 'mypage:user_info' %}" class="btn btn-outline-secondary mb-4">회원정보</a>
             <a href="{% url 'event:index' %}" class="btn btn-outline-secondary mb-4">나의 Franding</a>
             <a href="{% url 'subscribe:index' %}" class="btn btn-outline-secondary mb-4">구독</a>
-            <a href="{% url 'mypage:item_like_page' %}" class="btn btn-outline-secondary mb-4">찜 목록</a>
+            <a href="{% url 'mypage:item_like_list' %}" class="btn btn-outline-secondary mb-4">찜 목록</a>
             <a href="{% url 'QnA:home' %}" class="btn btn-outline-secondary mb-4">Q&A</a>    
             {% if user.is_staff %}
                 <a href="{% url 'seller:seller_index' %}" class="btn btn-outline-secondary mb-4">판매자페이지</a>
@@ -19,17 +19,12 @@
         <div class="col-10">
             <h1>{{ user.username }}님의 찜 목록</h1>
             <ul>
-            {% for item_likes in liked_items %}
+            {% for like in likes %}
                 <li>
-                    <a href="{% url 'item:detail' item.id %}">{{ item.name }}</a>
-                    <button class="like-button" data-item-id="{{ item.id }}">
-                        {% if user.is_authenticated and item in user.liked_items.all %}
+                    <a href="{% url 'item:detail' like.item.id %}">{{ like.item.name }}</a>
+                    <button class="like-button" data-item-id="{{ like.item.id }}">
                         <i class="fas fa-heart text-danger"></i> <!-- 꽉 찬 하트 -->
-                        {% else %}
-                        <i class="far fa-heart text-danger"></i> <!-- 비어 있는 하트 -->
-                        {% endif %}
                     </button>
-                    좋아요 수: <span id="like-count-{{ item.id }}">{{ item.item_likes.count }}</span>
                 </li>
             {% endfor %}
             </ul>
@@ -50,12 +45,8 @@ document.querySelectorAll('.like-button').forEach(button => {
                 'X-CSRFToken': '{{ csrf_token }}',
             },
         }).then(response => response.json()).then(data => {
-            var likeCountElement = document.getElementById('like-count-' + itemId);
-            likeCountElement.textContent = data.count;
-            if (data.liked) {
-                this.innerHTML = '<i class="fas fa-heart text-danger"></i>';
-            } else {
-                this.innerHTML = '<i class="far fa-heart text-danger"></i>';
+            if (!data.liked) {
+                this.parentElement.style.display = 'none';
             }
         });
     });

@@ -20,5 +20,8 @@ urlpatterns = [
     
     # 내 쿠폰
     path('coupon/', views.user_coupon, name='user_coupon'), 
+
+    path('toggle_like/<int:item_id>/', views.toggle_like, name='toggle_like'),
+    path('itemlikes/', views.item_like_list, name='item_like_list'),
     
 ]

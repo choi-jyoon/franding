@@ -228,6 +228,24 @@ def check_like_status(request, review_id):
 
 
 
+@login_required
+def item_detail(request, item_id):
+    item = get_object_or_404(Item, id=item_id)
+    is_liked = item.is_liked_by_user(request.user)
+    return render(request, 'item/item_detail.html', {'item': item, 'is_liked': is_liked})
+
+@login_required
+def toggle_like(request, item_id):
+    item = get_object_or_404(Item, id=item_id)
+    like, created = Like.objects.get_or_create(user=request.user, item=item)
+
+    if not created:  # 이미 좋아요가 눌려져 있는 경우
+        like.delete()  # 좋아요 취소
+        return JsonResponse({"liked": False, "count": item.like_set.count()})
+
+    return JsonResponse({"liked": True, "count": item.like_set.count()})
+
+
 # # Redis 연결 설정 (모듈 수준에서 한 번만 설정) / 기능보류!
 # cache = get_redis_connection("default")
 

@@ -51,8 +51,10 @@ class Item(models.Model):
     views = models.IntegerField(default=0)  # 조회수
 
     def __str__(self):
-        
         return self.name
+
+    def is_liked_by_user(self, user):
+        return self.like_set.filter(user=user).exists()
     
 class ItemViewCount(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
@@ -61,3 +63,11 @@ class ItemViewCount(models.Model):
 
     class Meta:
         unique_together = ('item', 'date')
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    liked_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} likes {self.item.name}"
