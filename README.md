@@ -43,3 +43,5 @@ franding ( perfume e-commerce )
 - 시향지 
     - 브랜드 별 시향지 상품 제공
     - 무료 상품
+
+franding cicd test

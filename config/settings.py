@@ -191,7 +191,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 
-# SITE_ID = 1
+SITE_ID = 1
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
 LOGIN_REDIRECT_URL='mypage:add_user_info'
@@ -201,8 +201,8 @@ LOGOUT_REDIRECT_URL = 'login'
 ACCOUNT_LOGOUT_ON_GET = True
 
 
-# MEDIA_URL='/media/'
-# MEDIA_ROOT=BASE_DIR/'media'
+MEDIA_URL='/media/'
+MEDIA_ROOT=BASE_DIR/'media'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 # ALLOWED_HOSTS = ['testserver', 'localhost', '127.0.0.1', '[::1]']

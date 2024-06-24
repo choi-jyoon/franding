@@ -1,0 +1,28 @@
+# .github/workflows/deploy.yml
+name: Deploy Django to AWS EC2 with Git
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup SSH Keys
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_KEY }}
+
+    - name: Sync and Deploy
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+        cd /home/ubuntu/franding
+        git pull        
+        sudo docker-compose down
+        sudo docker-compose up -d --build
+        "
