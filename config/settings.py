@@ -193,12 +193,12 @@ AUTHENTICATION_BACKENDS = (
 
 # SITE_ID = 1
 
-# SOCIALACCOUNT_LOGIN_ON_GET = True
-# LOGIN_REDIRECT_URL='mypage:add_user_info'
-# # LOGOUT_REDIRECT_URL='/'
-# LOGOUT_REDIRECT_URL = 'login'
-# # ACCOUNT_LOGOUT_REDIRECT_URL = reverse_lazy('accountapp:login')
-# ACCOUNT_LOGOUT_ON_GET = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
+LOGIN_REDIRECT_URL='mypage:add_user_info'
+# LOGOUT_REDIRECT_URL='/'
+LOGOUT_REDIRECT_URL = 'login'
+# ACCOUNT_LOGOUT_REDIRECT_URL = reverse_lazy('accountapp:login')
+ACCOUNT_LOGOUT_ON_GET = True
 
 
 # MEDIA_URL='/media/'
@@ -210,12 +210,13 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://52.79.153.140:16379',  # Redis 서버 위치
+        'LOCATION': 'redis://43.203.201.15:16379',  # Redis 서버 위치
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
     }
 }
+
 
 
 INTERNAL_IPS = [
