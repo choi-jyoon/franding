@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from cart.models import OrderCart, Order, PayInfo, Refund
 from .models import UserAddInfo
@@ -15,9 +16,16 @@ from django.db.models import Q
 import requests
 import os
 from dotenv import load_dotenv
+import boto3
 
 load_dotenv()
 admin_key = os.getenv('admin_key')
+
+
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
+
 
 @login_required
 def order_index(request):    
@@ -210,6 +218,9 @@ def add_user_info(request):
                 uploaded_file = request.FILES['file']
                 name = fs.save(uploaded_file.name, uploaded_file)
                 url = fs.url(name)
+                
+                s3.upload_file(os.path.join(settings.MEDIA_ROOT, name), 'franding', name)
+                
             else:
                 url = None  # 파일이 없을 경우 None으로 설정
             
@@ -255,6 +266,9 @@ def update_user_info(request):
             name = fs.save(uploaded_file.name, uploaded_file)
             url = fs.url(name)
             user_info.profile_img = url
+            
+            s3.upload_file(os.path.join(settings.MEDIA_ROOT, name), 'franding', name)
+            
             
         user_info.save()
         user.save()
