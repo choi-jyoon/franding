@@ -12,5 +12,6 @@ urlpatterns = [
     path('add/<int:item_id>/', views.add_cart, name='add'),
     path('like/', views.like_review, name='like_review'),
     path('check_like_status/<int:review_id>/', views.check_like_status, name='check_like_status'),
-    
+    # 새로운 API 엔드포인트 추가
+    path('api/item/<int:item_id>/viewers/', views.get_current_viewers_api, name='get_current_viewers_api'),
 ]

@@ -111,50 +111,50 @@ def list_item(request):
     return render(request, 'item/list.html', context)
 
 
-def detail_list_item(request, item_id):
-    item = get_object_or_404(Item, id=item_id)
-    sort_by = request.GET.get('sort_by', '-datetime')
-    reviews = Review.objects.filter(item=item_id).annotate(likes_count=Count('reviewlike')).order_by('-datetime').prefetch_related(
-        Prefetch('reviewreply_set', queryset=ReviewReply.objects.order_by('-datetime'))
-    )
-    if sort_by == '-datetime':
-        reviews = Review.objects.filter(item=item_id).annotate(likes_count=Count('reviewlike')).order_by('-datetime').prefetch_related(
-        Prefetch('reviewreply_set', queryset=ReviewReply.objects.order_by('-datetime')))
-    elif sort_by == '-star':
-        reviews = Review.objects.filter(item=item_id).annotate(likes_count=Count('reviewlike')).order_by('-star').prefetch_related(
-        Prefetch('reviewreply_set', queryset=ReviewReply.objects.order_by('-datetime')))
-    elif sort_by == '-likes':
-        # 리뷰를 좋아요 수 순으로 정렬
-        reviews = Review.objects.filter(item=item_id).annotate(likes_count=Count('reviewlike')).order_by('-likes_count').prefetch_related(
-            Prefetch('reviewreply_set', queryset=ReviewReply.objects.order_by('-datetime')))
-    paginator = Paginator(reviews, 3)
-    faqs = FAQ.objects.all()  
+# def detail_list_item(request, item_id):
+#     item = get_object_or_404(Item, id=item_id)
+#     sort_by = request.GET.get('sort_by', '-datetime')
+#     reviews = Review.objects.filter(item=item_id).annotate(likes_count=Count('reviewlike')).order_by('-datetime').prefetch_related(
+#         Prefetch('reviewreply_set', queryset=ReviewReply.objects.order_by('-datetime'))
+#     )
+#     if sort_by == '-datetime':
+#         reviews = Review.objects.filter(item=item_id).annotate(likes_count=Count('reviewlike')).order_by('-datetime').prefetch_related(
+#         Prefetch('reviewreply_set', queryset=ReviewReply.objects.order_by('-datetime')))
+#     elif sort_by == '-star':
+#         reviews = Review.objects.filter(item=item_id).annotate(likes_count=Count('reviewlike')).order_by('-star').prefetch_related(
+#         Prefetch('reviewreply_set', queryset=ReviewReply.objects.order_by('-datetime')))
+#     elif sort_by == '-likes':
+#         # 리뷰를 좋아요 수 순으로 정렬
+#         reviews = Review.objects.filter(item=item_id).annotate(likes_count=Count('reviewlike')).order_by('-likes_count').prefetch_related(
+#             Prefetch('reviewreply_set', queryset=ReviewReply.objects.order_by('-datetime')))
+#     paginator = Paginator(reviews, 3)
+#     faqs = FAQ.objects.all()  
 
 
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    try:
-        page_obj = paginator.page(page_number)
-    except PageNotAnInteger:
-        page_obj = paginator.page(1)
-    except EmptyPage:
-        page_obj = paginator.page(paginator.num_pages)    
+#     page_number = request.GET.get('page')
+#     page_obj = paginator.get_page(page_number)
+#     try:
+#         page_obj = paginator.page(page_number)
+#     except PageNotAnInteger:
+#         page_obj = paginator.page(1)
+#     except EmptyPage:
+#         page_obj = paginator.page(paginator.num_pages)    
     
-    if page_obj:
-        context = {
-        "item":item,
-        "review":page_obj,
-        'faqs':faqs,
-        'sort_by':sort_by,
-        }
-    else:
-        context = {
-            "item":item,
-            'message': '리뷰가 없습니다.',
-            'faqs':faqs,
-            'sort_by':sort_by,
-        }    
-    return render(request,'item/detail.html',context) 
+#     if page_obj:
+#         context = {
+#         "item":item,
+#         "review":page_obj,
+#         'faqs':faqs,
+#         'sort_by':sort_by,
+#         }
+#     else:
+#         context = {
+#             "item":item,
+#             'message': '리뷰가 없습니다.',
+#             'faqs':faqs,
+#             'sort_by':sort_by,
+#         }    
+#     return render(request,'item/detail.html',context) 
 
 
 @login_required
@@ -246,10 +246,12 @@ def toggle_like(request, item_id):
     return JsonResponse({"liked": True, "count": item.like_set.count()})
 
 
-# Redis 연결 설정 (모듈 수준에서 한 번만 설정) / 기능보류!
+# Redis 연결 설정 (모듈 수준에서 한 번만 설정)
 cache = get_redis_connection("default")
 
-# 접속자 관리 함수
+# 접속자 관리 함수들
+
+# 접속자 추가 함수
 def add_viewer(item_id, session_id):
     key = f'item_{item_id}_viewers'  # Redis 키 설정
     current_time = int(time.time())  # 현재 시간 (초 단위)
@@ -257,22 +259,26 @@ def add_viewer(item_id, session_id):
     cache.zadd(key, {session_id: current_time})  # 접속자 추가 (세션 ID와 현재 시간)
     cache.expire(key, expire_time)  # 키 만료 시간 설정
 
+# 만료된 접속자 제거 함수
 def remove_expired_viewers(item_id):
     key = f'item_{item_id}_viewers'  # Redis 키 설정
     current_time = int(time.time())  # 현재 시간 (초 단위)
     cache.zremrangebyscore(key, 0, current_time - 300)  # 5분 이상 비활성 접속자 제거
 
+# 현재 접속자 수 반환 함수
 def get_current_viewers(item_id):
     key = f'item_{item_id}_viewers'  # Redis 키 설정
     remove_expired_viewers(item_id)  # 만료된 접속자 제거
     return cache.zcard(key)  # 현재 접속자 수 반환
 
+# 일별 조회수 업데이트 함수
 def update_daily_view_count(item_id):
-    today = timezone.now().date()
+    today = timezone.now().date()  # 오늘 날짜 가져오기
     view_count, created = ItemViewCount.objects.get_or_create(item_id=item_id, date=today)
     view_count.count = models.F('count') + 1  # 더 효율적인 업데이트
     view_count.save(update_fields=['count'])
 
+# 아이템 상세 페이지 뷰 함수
 def detail_list_item(request, item_id):
     # 상품 객체 가져오기
     item = get_object_or_404(Item, id=item_id)
@@ -315,44 +321,11 @@ def detail_list_item(request, item_id):
 
     return render(request, 'item/detail.html', context)
 
-# 특정 기간 동안의 조회수를 집계하고 정렬하는 로직
-def get_top_items(period_days):
-    end_date = timezone.now().date()
-    start_date = end_date - timedelta(days=period_days)
-    top_items = ItemViewCount.objects.filter(date__range=(start_date, end_date)) \
-                                     .values('item') \
-                                     .annotate(total_views=Sum('count')) \
-                                     .order_by('-total_views')
-    return top_items
+# 현재 접속자 수를 반환하는 API 엔드포인트
+def get_current_viewers_api(request, item_id):
+    current_viewers = get_current_viewers(item_id)  # 현재 접속자 수 가져오기
+    return JsonResponse({'current_viewers': current_viewers})  # JSON 응답 반환
 
-def item_list(request):
-    sort_by = request.GET.get('sort_by', 'default')
-    items = Item.objects.all()
-    
-    if sort_by == 'week':
-        top_items = get_top_items(7)
-        item_ids = [item['item'] for item in top_items]
-        items = Item.objects.filter(id__in=item_ids).annotate(total_views=Sum('itemviewcount__count')).order_by('-total_views')
-    elif sort_by == 'month':
-        top_items = get_top_items(30)
-        item_ids = [item['item'] for item in top_items]
-        items = Item.objects.filter(id__in=item_ids).annotate(total_views=Sum('itemviewcount__count')).order_by('-total_views')
-    elif sort_by == 'half_year':
-        top_items = get_top_items(180)
-        item_ids = [item['item'] for item in top_items]
-        items = Item.objects.filter(id__in=item_ids).annotate(total_views=Sum('itemviewcount__count')).order_by('-total_views')
-    
-    # 페이징 처리
-    paginator = Paginator(items, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    context = {
-        'items': page_obj,
-        'sort_by': sort_by,
-    }
-
-    return render(request, 'item/list.html', context)
 
 
 

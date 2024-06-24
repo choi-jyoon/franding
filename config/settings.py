@@ -94,7 +94,6 @@ INSTALLED_APPS = [
 SITE_ID = 1
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -104,9 +103,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
-
-CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'config.urls'
 
@@ -193,13 +191,13 @@ AUTHENTICATION_BACKENDS = (
 )
 
 
-# SITE_ID = 1
+SITE_ID = 1
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
 LOGIN_REDIRECT_URL='mypage:add_user_info'
 # LOGOUT_REDIRECT_URL='/'
 LOGOUT_REDIRECT_URL = 'login'
-# ACCOUNT_LOGOUT_REDIRECT_URL = reverse_lazy('accountapp:login')
+ACCOUNT_LOGOUT_REDIRECT_URL = reverse_lazy('accountapp:login')
 ACCOUNT_LOGOUT_ON_GET = True
 
 
@@ -207,18 +205,17 @@ ACCOUNT_LOGOUT_ON_GET = True
 # MEDIA_ROOT=BASE_DIR/'media'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
-# ALLOWED_HOSTS = ['testserver', 'localhost', '127.0.0.1', '[::1]']
+ALLOWED_HOSTS = ['testserver', 'localhost', '127.0.0.1', '[::1]']
 
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://43.203.201.15:16379',  # Redis 서버 위치
+        'LOCATION': 'redis://52.79.153.140:16379',  # Redis 서버 위치
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
     }
 }
-
 
 
 INTERNAL_IPS = [
@@ -282,3 +279,7 @@ AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazo
 AWS_MEDIA_LOCATION = 'media'
 DEFAULT_FILE_STORAGE = 'config.storage_backends.MediaStorage'
 MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+
+
+#실시간 조회수기능
+CORS_ALLOW_ALL_ORIGINS = True

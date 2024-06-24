@@ -355,8 +355,8 @@
                 <h1 class="text">{{ item.name }}</h1>
                 <p>Price: {{ item.price }}원</p>
                 <p>Size: {{ item.size.ml }}ml</p>
-                <!-- <p>Views: {{ item.views }}</p> # 기능보류!
-                <p>Current viewers: <span id="current-viewers">{{ current_viewers }}</span></p> -->
+                <p>Views: {{ item.views }}</p> # 기능보류!
+                <p>Current viewers: <span id="current-viewers">{{ current_viewers }}</span></p>
             </div>
             <div class="right-box-item">
                 <div class="d-flex justify-content-center">
@@ -562,28 +562,25 @@
         modal.style.display = "block";
     });
 
-// 모달 창 닫기 버튼 기능 추가
-document.querySelector('.close').addEventListener('click', function() {
-    var modal = document.getElementById('myModal');
-    modal.style.display = "none";
-    document.getElementById('add-to-cart-form').submit();//<-장바구니로 이어지는 코드 작성 필요
-});
-
-// 모달 창 외부 클릭 시 닫기 기능 추가
-window.addEventListener('click', function(event) {
-    var modal = document.getElementById('myModal');
-    if (event.target == modal) {
+    // 모달 창 닫기 버튼 기능 추가
+    document.querySelector('.close').addEventListener('click', function() {
+        var modal = document.getElementById('myModal');
         modal.style.display = "none";
-        document.getElementById('go-cart').value = "1";
-        document.getElementById('go-cart-float').value = "1";
-        document.getElementById('add-to-cart-form').submit(); // 폼 제출       
-    }    
-});    
+        document.getElementById('add-to-cart-form').submit();//<-장바구니로 이어지는 코드 작성 필요
+    });
 
-
+    // 모달 창 외부 클릭 시 닫기 기능 추가
+    window.addEventListener('click', function(event) {
+        var modal = document.getElementById('myModal');
+        if (event.target == modal) {
+            modal.style.display = "none";
+            document.getElementById('go-cart').value = "1";
+            document.getElementById('go-cart-float').value = "1";
+            document.getElementById('add-to-cart-form').submit(); // 폼 제출       
+        }    
+    });    
     
     $('#add-to-cart-form').each(function() {   
-
         $.ajax({
             url: '/cart/badge_count/',
             type: 'GET',
@@ -591,9 +588,9 @@ window.addEventListener('click', function(event) {
                 'X-Requested-With': 'XMLHttpRequest'
             },
             success: function(response) {
-            // 예를 들어, response 객체 내의 'data' 값을 로컬 스토리지에 저장하고자 한다고 가정합니다.
-            console.log(response.cart_count);                
-            localStorage.setItem('cart_count', response.cart_count);
+                // 예를 들어, response 객체 내의 'data' 값을 로컬 스토리지에 저장하고자 한다고 가정합니다.
+                console.log(response.cart_count);                
+                localStorage.setItem('cart_count', response.cart_count);
             },
             error: function(xhr, status, error) {
                 console.log('Error: ' + error);
@@ -601,10 +598,7 @@ window.addEventListener('click', function(event) {
         });
     });
     
-    
-
-    //수량 조절
-
+    // 수량 조절
     const currentQuantityElement = document.getElementById('current-quantity');
 
     function decreaseQuantity() {
@@ -643,8 +637,6 @@ window.addEventListener('click', function(event) {
         }
     });
 
-
-
     // FAQ 토글
     document.addEventListener('DOMContentLoaded', function() {
         const faqQuestions = document.querySelectorAll('.faq-question');
@@ -664,86 +656,88 @@ window.addEventListener('click', function(event) {
     });
 
     function refreshCartBadge() {
-    const badgeCount = getCartItems();
-    if (badgeCount !== null) {
-        updateCartBadge(badgeCount);
-    } else {
-        console.warn('No cart count found in localStorage');
+        const badgeCount = getCartItems();
+        if (badgeCount !== null) {
+            updateCartBadge(badgeCount);
+        } else {
+            console.warn('No cart count found in localStorage');
+        }
     }
-}
+
     // 1대1 문의하기
     function openInquiryForm(item_id) {
         window.location.href = "{% url 'QnA:question_create' item.id %}";
     }
 
     $(document).ready(function() {
-    // 페이지 로드 시 각 리뷰의 좋아요 상태 확인
-    $('.like-btn').each(function() {
-        var button = $(this);
-        var reviewId = button.data('review-id');
-        
-        $.ajax({
-            url: '/item/check_like_status/' + reviewId + '/',
-            type: 'GET',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            success: function(response) {
-            var icon = button.find('i');
-            if (response.liked) {
-                icon.removeClass('bi-heart').addClass('bi-heart-fill');
-            } else {
-                icon.removeClass('bi-heart-fill').addClass('bi-heart');
-            }
+        // 페이지 로드 시 각 리뷰의 좋아요 상태 확인
+        $('.like-btn').each(function() {
+            var button = $(this);
+            var reviewId = button.data('review-id');
             
-        },
-            error: function(xhr, status, error) {
-                console.log('Error: ' + error);
-            }
-            
+            $.ajax({
+                url: '/item/check_like_status/' + reviewId + '/',
+                type: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(response) {
+                    var icon = button.find('i');
+                    if (response.liked) {
+                        icon.removeClass('bi-heart').addClass('bi-heart-fill');
+                    } else {
+                        icon.removeClass('bi-heart-fill').addClass('bi-heart');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log('Error: ' + error);
+                }
+            });
         });
-        
-    });
-    setTimeout(refreshCartBadge, 1000); // 2000ms = 2초
-    // 좋아요 버튼 클릭 이벤트
-    $('.like-btn').click(function() {
-        var button = $(this);
-        var reviewId = button.data('review-id');
 
-        $.ajax({
-            url: "{% url 'item:like_review' %}",
-            type: "POST",
-            data: {
-                'review_id': reviewId,
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
-            },
-            success: function(response) {
-            var icon = button.find('i');
-            if (response.liked) {
-                icon.removeClass('bi-heart').addClass('bi-heart-fill');
-            } else {
-                icon.removeClass('bi-heart-fill').addClass('bi-heart');
-            }
-            button.next('.like').text(response.likes_count);
-        },
-            error: function(response) {
-                alert('오류가 발생했습니다.');
-            }
+        setTimeout(refreshCartBadge, 1000); // 2000ms = 2초
+
+        // 좋아요 버튼 클릭 이벤트
+        $('.like-btn').click(function() {
+            var button = $(this);
+            var reviewId = button.data('review-id');
+
+            $.ajax({
+                url: "{% url 'item:like_review' %}",
+                type: "POST",
+                data: {
+                    'review_id': reviewId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    var icon = button.find('i');
+                    if (response.liked) {
+                        icon.removeClass('bi-heart').addClass('bi-heart-fill');
+                    } else {
+                        icon.removeClass('bi-heart-fill').addClass('bi-heart');
+                    }
+                    button.next('.like').text(response.likes_count);
+                },
+                error: function(response) {
+                    alert('오류가 발생했습니다.');
+                }
+            });
         });
+
+        // 현재 페이지를 다시 요청하여 접속자 수를 갱신하는 함수(기능 보류!)
         function updateViewers() {
-    // 현재 페이지를 다시 요청하여 접속자 수를 갱신하는 함수(기능 보류!)
-    fetch(window.location.href)
-        .then(response => response.text())
-        .then(html => {
-            // 응답받은 HTML을 파싱하여 현재 접속자 수 업데이트
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const currentViewers = doc.querySelector('#current-viewers').textContent;
-            document.querySelector('#current-viewers').textContent = currentViewers;
-        });
-}
+            fetch(window.location.href)
+                .then(response => response.text())
+                .then(html => {
+                    // 응답받은 HTML을 파싱하여 현재 접속자 수 업데이트
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const currentViewers = doc.querySelector('#current-viewers').textContent;
+                    document.querySelector('#current-viewers').textContent = currentViewers;
+                });
+        }
 
-setInterval(updateViewers, 10000);  // 10초마다 접속자 수 갱신
+        setInterval(updateViewers, 10000);  // 10초마다 접속자 수 갱신
     });
 });
 
@@ -767,3 +761,4 @@ document.getElementById('like-button').addEventListener('click', function() {
 </script>
 
 {% endblock %}
+
