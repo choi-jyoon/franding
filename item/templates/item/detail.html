@@ -44,7 +44,7 @@
     }
 
     .mb-5 {
-        width: 60%;
+
         display: flex;
         justify-content: center;
         align-items: center;
@@ -123,7 +123,18 @@
         display: flex;
         flex-direction: column;
     }
-
+    .profile-img {
+        width: 30px;
+        height: 30px;
+        object-fit: cover;
+        border-radius: 40%; /* 원형으로 만들기 위해 추가 */
+        background-color: #e2e2e2;
+        border:2px solid #ccc;
+        margin-right: 10px; 
+    }
+    .profile{
+        display: flex;
+    }
     .rating {
         display: flex;
     }
@@ -399,7 +410,10 @@
                 <div class="review-card">
                     <div class="review-up">
                         <div class="user-info">
+                            <div class="profile">
+                                <img src="{{ review.user.useraddinfo.profile_img|default:'path/to/default/profile_img.png' }}" alt="Profile Image" class="profile-img">
                             <h5>{{ review.user }}</h5>
+                        </div>
                             <div class="rating" data-value="{{ review.star }}">
                                 {% for i in '12345' %}
                                     {% if forloop.counter <= review.star %}
