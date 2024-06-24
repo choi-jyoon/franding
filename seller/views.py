@@ -93,7 +93,8 @@ def generate_ai_image(request):
         fs = FileSystemStorage()
         filename = fs.save(f"{request.POST.get('id')}.jpg", image_data)
         file_url = fs.url(filename)
-        s3.upload_file(filename, 'franding', filename)
+        s3.upload_file(os.path.join(settings.MEDIA_ROOT, filename), 'franding', filename)
+
         
         # # 로컬 파일 삭제 
         os.remove(filename)
@@ -120,10 +121,9 @@ def item_create(request):
                 uploaded_file = request.FILES['image']
                 name = fs.save(uploaded_file.name, uploaded_file)
                 url = fs.url(name)
-                s3.upload_file(name, 'franding', name)
+                s3.upload_file(os.path.join(settings.MEDIA_ROOT, name), 'franding', name)
+
                 
-                # # 로컬 파일 삭제 
-                os.remove(name)
                 
                 item.image = url
               
@@ -161,13 +161,18 @@ def item_detail(request, pk):
                 name = fs.save(uploaded_file.name, uploaded_file)
                 url = fs.url(name)
                 item.image = url
-                s3.upload_file(name, 'franding', name)
+                s3.upload_file(os.path.join(settings.MEDIA_ROOT, name), 'franding', name)
+                
+                
+                item.image = url
                 
             # back_image 처리
             if back_image_url:
                 # 이미 S3에 업로드된 이미지라면 그대로 사용
                 item.back_image = back_image_url
+            item.back_image = back_image_url
 
+            item.save()
             form.save()
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
         else:
