@@ -716,20 +716,20 @@ window.addEventListener('click', function(event) {
                 alert('오류가 발생했습니다.');
             }
         });
-//         function updateViewers() {
-//     // 현재 페이지를 다시 요청하여 접속자 수를 갱신하는 함수(기능 보류!)
-//     fetch(window.location.href)
-//         .then(response => response.text())
-//         .then(html => {
-//             // 응답받은 HTML을 파싱하여 현재 접속자 수 업데이트
-//             const parser = new DOMParser();
-//             const doc = parser.parseFromString(html, 'text/html');
-//             const currentViewers = doc.querySelector('#current-viewers').textContent;
-//             document.querySelector('#current-viewers').textContent = currentViewers;
-//         });
-// }
+        function updateViewers() {
+    // 현재 페이지를 다시 요청하여 접속자 수를 갱신하는 함수(기능 보류!)
+    fetch(window.location.href)
+        .then(response => response.text())
+        .then(html => {
+            // 응답받은 HTML을 파싱하여 현재 접속자 수 업데이트
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const currentViewers = doc.querySelector('#current-viewers').textContent;
+            document.querySelector('#current-viewers').textContent = currentViewers;
+        });
+}
 
-// setInterval(updateViewers, 10000);  // 10초마다 접속자 수 갱신
+setInterval(updateViewers, 10000);  // 10초마다 접속자 수 갱신
     });
 });
 
