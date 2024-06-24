@@ -191,8 +191,10 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-
-SITE_ID = 1
+# 로컬 SITE
+# SITE_ID = 8
+# 배포 SITE
+SITE_ID = 16
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
 LOGIN_REDIRECT_URL='mypage:add_user_info'
