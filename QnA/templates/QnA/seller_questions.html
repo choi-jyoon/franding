@@ -156,16 +156,16 @@
     <br>
     <ul class="nav nav-underline" id="seller-nav">
         <li class="nav-item">
-            <a class="nav-link" aria-current="page" href="#">상품관리</a>
+            <a class="nav-link" aria-current="page" href="{% url 'seller:seller_index' %}">상품관리</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">고객관리</a>
+            <a class="nav-link" href="{% url 'seller:subscribe_index' %}">구독관리</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{% url 'seller:seller_orderindex' %}">주문내역관리</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">환불관리</a>
+            <a class="nav-link" href="{% url 'seller:refund_index' %}">환불관리</a>
         </li>
         <li class="nav-item">
             <a class="nav-link active" href="{% url 'QnA:seller_questions' %}">Q&A</a>
