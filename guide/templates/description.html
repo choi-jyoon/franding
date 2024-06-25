@@ -18,7 +18,11 @@
     h1 {
         color: #6D6875;
         text-align: center;
-        font-size: 3em;
+        font-size: 2.5em; /* 폰트 크기를 줄였습니다 */
+    }
+    h3 {
+        font-size: 1.2em; /* h3 태그의 폰트 크기를 줄였습니다 */
+        color: #333;
     }
     .note {
         cursor: pointer;
@@ -46,15 +50,20 @@
             <strong>{{ description.title }}</strong>
         </div>
         <div id="{{ description.slug }}" class="description">
-            {% if description.sections.items %}
-                <ul>
-                    {% for key, value in description.sections.items %}
-                        <li><strong>{{ key }}:</strong> {{ value }}</li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>{{ description.sections }}</p>
-            {% endif %}
+            {% for key, value in description.sections.items %}
+                <h3>{{ key }}</h3>
+                {% if value is string %}
+                    <p>{{ value }}</p>
+                {% elif value.items %}
+                    <ul>
+                        {% for subkey, subvalue in value.items %}
+                            <li><strong>{{ subkey }}:</strong> {{ subvalue }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>{{ value }}</p>
+                {% endif %}
+            {% endfor %}
         </div>
     {% endfor %}
 </div>
