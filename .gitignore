@@ -9,7 +9,6 @@ time_logger.py
 api_test.py
 franding_db_backup.sql
 items.csv
-Dockerfile
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

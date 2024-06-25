@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+
+  web:
+    build:
+      context: .
+    container_name: franding_app
+    env_file:
+      - .env
+    volumes:
+      - static_volume:/app/staticfiles
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ${PWD}/config:/app/config
+      - static_volume:/app/staticfiles
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - web
+volumes:
+  static_volume:
