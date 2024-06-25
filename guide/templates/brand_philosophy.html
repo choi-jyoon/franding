@@ -40,13 +40,13 @@
 
 {% block content %}
 <div class="container">
-    <h1>Brand Story</h1>
-    {% for tale in tales %}
-        <div class="note" onclick="toggleDescription('{{ tale.slug }}')">
-            <strong>{{ tale.title }}</strong>
+    <h1>Brand Philosophy</h1>
+    {% for brand_philosophy in brand_philosophys %}
+        <div class="note" onclick="toggleDescription('{{ brand_philosophy.slug }}')">
+            <strong>{{ brand_philosophy.title }}</strong>
         </div>
-        <div id="{{ tale.slug }}" class="description">
-            <p>{{ tale.description|linebreaksbr }}</p>
+        <div id="{{ brand_philosophy.slug }}" class="description">
+            <p>{{ brand_philosophy.description|linebreaksbr }}</p>
         </div>
     {% endfor %}
 </div>

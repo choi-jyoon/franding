@@ -40,13 +40,13 @@
 
 {% block content %}
 <div class="container">
-    <h1>Perfume Descriptions</h1>
-    {% for tale in tales %}
-        <div class="note" onclick="toggleDescription('{{ tale.slug }}')">
-            <strong>{{ tale.title }}</strong>
+    <h1>Narrative</h1>
+    {% for narrative in narratives %}
+        <div class="note" onclick="toggleDescription('{{ narrative.slug }}')">
+            <strong>{{ narrative.title }}</strong>
         </div>
-        <div id="{{ tale.slug }}" class="description">
-            <p>{{ tale.description|linebreaksbr }}</p>
+        <div id="{{ narrative.slug }}" class="description">
+            <p>{{ narrative.description|linebreaksbr }}</p>
         </div>
     {% endfor %}
 </div>

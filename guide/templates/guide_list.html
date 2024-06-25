@@ -3,32 +3,52 @@
 {% block title %}Guide List{% endblock %}
 
 {% block content %}
-<h1>Guide</h1>
 <div class="button-container">
-    <a class="btn btn-primary" href="{% url 'guide:description' %}">Description</a>
-    <a class="btn btn-primary" href="{% url 'guide:tale' %}">Tale</a>
-    <a class="btn btn-primary" href="{% url 'guide:pleasant' %}">Pleasant</a>
-    <a class="btn btn-primary" href="{% url 'guide:tip' %}">Tip</a>
+    <a class="btn btn-primary custom-btn" href="{% url 'guide:brand_philosophy' %}">Brand Philosophy</a>
+    <a class="btn btn-primary custom-btn" href="{% url 'guide:description' %}">Description</a>
+    <a class="btn btn-primary custom-btn" href="{% url 'guide:pleasant' %}">Pleasant</a>
+    <a class="btn btn-primary custom-btn" href="{% url 'guide:scent' %}">Scent</a>
+    <a class="btn btn-primary custom-btn" href="{% url 'guide:narrative' %}">Narrative</a>
+    <a class="btn btn-primary custom-btn" href="{% url 'guide:tip' %}">Tip</a>
 </div>
 
 <style>
+    .container {
+        display: flex;
+        justify-content: center; /* 가로 가운데 정렬 */
+        align-items: center; /* 세로 가운데 정렬 */
+        height: 100vh;
+    }
+
     .button-container {
         display: flex;
+        flex-wrap: wrap; /* 넘치면 줄 바꿈 */
         gap: 10px;
-        margin-top: 20px;
+        justify-content: center; /* 가로 가운데 정렬 */
+        text-align: center; /* 버튼 텍스트 가운데 정렬 */
     }
 
-    .btn {
-        padding: 10px 20px;
-        text-decoration: none;
-        color: white;
-        background-color: #007bff;
-        border-radius: 5px;
-        transition: background-color 0.3s;
-    }
+    .custom-btn {
+    padding: 70px 60px; /* 조절한 버튼 크기 */
+    text-decoration: none;
+    color: #5B574F; /* 버튼 텍스트 색상 */
+    background-color: white; /* 버튼 배경색 */
+    border: 1px solid #5B574F; /* 버튼 테두리 */
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+    width: 600px; /* 버튼 너비 조정 */
+    display: inline-block; /* 가로 정렬을 위해 inline-block 사용 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+    line-height: 1.5; /* 줄 간격 조절로 수직 정렬 보정 */
+    vertical-align: middle; /* 수직 정렬 보정 */
+    font-size: 36px; /* 폰트 크기 설정 */
+}
 
-    .btn:hover {
-        background-color: #0056b3;
+
+    .custom-btn:hover {
+        background-color: #5B574F; /* 호버 시 배경색 */
+        color: white; /* 호버 시 텍스트 색상 */
+        border: 1px solid #5B574F; /* 호버 시 버튼 테두리 */
     }
 </style>
 {% endblock %}
