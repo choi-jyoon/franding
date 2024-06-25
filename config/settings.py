@@ -192,7 +192,10 @@ AUTHENTICATION_BACKENDS = (
 )
 
 
-SITE_ID = 1
+# 로컬 SITE
+# SITE_ID = 8
+# 배포 SITE
+SITE_ID = 16
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
 LOGIN_REDIRECT_URL='mypage:add_user_info'
@@ -211,7 +214,7 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://54.180.201.192:16379',  # Redis 서버 위치
+        'LOCATION': 'redis://54.180.245.105:16379',  # Redis 서버 위치
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
