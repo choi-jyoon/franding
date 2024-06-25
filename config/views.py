@@ -109,7 +109,7 @@ def send_verification_email(request):
         email = request.session.get('user_email')
         
         # 이메일 중복 확인
-        if User.objects.filter(email=email).exists():
+        if User.objects.filter(email=email, is_active = True).exists():
             return render(request, 'registration/register_done.html',{'error_message': '이미 등록된 이메일입니다.'})
         
         # 이메일 인증 토큰 생성 및 저장
