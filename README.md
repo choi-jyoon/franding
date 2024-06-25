@@ -57,6 +57,7 @@ franding ( perfume e-commerce )
     - 무료 상품
 - 상품 설명을 표현할 수 있는 이미지를 제공하여 향을 시각화    
     - 명품 향수 외에 franding 자체 향수를 제공하여 더 창의적인 향 제공
+- 카카오 페이 결제 기능
 - 고객이 원하는 키워드를 쉽게 찾을 수 있는 검색 & 정렬
     - brand filter
     - 상품 검색
@@ -185,8 +186,24 @@ franding ( perfume e-commerce )
 ![franding](static/img/image-3.png)
 - 판매자 페이지 -> 구독 관리 -> 구독 키워드
 ![franding](static/img/image-4.png)
-- 판매자 페이지 - 구독 관리 -> 구독 고객 관리
+- 판매자 페이지 -> 구독 관리 -> 구독 고객 관리
 ![franding](static/img/image-5.png)
-- 판매자 페이지 - 구독 관리 -> 구독자 분석
+- 판매자 페이지 -> 구독 관리 -> 구독자 분석
 ![franding](static/img/image-6.png)
 ![franding](static/img/image-7.png)
+- 판매자 페이지 -> 주문 내역 관리 -> 배송 상태 관리
+![franding](static/img/배송_상태_관리.png)
+- 판매자 페이지 -> 주문 내역 관리 -> 배송 상태 관리 -> 주문 상세
+![franding](static/img/주문_상세.png)
+- 판매자 페이지 -> 환불 관리
+![franding](static/img/환불_관리.png)
+- chatbot
+![franding](static/img/chatbot.png)
+- 상품 상세 페이지
+![franding](static/img/상품_상세.png)
+- 가이드 페이지
+![franding](static/img/가이드페이지.png)
+- 쿠폰
+![franding](static/img/쿠폰.png)
+- 구독
+![alt text](static/img/구독.png)
