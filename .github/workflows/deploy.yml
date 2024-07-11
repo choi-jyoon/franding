@@ -1,6 +1,7 @@
-# .github/workflows/deploy.yml
-name: Deploy Django to AWS EC2 with Git
+name: Deploy to EC2
 
+## 
+# main branch push 하기
 on:
   push:
     branches:
@@ -13,16 +14,240 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Setup SSH Keys
-      uses: webfactory/ssh-agent@v0.9.0
-      with:
-        ssh-private-key: ${{ secrets.SSH_KEY }}
+    - name: Install SSH client
+      run: sudo apt-get install -y openssh-client
 
-    - name: Sync and Deploy
+    - name: Add SSH key
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
-        cd /home/ubuntu/franding
-        git pull        
-        sudo docker-compose down
-        sudo docker-compose up -d --build
-        "
+        mkdir -p ~/.ssh
+        echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/franding.pem
+        chmod 600 ~/.ssh/franding.pem
+  
+    - name: Add EC2 host to known_hosts
+      run: |
+        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+    
+    - name: Deploy to EC2 and install Docker
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: 'ap-northeast-2'
+        EC2_INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
+      run: |
+        ssh -i ~/.ssh/franding.pem ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          sudo apt-get update -y
+          sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+          sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+          sudo apt-get update -y
+          sudo apt-get install -y docker-ce
+          sudo usermod -aG docker $USER
+          sudo systemctl enable docker
+          sudo systemctl start docker
+          docker --version          
+        EOF
+
+    - name: git clone 
+      run: |
+        ssh -i ~/.ssh/franding.pem ubuntu@${{ secrets.EC2_HOST }} '
+          if [ -d "/home/ubuntu/2024_franding_project_-" ]; then
+            echo "Directory exists. Pulling latest changes..."
+            cd /home/ubuntu/2024_franding_project_-
+            git pull
+          else
+            echo "Directory does not exist. Cloning repository..."
+            git clone https://github.com/SinMoonGh/2024_franding_project_-.git
+          fi'
+
+    - name: franding_django .env 파일 생성하기
+      run: |
+        ssh -i ~/.ssh/franding.pem ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          # .env 파일 생성
+          cat <<EOT > ~/2024_franding_project_-/.env
+          DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_HOST=${{ secrets.DB_HOST }}
+          admin_key=${{ secrets.ADMIN_KEY }}
+          OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+          SECRET_KEY=${{ secrets.SECRET_KEY }}
+          KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
+          KAKAO_KEY=${{ secrets.KAKAO_KEY }}
+          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_KEY=${{ secrets.GOOGLE_KEY }}
+          EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}
+          EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}
+          AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }}
+          AWS_S3_REGION_NAME=${{ secrets.AWS_S3_REGION_NAME }}
+        EOF             
+
+    - name: franding 네트워크 생성하기
+      run: |
+          ssh -i ~/.ssh/franding.pem ubuntu@${{ secrets.EC2_HOST }} '
+            # Create a custom network
+            if sudo docker network inspect franding-network > /dev/null 2>&1; then
+              echo "Docker network already exists. Skipping creation."
+            else
+              sudo docker network create franding-network
+            fi'    
+
+    - name: franding_django Dockerfile 생성하기
+      run: |
+        ssh -i ~/.ssh/franding.pem ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+
+          # Copy Dockerfile and necessary files
+          cat <<EOT > ~/2024_franding_project_-/Dockerfile
+          # Base image
+          FROM python:3.10-slim
+
+          # Set environment variables
+          ENV PYTHONDONTWRITEBYTECODE 1
+          ENV PYTHONUNBUFFERED 1
+
+          # Set work directory
+          WORKDIR /app
+
+          # Install dependencies
+          COPY requirements.txt /app/
+          RUN pip install --upgrade pip
+          RUN pip install -r requirements.txt
+
+          # Copy project
+          COPY . /app/
+
+          # Expose the port the app runs on
+          EXPOSE 8000
+
+          # Run the application
+          CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+        EOF
+    
+    - name: franding_django 이미지 빌드하기
+      run: |
+        ssh -i ~/.ssh/franding.pem ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          cd ~/2024_franding_project_-
+
+          # franding_django 이미지가 이미 존재하는지 확인
+          if sudo docker image inspect franding-django-img > /dev/null 2>&1; then
+            echo "Docker image already exists. Skipping build."
+          else
+            sudo docker build -t franding-django-img:latest .  
+          fi        
+        EOF
+
+
+    - name: franding_django 컨테이너 실행하기
+      run: |
+        ssh -i ~/.ssh/franding.pem ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          # Stop existing container if running
+          sudo docker stop franding-container || true
+
+          # Remove existing container if exists
+          sudo docker rm franding-container || true
+
+          # Run Docker container
+          sudo docker run -d -p 8000:8000 --name franding-container -v /home/ubuntu/2024_franding_project_-:/app --network franding-network franding-django-img:latest
+        EOF
+
+    - name: nginx.conf 파일 생성하기
+      run: |
+        ssh -i ~/.ssh/franding.pem ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          # Copy nginx.conf and necessary files
+          cat <<EOT > ~/nginx/nginx.conf
+          server {
+              listen 80;
+
+              location / {
+                  proxy_pass http://franding-container:8000;
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+              }
+          }
+          EOT  
+        EOF
+
+    - name: nginx Dockerfile 생성하기
+      run: |
+        ssh -i ~/.ssh/franding.pem ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          # nginx 폴더 생성
+          mkdir -p ~/nginx
+
+          # Copy Dockerfile and necessary files
+          cat <<EOT > ~/nginx/Dockerfile
+          # 베이스 이미지로 Nginx 사용
+          FROM nginx:latest
+
+          # Nginx 설정 파일 복사 (옵션)
+          # 만약 커스텀 설정 파일을 사용하려면, 아래와 같이 설정 파일을 복사합니다.
+          COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+          # 기본 HTML 파일 복사 (옵션)
+          # 만약 커스텀 웹 페이지를 사용하려면, 아래와 같이 파일을 복사합니다.
+          # COPY index.html /usr/share/nginx/html/index.html
+
+          # 포트 80 노출
+          EXPOSE 80
+        EOF
+
+    - name: nginx 이미지 빌드하기
+      run: |
+        ssh -i ~/.ssh/franding.pem ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          cd ~/nginx
+
+          # nginx 이미지가 이미 존재하는지 확인
+          if sudo docker image inspect franding-nginx-img > /dev/null 2>&1; then
+            echo "Docker image already exists. Skipping build."
+          else
+            sudo docker build -t franding-nginx-img:latest .  
+          fi        
+        EOF
+
+    - name: nginx 컨테이너 실행하기
+      run: |
+        ssh -i ~/.ssh/franding.pem ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          # Stop existing container if running
+          sudo docker stop franding-nginx-container || true
+
+          # Remove existing container if exists
+          sudo docker rm franding-nginx-container || true
+
+          # Run Docker container
+          sudo docker run -d -p 80:80 --name franding-nginx-container --network franding-network franding-nginx-img
+        EOF
+
+    # - name: Verify Redis is running
+    #   run: |
+    #     ssh -i ~/.ssh/franding.pem ubuntu@${{ secrets.EC2_HOST }} << 'EOF' 
+    #       # Pull Redis image
+    #       sudo docker pull redis
+
+    #       # Stop existing Redis container if running
+    #       sudo docker stop redis-container || true
+
+    #       # Remove existing Redis container if exists
+    #       sudo docker rm redis-container || true
+
+    #       # Run Redis container
+    #       sudo docker run -d --name redis-container -p 6379:6379 redis
+
+    #       # 컨테이너 생성 확인
+    #       docker ps | grep redis-container
+    #     EOF
+    # - name: Setup SSH Keys
+    #   uses: webfactory/ssh-agent@v0.9.0
+    #   with:
+    #     ssh-private-key: ${{ secrets.SSH_KEY }}
+
+    # - name: Sync and Deploy
+    #   run: |
+    #     ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} "
+    #     cd /home/ubuntu/franding
+    #     git pull        
+    #     sudo docker-compose down
+    #     sudo docker-compose up -d --build
+    #     "
